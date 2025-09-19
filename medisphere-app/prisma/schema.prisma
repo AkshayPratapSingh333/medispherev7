@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  DOCTOR
+  PATIENT
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum DoctorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SenderType {
+  DOCTOR
+  PATIENT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String?
+  image         String?
+  role          UserRole  @default(PATIENT)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts    Account[]
+  sessions    Session[]
+  doctor      Doctor?
+  patient     Patient?
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Doctor {
+  id                String        @id @default(cuid())
+  userId            String        @unique
+  licenseNumber     String        @unique
+  specialization    String
+  experience        Int
+  qualification     String
+  hospitalName      String?
+  consultationFee   Float
+  status            DoctorStatus  @default(PENDING)
+  bio               String?       @db.Text
+  availableSchedule Json
+  languages         Json
+  rating            Float         @default(0)
+  totalRatings      Int           @default(0)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments  Appointment[]
+  reviews       Review[]
+  prescriptions Prescription[]
+
+  @@map("doctors")
+}
+
+model Patient {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  dateOfBirth     DateTime?
+  gender          String?
+  phoneNumber     String?
+  emergencyContact String?
+  medicalHistory  String?  @db.Text
+  allergies       String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments  Appointment[]
+  reports       Report[]
+  reviews       Review[]
+  medications   Medication[]
+  aiChats       AIChat[]
+
+  @@map("patients")
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  doctorId    String
+  patientId   String
+  scheduledAt DateTime
+  duration    Int               @default(30)
+  status      AppointmentStatus @default(PENDING)
+  meetingLink String?
+  notes       String?           @db.Text
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  doctor      Doctor        @relation(fields: [doctorId], references: [id])
+  patient     Patient       @relation(fields: [patientId], references: [id])
+  prescription Prescription?
+  chatMessages ChatMessage[]
+
+  @@map("appointments")
+  @@index([doctorId])
+  @@index([patientId])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  patientId   String
+  fileName    String
+  fileUrl     String   @db.Text
+  fileType    String
+  fileSize    Int
+  uploadedAt  DateTime @default(now())
+  description String?  @db.Text
+  aiAnalysis  String?  @db.Text
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@map("reports")
+}
+
+model Prescription {
+  id            String   @id @default(cuid())
+  appointmentId String   @unique
+  doctorId      String
+  medications   Json
+  instructions  String   @db.Text
+  createdAt     DateTime @default(now())
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+  doctor      Doctor      @relation(fields: [doctorId], references: [id])
+
+  @@map("prescriptions")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  doctorId  String
+  patientId String
+  rating    Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  doctor  Doctor  @relation(fields: [doctorId], references: [id])
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@map("reviews")
+}
+
+model Medication {
+  id        String   @id @default(cuid())
+  patientId String
+  name      String
+  dosage    String
+  frequency String
+  startDate DateTime
+  endDate   DateTime?
+  reminders Json
+  createdAt DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@map("medications")
+}
+
+model AIChat {
+  id        String   @id @default(cuid())
+  patientId String
+  messages  Json
+  language  String   @default("en")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@map("ai_chats")
+}
+
+model ChatMessage {
+  id            String     @id @default(cuid())
+  appointmentId String
+  senderId      String
+  senderType    SenderType
+  message       String     @db.Text
+  messageType   String     @default("text")
+  timestamp     DateTime   @default(now())
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+
+  @@map("chat_messages")
+  @@index([appointmentId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  resource  String
+  details   String?  @db.Text
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}

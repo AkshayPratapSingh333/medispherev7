@@ -1,0 +1,11 @@
+{
+  "app.title": "ટેલીમેડિસિન",
+  "auth.signin": "સાઇન ઇન",
+  "auth.signup": "નવું ખાતું બનાવો",
+  "auth.signout": "સાઇન આઉટ",
+  "doctors.list.title": "ડૉક્ટર્સ શોધો",
+  "appointments.book.title": "અપોઇન્ટમેન્ટ બૂક કરો",
+  "reports.upload.title": "રિપોર્ટ અપલોડ કરો",
+  "admin.dashboard.title": "એડમિન ડૅશબોર્ડ",
+  "ai.stub.warning": "AI સુવિધાઓ કનફિગર નથી. GEMINI_API_KEY સેટ કરો."
+}

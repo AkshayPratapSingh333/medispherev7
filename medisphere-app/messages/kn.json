@@ -1,0 +1,11 @@
+{
+  "app.title": "ಟೆಲಿಮೆಡಿಸಿನ್",
+  "auth.signin": "ಸೈನ್ ಇನ್",
+  "auth.signup": "ಸೈನ್ ಅಪ್",
+  "auth.signout": "ಸೈನ್ ಔಟ್",
+  "doctors.list.title": "ಡಾಕ್ಟರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "appointments.book.title": "ಅಪ್ಪಾಯಿಂಟ್‌ಮೆಂಟ್ ಬುಕ್ ಮಾಡಿ",
+  "reports.upload.title": "ರಿಪೋರ್ಟ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+  "admin.dashboard.title": "ಅಡ್ಮಿನ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+  "ai.stub.warning": "AI ವೈಶಿಷ್ಟ್ಯಗಳು ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿಲ್ಲ. GEMINI_API_KEY ಅನ್ನು ಸೆಟ್ ಮಾಡಿ."
+}

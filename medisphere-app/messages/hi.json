@@ -1,0 +1,11 @@
+{
+  "app.title": "टेलीमेडिसिन",
+  "auth.signin": "साइन इन",
+  "auth.signup": "नया अकाउंट बनाएं",
+  "auth.signout": "लॉग आउट",
+  "doctors.list.title": "डॉक्टर खोजें",
+  "appointments.book.title": "अपॉइंटमेंट बुक करें",
+  "reports.upload.title": "रिपोर्ट अपलोड करें",
+  "admin.dashboard.title": "एडमिन डैशबोर्ड",
+  "ai.stub.warning": "AI फ़ीचर सक्षम नहीं है। GEMINI_API_KEY सेट करें।"
+}

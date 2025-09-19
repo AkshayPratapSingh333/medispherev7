@@ -1,0 +1,11 @@
+{
+  "app.title": "Telemedicine",
+  "auth.signin": "Sign in",
+  "auth.signup": "Sign up",
+  "auth.signout": "Sign out",
+  "doctors.list.title": "Find Doctors",
+  "appointments.book.title": "Book Appointment",
+  "reports.upload.title": "Upload Report",
+  "admin.dashboard.title": "Admin Dashboard",
+  "ai.stub.warning": "AI features are not configured. Set GEMINI_API_KEY to enable."
+}

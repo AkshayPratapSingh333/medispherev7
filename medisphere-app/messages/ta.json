@@ -1,0 +1,11 @@
+{
+  "app.title": "டெலிமெடிசீன்",
+  "auth.signin": "உள் நுழைய",
+  "auth.signup": "பதிவு செய்ய",
+  "auth.signout": "வெளியேறு",
+  "doctors.list.title": "டாக்டர்கள் காண்க",
+  "appointments.book.title": "நியமனம் பதிவு செய்",
+  "reports.upload.title": "அறிக்கை பதிவேற்றம்",
+  "admin.dashboard.title": "நிர்வாகர் டாஷ்போரடு",
+  "ai.stub.warning": "AI அம்சங்கள் தொகுக்கப்படவில்லை. GEMINI_API_KEY ஐ அமைக்கவும்."
+}
