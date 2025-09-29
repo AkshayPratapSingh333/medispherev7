@@ -1,15 +1,14 @@
-// components/layout/Sidebar.tsx
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const navItems = [
+const NAV = [
   { href: "/", label: "Home" },
   { href: "/doctors", label: "Doctors" },
-  { href: "/appointments/book", label: "Book Appointment" },
+  { href: "/appointments/book", label: "Book" },
   { href: "/reports", label: "Reports" },
   { href: "/medicines", label: "Medicines" },
   { href: "/chat", label: "Chat" },
@@ -17,263 +16,192 @@ const navItems = [
   { href: "/admin", label: "Admin" },
 ];
 
-export default function Sidebar({ className = "" }: { className?: string }) {
-  const pathname = usePathname();
-  const [isClient, setIsClient] = useState(false);
+const Dot = () => <span className="text-cyan-700/80">•</span>;
 
+export default function Sidebar() {
+  const pathname = usePathname();
+
+  // Collapsed state (desktop)
+  const [collapsed, setCollapsed] = useState(false);
+  // Mobile drawer open
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Restore collapsed state
   useEffect(() => {
-    setIsClient(true);
+    const saved = localStorage.getItem("sb_collapsed");
+    if (saved === "1") setCollapsed(true);
   }, []);
 
-  return (
-    <motion.aside
-      className={`fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-white/95 via-teal-50/30 to-cyan-50/30 backdrop-blur-md border-r border-gray-200/50 shadow-lg hidden md:block overflow-hidden z-40 ${className}`}
-      initial={{ x: -100, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Floating Particles */}
-        {isClient && [...Array(6)].map((_, i) => (
-          <motion.div
-            key={`sidebar-particle-${i}`}
-            className="absolute w-1 h-1 bg-gradient-to-r from-teal-300 to-cyan-300 rounded-full opacity-40"
-            style={{
-              left: `${20 + (i * 8)}%`,
-              top: `${15 + (i * 12)}%`,
-            }}
-            animate={{
-              y: [-10, -25, -10],
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 4 + (i * 0.8),
-              repeat: Infinity,
-              delay: i * 0.5,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+  // Publish sidebar width as CSS var so Header/Main can offset
+  useEffect(() => {
+    const w = collapsed ? "4rem" : "16rem"; // 64px vs 256px
+    document.documentElement.style.setProperty("--sidebar-w", w);
+    localStorage.setItem("sb_collapsed", collapsed ? "1" : "0");
+  }, [collapsed]);
 
-        {/* Gradient Orbs */}
-        <motion.div
-          className="absolute -top-8 -left-8 w-16 h-16 bg-gradient-to-br from-teal-200/20 to-cyan-200/20 rounded-full blur-xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        
-        <motion.div
-          className="absolute bottom-20 -right-8 w-20 h-20 bg-gradient-to-tl from-blue-200/20 to-teal-200/20 rounded-full blur-xl"
-          animate={{
-            scale: [1, 1.4, 1],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            delay: 2,
-            ease: "easeInOut",
-          }}
-        />
+  // Header height variable (fallback 56px if not set)
+  useEffect(() => {
+    const existing = getComputedStyle(document.documentElement)
+      .getPropertyValue("--header-h")
+      .trim();
+    if (!existing) {
+      document.documentElement.style.setProperty("--header-h", "56px"); // h-14
+    }
+  }, []);
 
-        {/* Vertical Gradient Line */}
-        <motion.div
-          className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-teal-300/30 to-transparent"
-          animate={{
-            opacity: [0.3, 0.7, 0.3],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      </div>
+  const width = collapsed ? 64 : 256;
 
-      <div className="relative z-10 p-6 h-full overflow-y-auto">
-        {/* Sidebar Header */}
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
+  const linkBase =
+    "relative group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200";
+  const linkClass = (active: boolean) =>
+    active
+      ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-teal-800 ring-1 ring-teal-200"
+      : "text-gray-700 hover:text-teal-700 hover:bg-white/70";
+
+  const NavLink = ({ href, label }: { href: string; label: string }) => {
+    const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
+    return (
+      <li className="list-none" title={collapsed ? label : undefined}>
+        <Link
+          href={href}
+          className={`${linkBase} ${linkClass(active)}`}
+          aria-current={active ? "page" : undefined}
         >
-          <h2 className="text-lg font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-            Navigation
-          </h2>
-          <div className="w-12 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full" />
-        </motion.div>
-
-        {/* Navigation Items */}
-        <nav className="space-y-2">
-          {navItems.map((item, i) => {
-            const isActive = pathname === item.href;
-            
-            return (
-              <motion.div
-                key={item.href}
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                whileHover={{ x: 8 }}
-                className="relative"
-              >
-                <Link
-                  href={item.href}
-                  className={`
-                    relative group flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300
-                    ${isActive 
-                      ? 'bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-teal-700 shadow-sm border border-teal-200/50' 
-                      : 'text-gray-600 hover:text-teal-600 hover:bg-white/50'
-                    }
-                  `}
-                >
-                  <span className="relative z-10">{item.label}</span>
-                  
-                  {/* Active State Background */}
-                  {isActive && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-teal-100/50 to-cyan-100/50 rounded-xl"
-                      layoutId="activeBackground"
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                  
-                  {/* Hover Background */}
-                  {!isActive && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-teal-50/50 to-cyan-50/50 rounded-xl opacity-0 group-hover:opacity-100"
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                  
-                  {/* Left Border Indicator */}
-                  <motion.div
-                    className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-r-full transition-all duration-300 ${
-                      isActive 
-                        ? 'h-8 bg-gradient-to-b from-teal-400 to-cyan-400' 
-                        : 'h-0 bg-teal-400 group-hover:h-4'
-                    }`}
-                  />
-                  
-                  {/* Right Arrow for Active */}
-                  {isActive && (
-                    <motion.div
-                      className="absolute right-3 text-teal-500"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <motion.span
-                        animate={{ x: [0, 3, 0] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      >
-                        →
-                      </motion.span>
-                    </motion.div>
-                  )}
-                  
-                  {/* Hover Glow Effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-teal-200/20 to-cyan-200/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 -z-10"
-                    transition={{ duration: 0.3 }}
-                  />
-                </Link>
-
-                {/* Floating Dots for Active Item */}
-                {isActive && isClient && [...Array(3)].map((_, idx) => (
-                  <motion.div
-                    key={`active-dot-${idx}`}
-                    className="absolute w-1 h-1 bg-teal-400 rounded-full opacity-60"
-                    style={{
-                      right: `${8 + (idx * 4)}px`,
-                      top: `${12 + (idx * 2)}px`,
-                    }}
-                    animate={{
-                      y: [-2, -8, -2],
-                      opacity: [0.4, 0.8, 0.4],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: idx * 0.3,
-                      ease: "easeInOut",
-                    }}
-                  />
-                ))}
-              </motion.div>
-            );
-          })}
-        </nav>
-
-        {/* Bottom Decoration */}
-        <motion.div
-          className="mt-12 pt-6 border-t border-gradient-to-r from-transparent via-gray-200 to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.6 }}
-        >
-          <div className="flex justify-center space-x-2">
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={`bottom-dot-${i}`}
-                className="w-2 h-2 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.5, 0.8, 0.5],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
-          </div>
           
-          {/* Subtle Brand Text */}
-          <motion.p
-            className="text-xs text-gray-400 text-center mt-3"
-            animate={{
-              opacity: [0.5, 0.8, 0.5],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            Panchkarma Platform
-          </motion.p>
-        </motion.div>
-      </div>
+          <AnimatePresence initial={false}>
+            {!collapsed && (
+              <motion.span
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -6 }}
+                transition={{ duration: 0.15 }}
+                className="truncate"
+              >
+                {label}
+              </motion.span>
+            )}
+          </AnimatePresence>
 
-      {/* Right Border Glow */}
-      <motion.div
-        className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-teal-300/50 to-transparent"
-        animate={{
-          opacity: [0.3, 0.6, 0.3],
+          {active && (
+            <span className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400" />
+          )}
+        </Link>
+      </li>
+    );
+  };
+
+  return (
+    <>
+      {/* DESKTOP SIDEBAR: below header */}
+      <motion.aside
+        initial={false}
+        animate={{ width }}
+        transition={{ type: "spring", stiffness: 220, damping: 24 }}
+        style={{
+          width,
+          top: "var(--header-h, 56px)",
+          height: "calc(100vh - var(--header-h, 56px))",
         }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-    </motion.aside>
+        className={[
+          "hidden md:block",
+          "fixed left-0",
+          // lies BELOW header; header should have z-30, we go z-20
+          "z-20",
+          "bg-gradient-to-b from-white/95 via-teal-50/40 to-cyan-50/40 backdrop-blur-md",
+          "border-r border-cyan-100/70 shadow-lg",
+        ].join(" ")}
+      >
+        {/* Row: title + collapse toggle */}
+        <div className="flex items-center justify-between px-3 py-3">
+          <div className="flex items-center gap-2">
+           
+            {!collapsed && (
+              <div className="text-cyan-800 font-bold">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-700 to-emerald-700">
+                  Panchkarma
+                </span>
+              </div>
+            )}
+          </div>
+
+        {/* Collapse toggle */}
+          <button
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={() => setCollapsed((v) => !v)}
+            className="inline-flex items-center justify-center size-8 rounded-md ring-1 ring-cyan-200 text-cyan-700 bg-white hover:bg-cyan-50"
+            title={collapsed ? "Expand" : "Collapse"}
+          >
+            <span className="text-xl leading-none select-none">{collapsed ? "»" : "«"}</span>
+          </button>
+        </div>
+
+        <div className="h-px bg-gradient-to-r from-transparent via-cyan-200 to-transparent" />
+
+        <ul className="px-3 py-3 space-y-2 overflow-y-auto h-[calc(100%-64px-1px)]">
+          {NAV.map((it) => (
+            <NavLink key={it.href} {...it} />
+          ))}
+        </ul>
+
+        {/* Right glow divider */}
+        <div className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-teal-300/50 to-transparent" />
+      </motion.aside>
+
+      {/* MOBILE DRAWER: opens under header */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              key="overlay"
+              className="md:hidden fixed inset-0 bg-black/30 z-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.aside
+              key="drawer"
+              className="md:hidden fixed left-0 w-64 z-50 bg-gradient-to-b from-white to-cyan-50 border-r border-cyan-100 shadow-xl"
+              style={{
+                top: "var(--header-h, 56px)",
+                height: "calc(100vh - var(--header-h, 56px))",
+              }}
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            >
+              <ul className="px-3 py-3 space-y-2 overflow-y-auto h-full">
+                {NAV.map((it) => (
+                  <li key={it.href}>
+                    <Link
+                      href={it.href}
+                      className={`${linkBase} ${linkClass(
+                        pathname === it.href || (it.href !== "/" && pathname?.startsWith(it.href))
+                      )}`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span className="inline-flex size-8 items-center justify-center rounded-md bg-cyan-600/10 ring-1 ring-cyan-200 text-cyan-700">
+                        <Dot />
+                      </span>
+                      <span>{it.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* MOBILE TRIGGER BUTTON (since header is separate) */}
+      <button
+        className="md:hidden fixed left-3 top-[calc(var(--header-h,56px)+0.5rem)] z-30 inline-flex items-center justify-center size-10 rounded-lg ring-1 ring-cyan-200 bg-white/90 text-cyan-700 shadow"
+        aria-label="Open sidebar"
+        onClick={() => setMobileOpen(true)}
+      >
+        ☰
+      </button>
+    </>
   );
 }

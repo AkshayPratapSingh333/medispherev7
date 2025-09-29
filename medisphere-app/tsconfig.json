@@ -23,6 +23,6 @@
       "@/*": ["medisphere-app/src/*"]
     }
   },
-  "include": ["medisphere-app/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","next-env.d.ts"],
+  "include": ["medisphere-app/next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","next-env.d.ts", "types"],
   "exclude": ["medisphere-app/node_modules"]
 }

@@ -1,20 +1,22 @@
-// app/api/auth/signup/route.ts
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
+
+const schema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(6),
+  role: z.enum(["PATIENT", "DOCTOR"]).optional().default("PATIENT"),
+});
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const body = await req.json();
+    const { name, email, password, role } = schema.parse(body);
 
-    if (!name || !email || !password) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
-
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return NextResponse.json({ error: "Email already exists" }, { status: 400 });
-    }
+    const exists = await prisma.user.findUnique({ where: { email } });
+    if (exists) return NextResponse.json({ error: "Email already in use" }, { status: 400 });
 
     const hashed = await bcrypt.hash(password, 10);
 
@@ -23,13 +25,14 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashed,
-        role: "PATIENT", // default role
+        role,
       },
+      select: { id: true, email: true, role: true, name: true },
     });
 
-    return NextResponse.json({ ok: true, user: { id: user.id, email: user.email } });
-  } catch (err) {
-    console.error("Signup error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ user });
+  } catch (err: any) {
+    console.error("POST /api/auth/signup error:", err);
+    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 }

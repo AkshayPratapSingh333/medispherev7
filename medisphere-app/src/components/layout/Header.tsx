@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import SignOutButton from "../auth/SignOutButton";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -13,12 +12,9 @@ export default function Header() {
 
   useEffect(() => {
     setIsClient(true);
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const navItems = [
@@ -28,217 +24,136 @@ export default function Header() {
     { href: "/chat", label: "Chat" },
   ];
 
+  const bgScrolled =
+    "bg-white/90 backdrop-blur-md shadow-lg border-b border-cyan-100";
+  const bgTop =
+    "bg-gradient-to-r from-teal-50/90 via-cyan-50/90 to-blue-50/90 backdrop-blur-sm shadow-md border-b border-white/30";
+
+  // Decide dashboard path by role
+  const dashHref =
+    (session?.user as any)?.role === "DOCTOR"
+      ? "/doctor/dashboard"
+      : (session?.user as any)?.role === "ADMIN"
+      ? "/admin"
+      : "/patient/dashboard";
+
   return (
     <motion.header
-      className={`sticky top-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200"
-          : "bg-gradient-to-r from-teal-50/90 via-cyan-50/90 to-blue-50/90 backdrop-blur-sm border-b border-white/20 shadow-md"
-      }`}
-      initial={{ y: -100, opacity: 0 }}
+      className={[
+        // Fixed header; content must add pt-14 in layout
+        "fixed top-0 left-0 right-0 h-16 z-30",
+        // On desktop, pad-left by live sidebar width (set by Sidebar)
+        "md:pl-[var(--sidebar-w)] transition-[padding-left] duration-300 ease-out",
+        // Theme based on scroll
+        "transition-colors duration-300",
+        isScrolled ? bgScrolled : bgTop,
+      ].join(" ")}
+      initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      role="banner"
     >
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Floating Particles */}
-        {isClient && [...Array(8)].map((_, i) => (
-          <motion.div
-            key={`header-particle-${i}`}
-            className="absolute w-1 h-1 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full opacity-30"
-            style={{
-              left: `${10 + (i * 10)}%`,
-              top: `${30 + (i * 5)}%`,
-            }}
-            animate={{
-              y: [-5, -15, -5],
-              opacity: [0.2, 0.6, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 4 + (i * 0.5),
-              repeat: Infinity,
-              delay: i * 0.3,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-
-        {/* Gradient Orbs */}
-        <motion.div
-          className="absolute -top-10 -left-10 w-20 h-20 bg-gradient-to-br from-teal-200/20 to-cyan-200/20 rounded-full blur-xl"
-          animate={{
-            x: [0, 30, 0],
-            y: [0, -10, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute -top-10 -right-10 w-16 h-16 bg-gradient-to-bl from-blue-200/20 to-teal-200/20 rounded-full blur-xl"
-          animate={{
-            x: [0, -25, 0],
-            y: [0, -15, 0],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            delay: 2,
-            ease: "easeInOut",
-          }}
-        />
+      {/* Soft animated background accents (subtle) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {isClient &&
+          [...Array(6)].map((_, i) => (
+            <motion.div
+              key={`hdr-dot-${i}`}
+              className="absolute w-1 h-1 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full opacity-30"
+              style={{ left: `${12 + i * 12}%`, top: `${30 + i * 6}%` }}
+              animate={{ y: [-4, -10, -4], opacity: [0.2, 0.6, 0.2] }}
+              transition={{ duration: 4 + i * 0.4, repeat: Infinity, delay: i * 0.25, ease: "easeInOut" }}
+            />
+          ))}
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Enhanced Logo */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+      {/* Content row */}
+      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center justify-between">
+        {/* Brand */}
+        <Link
+          href="/"
+          className="flex items-center gap-2 group"
+          aria-label="Go to home"
         >
-          <Link
-            href="/"
-            className="relative group flex items-center space-x-2"
-          >
-            <motion.div
-              className="text-3xl font-extrabold bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent"
-              whileHover={{ 
-                background: "linear-gradient(to right, #0891b2, #0d9488, #3b82f6)",
-                textShadow: "0 0 20px rgba(20, 184, 166, 0.3)"
-              }}
-            >
-              Panchkarma
-            </motion.div>
-            
-            {/* Logo Glow Effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-teal-300/20 to-blue-300/20 blur-lg -z-10 rounded-lg opacity-0 group-hover:opacity-100"
-              transition={{ duration: 0.3 }}
-            />
-            
-            {/* Animated Underline */}
-            <motion.div
-              className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 w-0 group-hover:w-full"
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-          </Link>
-        </motion.div>
+          <span className="font-bold text-2xl  text-cyan-800 group-hover:text-cyan-900">
+            PanchKarma
+          </span>
+        </Link>
 
-        {/* Enhanced Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          {navItems.map((item, i) => (
+        {/* Nav (desktop) */}
+        <nav className="hidden md:flex items-center gap-2">
+          {navItems.map((item, idx) => (
             <motion.div
               key={item.href}
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              whileHover={{ y: -2 }}
+              transition={{ delay: 0.05 * idx }}
             >
               <Link
                 href={item.href}
-                className="relative group px-3 py-2 rounded-lg transition-all duration-300 hover:bg-white/20 backdrop-blur-sm"
+                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-teal-700 hover:bg-white/60 transition-colors"
               >
-                <span className="font-medium text-gray-700 group-hover:text-teal-600 transition-colors duration-300">
-                  {item.label}
-                </span>
-                
-                {/* Hover Background */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-teal-50/50 to-cyan-50/50 rounded-lg opacity-0 group-hover:opacity-100 -z-10"
-                  transition={{ duration: 0.3 }}
-                />
-                
-                {/* Animated Border */}
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 w-0 group-hover:w-full"
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                />
+                {item.label}
               </Link>
             </motion.div>
           ))}
         </nav>
 
-       {/* Auth Section */}
-        <div className="flex items-center space-x-4">
+        {/* Auth section */}
+        <div className="flex items-center gap-2">
           {status === "loading" ? (
-            <span className="text-sm text-gray-500">Loading...</span>
+            <span className="text-xs text-gray-500">Loading…</span>
           ) : session?.user ? (
-            <motion.div
-              className="flex items-center space-x-4"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Greeting */}
-              <div className="px-4 py-2 bg-white/40 backdrop-blur-sm rounded-full border border-white/20 shadow-sm">
-                <span className="text-sm text-slate-700 font-medium">
-                  Hi, {session.user.name ?? "User"}
+            <>
+              <div className="hidden sm:block px-3 py-1.5 rounded-full bg-white/60 backdrop-blur ring-1 ring-cyan-200">
+                <span className="text-xs text-slate-700">
+                  Hi,{" "}
+                  <span className="font-medium">
+                    {session.user.name || session.user.email || "User"}
+                  </span>
                 </span>
               </div>
 
-              {/* Dashboard */}
               <Link
-                href={
-                  session.user.role === "DOCTOR"
-                    ? "/doctor/dashboard"
-                    : session.user.role === "ADMIN"
-                    ? "/admin"
-                    : "/patient/dashboard"
-                }
-                className="relative px-6 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold rounded-xl shadow-lg"
+                href={dashHref}
+                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-emerald-500 shadow hover:from-cyan-600 hover:to-emerald-600"
               >
                 Dashboard
               </Link>
 
-              {/* Sign Out */}
               <motion.button
-                onClick={() => signOut({ callbackUrl: "/", redirect: true })}
-                className="px-5 py-2 bg-gradient-to-r from-red-500 to-rose-500 text-white font-medium rounded-lg shadow-sm hover:shadow-md hover:from-red-600 hover:to-rose-600 transition-all duration-300"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-red-500 shadow hover:from-rose-600 hover:to-red-600"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Sign out
               </motion.button>
-            </motion.div>
+            </>
           ) : (
-            <motion.div
-              className="flex items-center space-x-3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
+            <>
               <Link
                 href="/auth/signin"
-                className="px-5 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:border-teal-400 hover:text-teal-600 transition-all duration-300 hover:bg-teal-50/50"
+                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 ring-1 ring-cyan-200 hover:text-teal-700 hover:bg-cyan-50"
               >
                 Sign in
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-5 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium rounded-lg shadow-sm hover:shadow-md hover:from-teal-600 hover:to-cyan-600 transition-all duration-300"
+                className="px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-emerald-500 shadow hover:from-cyan-600 hover:to-emerald-600"
               >
                 Sign up
               </Link>
-            </motion.div>
+            </>
           )}
         </div>
       </div>
 
-      {/* Bottom Glow Line */}
+      {/* Bottom shimmer line */}
       <motion.div
-        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-300/50 to-transparent"
-        animate={{
-          opacity: [0.3, 0.8, 0.3],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-300/60 to-transparent"
+        animate={{ opacity: [0.3, 0.8, 0.3] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
     </motion.header>
   );

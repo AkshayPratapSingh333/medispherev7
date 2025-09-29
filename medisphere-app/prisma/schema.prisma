@@ -89,6 +89,9 @@ model Doctor {
   experience        Int
   qualification     String
   hospitalName      String?
+  hospitalAddress   String?      // <-- added
+  state             String?      // <-- added
+  contact           String?      // <-- added
   consultationFee   Float
   status            DoctorStatus  @default(PENDING)
   bio               String?       @db.Text
