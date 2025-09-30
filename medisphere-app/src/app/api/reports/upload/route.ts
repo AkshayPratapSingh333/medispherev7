@@ -1,57 +1,60 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../../api/auth/[...nextauth]/route";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
-import fs from "fs";
-import path from "path";
+const MAX_BYTES = 10 * 1024 * 1024; // 10MB cap
+const ALLOWED = new Set([
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+]);
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const form = await req.formData().catch(() => null);
+  if (!form) return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
 
-  const formData = await req.formData();
-  const file = formData.get("file") as File;
+  const file = form.get("file");
+  if (!(file instanceof Blob)) return NextResponse.json({ error: "Missing file" }, { status: 422 });
 
-  if (!file) {
-    return NextResponse.json({ error: "Missing file" }, { status: 400 });
-  }
+  const fileName = ((form.get("fileName") as string) || "report").trim();
+  const description = ((form.get("description") as string) || "").trim() || null;
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const fileType = file.type || "application/octet-stream";
+  const fileSize = file.size || 0;
 
-  // check if user is a patient
-  const patient = await prisma.patient.findUnique({
+  if (!ALLOWED.has(fileType)) return NextResponse.json({ error: "Unsupported file type" }, { status: 415 });
+  if (fileSize > MAX_BYTES) return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 413 });
+
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  // Ensure patient row for this user
+  const patient = await prisma.patient.upsert({
     where: { userId: session.user.id },
+    update: {},
+    create: { userId: session.user.id },
   });
 
-  if (!patient) {
-    return NextResponse.json({ error: "Not a patient" }, { status: 403 });
-  }
-
-  // Save file locally (in /uploads/reports)
-  const uploadDir = path.join(process.cwd(), "uploads", "reports");
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-
-  const filename = `${Date.now()}-${file.name}`;
-  const filepath = path.join(uploadDir, filename);
-
-  fs.writeFileSync(filepath, buffer);
-
-  // Save metadata in DB
   const report = await prisma.report.create({
     data: {
       patientId: patient.id,
-      fileName: file.name,
-      fileUrl: filepath, // NOTE: For production → store S3/GCS URL instead
-      fileType: file.type,
-      fileSize: file.size,
+      fileName,
+      fileType,
+      fileSize,
+      description,
+      aiAnalysis: null,
+      fileData: buffer, // <- store bytes into MySQL
+    },
+    select: {
+      id: true, fileName: true, fileType: true, fileSize: true,
+      uploadedAt: true, description: true, aiAnalysis: true,
     },
   });
 
-  return NextResponse.json(report);
+  return NextResponse.json(report, { status: 201 });
 }

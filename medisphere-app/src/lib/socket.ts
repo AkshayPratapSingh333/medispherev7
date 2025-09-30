@@ -1,25 +1,14 @@
-// lib/socket.ts
+// src/lib/socket.ts
+"use client";
 import { io, Socket } from "socket.io-client";
+import { getSession } from "next-auth/react";
 
 let socket: Socket | null = null;
-
-export function initSocketClient(token?: string, url?: string) {
-  if (!socket) {
-    const base = url ?? process.env.NEXT_PUBLIC_SIGNALING_URL ?? "http://localhost:4000";
-    socket = io(base, {
-      auth: { token: token ?? (typeof window !== "undefined" ? localStorage.getItem("socket_token") : "") },
-      transports: ["websocket"],
-    });
-  }
+export async function getSocket() {
+  if (socket) return socket;
+  const url = process.env.NEXT_PUBLIC_SIGNALING_URL!;
+  const session = await getSession();
+  const token = (session as any)?.sessionToken || (session as any)?.accessToken || "";
+  socket = io(url, { transports: ["websocket"], withCredentials: true, auth: { token, userId: session?.user?.id } });
   return socket;
-}
-
-export function getSocketClient() {
-  if (!socket) throw new Error("Socket not initialized");
-  return socket;
-}
-
-export function disconnectSocket() {
-  socket?.disconnect();
-  socket = null;
 }

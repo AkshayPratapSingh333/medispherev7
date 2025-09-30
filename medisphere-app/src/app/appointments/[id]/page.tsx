@@ -9,12 +9,18 @@ export default async function AppointmentPage({ params }: { params: { id: string
     include: { doctor: { include: { user: true } }, patient: { include: { user: true } } },
   });
 
-  if (!appointment) return <div>Not found</div>;
+  if (!appointment) {
+    return (
+      <div className="min-h-[50vh] grid place-items-center text-cyan-800">Appointment not found</div>
+    );
+  }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <AppointmentDetails appointment={appointment} />
-      <AppointmentStatus id={appointment.id} current={appointment.status} />
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50">
+      <div className="max-w-2xl mx-auto px-6 py-8 space-y-4">
+        <AppointmentDetails appointment={appointment} />
+        <AppointmentStatus id={appointment.id} current={appointment.status} />
+      </div>
     </div>
   );
 }

@@ -2,112 +2,160 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 import prisma from "../../../lib/prisma";
 import { Prisma } from "@prisma/client";
+import Link from "next/link";
 
-// Type: doctor with relations
 type DoctorWithRelations = Prisma.DoctorGetPayload<{
-  include: { appointments: true; reviews: true };
+  include: {
+    user: { select: { name: true; email: true; image: true } };
+    appointments: {
+      select: { id: true; scheduledAt: true; status: true; patient: { select: { user: { select: { name: true } } } } };
+      orderBy: { scheduledAt: "asc" };
+      where: { scheduledAt: { gt: Date }; NOT: { status: "CANCELLED" } };
+      take: number;
+    };
+    _count: { select: { reviews: true } };
+  };
 }>;
 
-function formatDate(d: Date) {
+function fmt(d: Date) {
   try {
-    return new Intl.DateTimeFormat("en-IN", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(d);
+    return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(d);
   } catch {
     return d.toString();
   }
 }
 
-function avgRating(nums: number[]) {
-  if (!nums.length) return 0;
-  return Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 10) / 10;
+function Badge({ children, tone = "cyan" }: { children: React.ReactNode; tone?: "cyan" | "emerald" | "amber" }) {
+  const tones = {
+    cyan: "bg-cyan-600/10 text-cyan-800 ring-cyan-200",
+    emerald: "bg-emerald-600/10 text-emerald-800 ring-emerald-200",
+    amber: "bg-amber-600/10 text-amber-800 ring-amber-200",
+  } as const;
+  return (
+    <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs ring-1 ${tones[tone]}`}>{children}</span>
+  );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, string> = {
-    PENDING: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
-    APPROVED: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
-    REJECTED: "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
-  };
-  const cls = map[status] ?? "bg-cyan-50 text-cyan-700 ring-1 ring-cyan-200";
+function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${cls}`}>
-      {status}
-    </span>
+    <div className="bg-white rounded-2xl border border-cyan-100 p-5 shadow-sm">
+      <div className="text-sm text-cyan-700/70">{label}</div>
+      <div className="mt-1 text-3xl font-semibold text-cyan-800">{value}</div>
+    </div>
   );
 }
 
 export default async function DoctorDashboard() {
   const session = await getServerSession(authOptions);
+
+  // Guard: must be signed in
   if (!session?.user?.id) {
     return (
-      <div className="min-h-[60vh] grid place-items-center">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold text-cyan-800">Please sign in</h1>
-          <p className="text-cyan-700/70">You need an account to view this page.</p>
-        </div>
+      <div className="min-h-[60vh] grid place-items-center text-cyan-800">
+        Please sign in.
       </div>
     );
   }
 
+  // Fetch doctor tied to this user
+  const now = new Date();
   const doctor: DoctorWithRelations | null = await prisma.doctor.findUnique({
     where: { userId: session.user.id },
-    include: { appointments: true, reviews: true },
+    include: {
+      user: { select: { name: true, email: true, image: true } },
+      // Next 8 upcoming non-cancelled appointments
+      appointments: {
+        select: {
+          id: true,
+          scheduledAt: true,
+          status: true,
+          patient: { select: { user: { select: { name: true } } } },
+        },
+        where: { scheduledAt: { gt: now }, NOT: { status: "CANCELLED" } },
+        orderBy: { scheduledAt: "asc" },
+        take: 8,
+      },
+      _count: { select: { reviews: true } },
+    },
   });
 
+  // If no doctor record, show apply/register CTA
   if (!doctor) {
     return (
-      <div className="min-h-[60vh] grid place-items-center">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold text-cyan-800">Not registered as a doctor</h1>
-          <p className="text-cyan-700/70">Please complete your doctor application to access the dashboard.</p>
-          <a
-            href="/doctor/apply"
-            className="inline-block mt-4 px-4 py-2 rounded-lg text-white bg-gradient-to-r from-cyan-500 to-emerald-500"
-          >
-            Apply Now
-          </a>
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50">
+        <div className="max-w-3xl mx-auto px-6 py-12">
+          <div className="relative">
+            <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-cyan-100/60 via-teal-100/60 to-sky-100/60 blur-xl" />
+            <div className="relative bg-white/90 backdrop-blur-sm border border-cyan-100 rounded-3xl px-8 py-10 shadow text-center">
+              <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-700 to-emerald-700">
+                Become a Doctor on the Platform
+              </h1>
+              <p className="mt-2 text-cyan-800/70">
+                Submit your credentials to start receiving appointments.
+              </p>
+              <Link
+                href="/doctors/apply"
+                className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-6 py-3 text-white font-semibold hover:from-cyan-600 hover:to-emerald-600"
+              >
+                Apply / Register
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  const upcoming = doctor.appointments
-    .filter(a => a.status !== "CANCELLED" && a.scheduledAt > new Date())
-    .sort((a, b) => a.scheduledAt.getTime() - b.scheduledAt.getTime());
+  const rating = Number(doctor?.rating ?? 0);
+  const totalReviews = doctor?._count.reviews ?? 0;
+  const upcomingCount = doctor.appointments.length;
 
-  const past = doctor.appointments
-    .filter(a => a.scheduledAt <= new Date())
-    .sort((a, b) => b.scheduledAt.getTime() - a.scheduledAt.getTime());
-
-  const ratingNumbers = doctor.reviews.map(r => r.rating);
-  const average = avgRating(ratingNumbers);
+  // Tone for status
+  const statusTone =
+    doctor.status === "APPROVED" ? "emerald" : doctor.status === "PENDING" ? "amber" : "cyan";
 
   return (
-    <div className="min-h-screen mt-11 bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50">
-      <div className="max-w-6xl mx-auto  px-4 py-8">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Header card */}
         <div className="relative mb-6">
           <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-cyan-100/60 via-teal-100/60 to-sky-100/60 blur-xl" />
-          <div className="relative bg-white/90 backdrop-blur-sm border border-cyan-100 rounded-3xl px-6 py-5 shadow">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="relative bg-white/90 backdrop-blur-sm border border-cyan-100 rounded-3xl px-6 py-6 shadow">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-700 to-emerald-700">
                   Doctor Dashboard
                 </h1>
-                <p className="text-cyan-700/70">
-                  Welcome, <span className="font-medium">{session.user.name ?? session.user.email}</span>
+                <p className="text-cyan-800/70">
+                  Welcome, {doctor.user.name ?? session.user.email}
                 </p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <Badge tone={statusTone as any}>Status: {doctor.status}</Badge>
+                  {doctor.specialization ? (
+                    <Badge>Specialization: {doctor.specialization}</Badge>
+                  ) : null}
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <StatusBadge status={doctor.status} />
-                <a
-                  href="/doctor/profile/edit"
-                  className="px-3 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-emerald-500"
+
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/doctor/profile"
+                  className="inline-flex items-center rounded-lg bg-cyan-600/10 px-3 py-2 text-sm font-medium text-cyan-800 ring-1 ring-cyan-200 hover:bg-cyan-600/15"
                 >
                   Edit Profile
-                </a>
+                </Link>
+                <Link
+                  href="/appointments/upcoming"
+                  className="inline-flex items-center rounded-lg bg-cyan-600/10 px-3 py-2 text-sm font-medium text-cyan-800 ring-1 ring-cyan-200 hover:bg-cyan-600/15"
+                >
+                  View all upcoming
+                </Link>
+                <Link
+                  href="/appointments"
+                  className="inline-flex items-center rounded-lg bg-emerald-600/10 px-3 py-2 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200 hover:bg-emerald-600/15"
+                >
+                  Manage appointments
+                </Link>
               </div>
             </div>
           </div>
@@ -115,107 +163,91 @@ export default async function DoctorDashboard() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-2xl border border-cyan-100 p-5 shadow-sm">
-            <div className="text-sm text-cyan-700/70">Upcoming Appointments</div>
-            <div className="mt-1 text-3xl font-semibold text-cyan-800">{upcoming.length}</div>
-          </div>
-          <div className="bg-white rounded-2xl border border-cyan-100 p-5 shadow-sm">
-            <div className="text-sm text-cyan-700/70">Reviews</div>
-            <div className="mt-1 text-3xl font-semibold text-cyan-800">{doctor.reviews.length}</div>
-          </div>
-          <div className="bg-white rounded-2xl border border-cyan-100 p-5 shadow-sm">
-            <div className="text-sm text-cyan-700/70">Average Rating</div>
-            <div className="mt-1 text-3xl font-semibold text-cyan-800">{average.toFixed(1)}<span className="text-base">/5</span></div>
-          </div>
+          <Stat label="Upcoming Appointments" value={upcomingCount} />
+          <Stat label="Rating" value={`${rating.toFixed(1)} ⭐`} />
+          <Stat label="Total Reviews" value={totalReviews} />
         </div>
 
-        {/* Two-column: Upcoming + Recent Reviews */}
+        {/* Two columns: upcoming list + profile summary */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Upcoming Appointments */}
+          {/* Upcoming */}
           <div className="lg:col-span-2 bg-white rounded-2xl border border-cyan-100 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold text-cyan-900">Upcoming Appointments</h2>
-              <a href="/doctor/appointments" className="text-cyan-700 hover:underline text-sm">View all</a>
+              <Link href="/appointments/upcoming" className="text-cyan-700 hover:underline text-sm">
+                View all
+              </Link>
             </div>
-            {upcoming.length === 0 ? (
-              <EmptyState message="No upcoming appointments" hint="When patients book, they’ll appear here." />
+
+            {doctor.appointments.length === 0 ? (
+              <div className="rounded-xl border border-cyan-100 p-6 text-center text-cyan-800">
+                No upcoming appointments.
+              </div>
             ) : (
               <ul className="divide-y divide-cyan-100/70">
-                {upcoming.slice(0, 6).map((a) => (
+                {doctor.appointments.map((a) => (
                   <li key={a.id} className="py-3 flex items-center justify-between">
                     <div>
-                      <div className="font-medium text-cyan-900">{formatDate(a.scheduledAt)}</div>
-                      <div className="text-sm text-cyan-700/70">Status: {a.status}</div>
+                      <div className="font-medium text-cyan-900">{fmt(a.scheduledAt)}</div>
+                      <div className="text-sm text-cyan-700/70">
+                        Patient: {a.patient?.user?.name ?? "—"} · Status: {a.status}
+                      </div>
                     </div>
-                    <a
-                      href={`/doctor/appointments/${a.id}`}
-                      className="text-sm px-3 py-1.5 rounded-lg bg-cyan-600/10 text-cyan-700 ring-1 ring-cyan-200"
-                    >
-                      Manage
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {/* Past appointments quick list */}
-            <div className="mt-6">
-              <h3 className="text-sm font-semibold text-cyan-900 mb-2">Recent Past Appointments</h3>
-              {past.length === 0 ? (
-                <p className="text-sm text-cyan-700/70">No past appointments yet.</p>
-              ) : (
-                <ul className="grid md:grid-cols-2 gap-3">
-                  {past.slice(0, 4).map((a) => (
-                    <li key={a.id} className="p-3 rounded-xl border border-cyan-100">
-                      <div className="text-cyan-900 font-medium">{formatDate(a.scheduledAt)}</div>
-                      <div className="text-sm text-cyan-700/70">Status: {a.status}</div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-
-          {/* Reviews */}
-          <div className="bg-white rounded-2xl border border-cyan-100 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-cyan-900">Recent Reviews</h2>
-              <a href="/doctor/reviews" className="text-cyan-700 hover:underline text-sm">View all</a>
-            </div>
-            {doctor.reviews.length === 0 ? (
-              <EmptyState message="No reviews yet" hint="Reviews received from patients will appear here." />
-            ) : (
-              <ul className="space-y-3">
-                {doctor.reviews.slice(0, 5).map((r) => (
-                  <li key={r.id} className="p-3 rounded-xl border border-cyan-100">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-cyan-900">⭐ {r.rating}/5</div>
-                      {r.createdAt && (
-                        <div className="text-xs text-cyan-700/60">{formatDate(r.createdAt as unknown as Date)}</div>
-                      )}
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/appointments/${a.id}`}
+                        className="text-sm px-3 py-1.5 rounded-lg bg-cyan-600/10 text-cyan-800 ring-1 ring-cyan-200 hover:bg-cyan-600/15"
+                      >
+                        View
+                      </Link>
+                      <Link
+                        href={`/appointments/${a.id}`}
+                        className="text-sm px-3 py-1.5 rounded-lg bg-emerald-600/10 text-emerald-800 ring-1 ring-emerald-200 hover:bg-emerald-600/15"
+                      >
+                        Manage
+                      </Link>
                     </div>
-                    <p className="text-sm text-cyan-800/80 mt-1">{r.comment ?? "No comment"}</p>
                   </li>
                 ))}
               </ul>
             )}
           </div>
-        </div>
 
-        {/* Footer actions */}
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a
-            href="/doctor/schedule"
-            className="px-4 py-2 rounded-lg text-sm font-medium text-cyan-800 bg-cyan-50 ring-1 ring-cyan-200 hover:bg-cyan-100"
-          >
-            Edit Availability
-          </a>
-          <a
-            href="/doctor/settings"
-            className="px-4 py-2 rounded-lg text-sm font-medium text-emerald-800 bg-emerald-50 ring-1 ring-emerald-200 hover:bg-emerald-100"
-          >
-            Settings
-          </a>
+          {/* Profile summary */}
+          <div className="bg-white rounded-2xl border border-cyan-100 p-6 shadow-sm space-y-3">
+            <h2 className="text-lg font-semibold text-cyan-900">Profile Summary</h2>
+            <div className="rounded-xl border border-cyan-100 p-4">
+              <div className="text-sm text-cyan-700/70">Name</div>
+              <div className="font-medium text-cyan-900">{doctor.user.name ?? "—"}</div>
+            </div>
+            <div className="rounded-xl border border-cyan-100 p-4">
+              <div className="text-sm text-cyan-700/70">Email</div>
+              <div className="font-medium text-cyan-900">{doctor.user.email ?? "—"}</div>
+            </div>
+            <div className="rounded-xl border border-cyan-100 p-4">
+              <div className="text-sm text-cyan-700/70">Specialization</div>
+              <div className="font-medium text-cyan-900">{doctor.specialization ?? "—"}</div>
+            </div>
+            <div className="rounded-xl border border-cyan-100 p-4">
+              <div className="text-sm text-cyan-700/70">Experience</div>
+              <div className="font-medium text-cyan-900">{doctor.experience ?? 0} years</div>
+            </div>
+            <div className="rounded-xl border border-cyan-100 p-4">
+              <div className="text-sm text-cyan-700/70">Consultation Fee</div>
+              <div className="font-medium text-cyan-900">
+                {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(
+                  Number(doctor.consultationFee ?? 0)
+                )}
+              </div>
+            </div>
+
+            <Link
+              href="/doctor/profile"
+              className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-white font-medium hover:from-cyan-600 hover:to-emerald-600"
+            >
+              Edit Profile
+            </Link>
+          </div>
         </div>
       </div>
     </div>

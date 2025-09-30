@@ -19,7 +19,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="relative w-auto min-h-screen overflow-hidden md:ml-64">
+    <div className="relative  w-fit min-h-screen overflow-hidden md:ml-64">
       {/* Enhanced Background Layers */}
       <div className="fixed inset-0 -z-10">
         {/* Primary Gradient Background */}

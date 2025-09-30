@@ -1,44 +1,73 @@
-require("dotenv").config();
-const express = require("express");
-const http = require("http");
-const helmet = require("helmet");
-const cors = require("cors");
-const morgan = require("morgan");
-const { Server } = require("socket.io");
-
-const socketService = require("./src/services/socketService");
-const roomController = require("./src/controllers/roomController");
-const chatController = require("./src/controllers/chatController");
-const logger = require("./src/utils/logger");
+import "dotenv/config";
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import jwt from "jsonwebtoken";
 
 const app = express();
-const server = http.createServer(app);
-
-const PORT = process.env.PORT || 4000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
-
-// Middleware
+app.use(cors({ origin: true, credentials: true }));
 app.use(helmet());
-app.use(cors({ origin: CORS_ORIGIN }));
-app.use(express.json());
 app.use(morgan("dev"));
 
-// Basic API endpoints
-app.get("/health", (req, res) => res.json({ ok: true, time: Date.now() }));
-app.get("/rooms/:id", roomController.getRoomInfo);
-app.get("/rooms", roomController.listRooms);
-app.post("/chat/save", chatController.saveMessage); // optional hook for persistence
+app.get("/health", (_, res) => res.json({ ok: true }));
 
-// Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: CORS_ORIGIN,
-    methods: ["GET", "POST"]
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: true, credentials: true } });
+
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+
+function verifyJwt(token) {
+  if (!NEXTAUTH_SECRET) return true; // allow all if not configured
+  if (!token) return false;
+  try {
+    jwt.verify(token, NEXTAUTH_SECRET);
+    return true;
+  } catch {
+    return false;
   }
+}
+
+io.on("connection", (socket) => {
+  const { token } = socket.handshake.auth || {};
+  if (!verifyJwt(token)) {
+    socket.disconnect(true);
+    return;
+  }
+
+  socket.on("join", ({ appointmentId }) => {
+    if (!appointmentId) return;
+    socket.join(appointmentId);
+    socket.emit("joined", { appointmentId });
+  });
+
+  // Chat
+  socket.on("chat:message", ({ appointmentId, message }) => {
+    if (!appointmentId || !message) return;
+    socket.to(appointmentId).emit("chat:message", { message });
+  });
+
+  // WebRTC relay
+  socket.on("webrtc:offer", ({ appointmentId, sdp }) => {
+    socket.to(appointmentId).emit("webrtc:offer", { sdp });
+  });
+  socket.on("webrtc:answer", ({ appointmentId, sdp }) => {
+    socket.to(appointmentId).emit("webrtc:answer", { sdp });
+  });
+  socket.on("webrtc:ice", ({ appointmentId, candidate }) => {
+    socket.to(appointmentId).emit("webrtc:ice", { candidate });
+  });
+
+  // Call state
+  socket.on("call:start", ({ appointmentId }) => {
+    socket.to(appointmentId).emit("call:incoming");
+  });
+  socket.on("call:end", ({ appointmentId }) => {
+    io.to(appointmentId).emit("call:ended");
+  });
 });
 
-socketService(io, { logger });
-
-server.listen(PORT, () => {
-  logger.info(`Signaling server listening on http://localhost:${PORT}`);
-});
+const PORT = Number(process.env.PORT || 4000);
+server.listen(PORT, () => console.log(`Signaling server running on ${PORT}`));
