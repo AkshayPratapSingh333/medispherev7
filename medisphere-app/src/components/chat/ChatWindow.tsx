@@ -6,12 +6,28 @@ import ChatInput from "./ChatInput";
 import { getSocket } from "../../lib/socket";
 import { useSession } from "next-auth/react";
 import VideoCallPanel from "../../components/chat/VideoCallPanel";
+import DoctorCallInitiator from "../video/DoctorCallInitiator";
+import { toast } from "sonner";
+import { incrementChatUnreadCount } from "@/lib/chat-unread";
+
+type ChatMessage = {
+  id: string;
+  appointmentId: string;
+  senderId: string;
+  senderType: "DOCTOR" | "PATIENT";
+  message: string;
+  messageType: "text" | "image" | "file";
+  timestamp: string;
+};
 
 export default function ChatWindow({ appointmentId }: { appointmentId: string }) {
   const { data: session } = useSession();
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inCall, setInCall] = useState(false);
-  const joinedRef = useRef(false);
+  const joinedAppointmentRef = useRef<string | null>(null);
+
+  // Check if current user is a doctor
+  const isDoctor = session?.user?.role === "DOCTOR";
 
   // Load history
   useEffect(() => {
@@ -26,32 +42,70 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
 
   // Socket join + listeners
   useEffect(() => {
-    (async () => {
+    let isMounted = true;
+
+    const setupSocketListeners = async () => {
       const socket = await getSocket();
-      if (!joinedRef.current) {
+      if (!isMounted) return;
+
+      if (joinedAppointmentRef.current !== appointmentId) {
         socket.emit("join", { appointmentId });
-        joinedRef.current = true;
+        joinedAppointmentRef.current = appointmentId;
       }
-      socket.on("chat:message", ({ message }) => {
-        setMessages((m) => [...m, message]);
-      });
-      socket.on("call:incoming", () => setInCall(true));
-      socket.on("call:ended", () => setInCall(false));
+
+      const onMessage = ({ message }: { message: ChatMessage }) => {
+        if (isMounted) {
+          setMessages((m) => [...m, message]);
+
+          // Show a visible popup for incoming messages from the other participant.
+          if (message.senderId !== session?.user?.id) {
+            incrementChatUnreadCount();
+            const senderLabel =
+              message.senderType === "DOCTOR" ? "Doctor" : "Patient";
+            toast(`New message from ${senderLabel}`, {
+              description: message.message,
+              duration: 5000,
+            });
+          }
+        }
+      };
+
+      const onCallIncoming = () => {
+        if (isMounted) setInCall(true);
+      };
+
+      const onCallEnded = () => {
+        if (isMounted) setInCall(false);
+      };
+
+      socket.on("chat:message", onMessage);
+      socket.on("call:incoming", onCallIncoming);
+      socket.on("call:ended", onCallEnded);
 
       return () => {
-        socket.off("chat:message");
-        socket.off("call:incoming");
-        socket.off("call:ended");
+        socket.off("chat:message", onMessage);
+        socket.off("call:incoming", onCallIncoming);
+        socket.off("call:ended", onCallEnded);
       };
-    })();
-  }, [appointmentId]);
+    };
+
+    const cleanup = setupSocketListeners();
+
+    return () => {
+      isMounted = false;
+      cleanup?.then((fn) => fn?.());
+    };
+  }, [appointmentId, session?.user?.id]);
 
   // Send message (persist then broadcast)
   async function sendMessage(content: string) {
+    const message = content.trim();
+    if (!message) return;
+
     const res = await fetch(`/api/appointments/${appointmentId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ message, messageType: "text" }),
     });
     const msg = await res.json();
     if (res.ok) {
@@ -67,22 +121,27 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
     <div className="flex flex-col border border-cyan-100 rounded-2xl h-full bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-cyan-100 px-4 py-3">
         <div className="font-semibold text-cyan-900">Appointment Chat</div>
-        <button
-          onClick={() => setInCall(true)}
-          className="rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 px-3 py-1.5 text-white"
-        >
-          Video Call
-        </button>
+        {isDoctor ? (
+          // Doctor: Show call initiation button
+          <DoctorCallInitiator appointmentId={appointmentId} />
+        ) : (
+          // Patient: Show manual call button
+          <button
+            onClick={() => setInCall(true)}
+            className="rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 px-3 py-1.5 text-white text-sm font-medium"
+          >
+            📞 Video Call
+          </button>
+        )}
       </div>
 
       {inCall && (
         <div className="p-3 border-b border-cyan-100">
           <VideoCallPanel
-  appointmentId={appointmentId}
-  onClose={() => setInCall(false)}
-  myId={session?.user?.id || "guest"}
-/>
-
+            appointmentId={appointmentId}
+            onClose={() => setInCall(false)}
+            myId={session?.user?.id || "guest"}
+          />
         </div>
       )}
 

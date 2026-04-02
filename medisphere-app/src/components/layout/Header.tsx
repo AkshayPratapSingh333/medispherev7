@@ -4,11 +4,19 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import {
+  CHAT_UNREAD_EVENT,
+  clearChatUnreadCount,
+  getChatUnreadCount,
+} from "@/lib/chat-unread";
 
 export default function Header() {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
 
   useEffect(() => {
     setIsClient(true);
@@ -16,6 +24,39 @@ export default function Header() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const sync = () => setChatUnreadCount(getChatUnreadCount());
+    sync();
+
+    const onUnreadEvent = (event: Event) => {
+      const customEvent = event as CustomEvent<{ count?: number }>;
+      if (typeof customEvent.detail?.count === "number") {
+        setChatUnreadCount(customEvent.detail.count);
+      } else {
+        sync();
+      }
+    };
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "chat_unread_count") sync();
+    };
+
+    window.addEventListener(CHAT_UNREAD_EVENT, onUnreadEvent as EventListener);
+    window.addEventListener("storage", onStorage);
+
+    return () => {
+      window.removeEventListener(CHAT_UNREAD_EVENT, onUnreadEvent as EventListener);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    const inChat = pathname === "/chat" || /\/appointments\/[^/]+\/chat$/.test(pathname || "");
+    if (inChat) {
+      clearChatUnreadCount();
+    }
+  }, [pathname]);
 
   const navItems = [
     { href: "/doctors", label: "Doctors" },
@@ -93,7 +134,14 @@ export default function Header() {
                 href={item.href}
                 className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-teal-700 hover:bg-white/60 transition-colors"
               >
-                {item.label}
+                <span className="inline-flex items-center gap-2">
+                  <span>{item.label}</span>
+                  {item.href === "/chat" && chatUnreadCount > 0 && (
+                    <span className="inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                      {chatUnreadCount > 99 ? "99+" : chatUnreadCount}
+                    </span>
+                  )}
+                </span>
               </Link>
             </motion.div>
           ))}

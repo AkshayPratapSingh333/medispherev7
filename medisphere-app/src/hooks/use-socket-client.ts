@@ -1,60 +1,85 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useCallback } from 'react';
+import { io, Socket } from 'socket.io-client';
+import { useSession } from 'next-auth/react';
 
-export function useWebRTCClient(socket: any, roomId: string) {
-  const pcRef = useRef<RTCPeerConnection | null>(null);
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+let socketInstance: Socket | null = null;
+
+export function useSocketClient() {
+  const { data: session } = useSession();
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    if (!socket) return;
-    const pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
-    pcRef.current = pc;
+    // Only create socket on client side
+    if (typeof window === 'undefined') return;
 
-    const remote = new MediaStream();
-    setRemoteStream(remote);
-    pc.ontrack = (ev) => ev.streams[0].getTracks().forEach(t => remote.addTrack(t));
+    const signalingServer = process.env.NEXT_PUBLIC_SIGNALING_SERVER || 'http://localhost:4000';
 
-    pc.onicecandidate = (e) => {
-      if (e.candidate) socket.emit("signal", { roomId, type: "candidate", candidate: e.candidate });
-    };
+    if (!socketInstance) {
+      socketInstance = io(signalingServer, {
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5,
+        auth: {
+          token: session?.user?.email,
+          userId: session?.user?.id,
+          name: session?.user?.name,
+          role: session?.user?.role,
+        },
+      });
 
-    socket.on("signal", async (payload: any) => {
-      try {
-        if (payload.type === "offer") {
-          await pc.setRemoteDescription(payload.sdp);
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-          socket.emit("signal", { roomId, type: "answer", sdp: pc.localDescription });
-        } else if (payload.type === "answer") {
-          await pc.setRemoteDescription(payload.sdp);
-        } else if (payload.type === "candidate") {
-          await pc.addIceCandidate(payload.candidate);
-        }
-      } catch (err) {
-        console.error("webrtc signal error", err);
-      }
-    });
+      socketInstance.on('connect', () => {
+        console.log('[Socket.io] Connected to signaling server');
+      });
+
+      socketInstance.on('disconnect', () => {
+        console.log('[Socket.io] Disconnected from signaling server');
+      });
+
+      socketInstance.on('error', (error) => {
+        console.error('[Socket.io] Error:', error);
+      });
+    }
+
+    socketRef.current = socketInstance;
 
     return () => {
-      socket.off("signal");
-      pc.close();
-      pcRef.current = null;
+      // Don't disconnect on unmount - keep connection alive
     };
-  }, [socket, roomId]);
+  }, [session]);
 
-  async function startLocal() {
-    const media = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    setLocalStream(media);
-    media.getTracks().forEach(t => pcRef.current?.addTrack(t, media));
-  }
+  const emit = useCallback((event: string, data?: any) => {
+    if (socketRef.current?.connected) {
+      socketRef.current.emit(event, data);
+    } else {
+      console.warn(`[Socket.io] Not connected, cannot emit ${event}`);
+    }
+  }, []);
 
-  async function createOffer() {
-    const pc = pcRef.current;
-    if (!pc) throw new Error("pc not ready");
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    socket.emit("signal", { roomId, type: "offer", sdp: pc.localDescription });
-  }
+  const on = useCallback((event: string, callback: (data: any) => void) => {
+    if (socketRef.current) {
+      socketRef.current.on(event, callback);
+    }
+  }, []);
 
-  return { startLocal, createOffer, localStream, remoteStream };
+  const off = useCallback((event: string) => {
+    if (socketRef.current) {
+      socketRef.current.off(event);
+    }
+  }, []);
+
+  const once = useCallback((event: string, callback: (data: any) => void) => {
+    if (socketRef.current) {
+      socketRef.current.once(event, callback);
+    }
+  }, []);
+
+  return {
+    socket: socketRef.current,
+    emit,
+    on,
+    off,
+    once,
+    isConnected: socketRef.current?.connected ?? false,
+  };
 }

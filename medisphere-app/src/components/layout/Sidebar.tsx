@@ -4,6 +4,11 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  CHAT_UNREAD_EVENT,
+  clearChatUnreadCount,
+  getChatUnreadCount,
+} from "@/lib/chat-unread";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -25,6 +30,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   // Mobile drawer open
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [chatUnreadCount, setChatUnreadCount] = useState(0);
 
   // Restore collapsed state
   useEffect(() => {
@@ -49,6 +55,38 @@ export default function Sidebar() {
     }
   }, []);
 
+  useEffect(() => {
+    const sync = () => setChatUnreadCount(getChatUnreadCount());
+    sync();
+
+    const onUnreadEvent = (event: Event) => {
+      const customEvent = event as CustomEvent<{ count?: number }>;
+      if (typeof customEvent.detail?.count === "number") {
+        setChatUnreadCount(customEvent.detail.count);
+      } else {
+        sync();
+      }
+    };
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "chat_unread_count") sync();
+    };
+
+    window.addEventListener(CHAT_UNREAD_EVENT, onUnreadEvent as EventListener);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener(CHAT_UNREAD_EVENT, onUnreadEvent as EventListener);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
+
+  useEffect(() => {
+    const inChat = pathname === "/chat" || /\/appointments\/[^/]+\/chat$/.test(pathname || "");
+    if (inChat) {
+      clearChatUnreadCount();
+    }
+  }, [pathname]);
+
   const width = collapsed ? 64 : 256;
 
   const linkBase =
@@ -60,6 +98,7 @@ export default function Sidebar() {
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
+    const showChatUnread = href === "/chat" && chatUnreadCount > 0;
     return (
       <li className="list-none" title={collapsed ? label : undefined}>
         <Link
@@ -81,6 +120,12 @@ export default function Sidebar() {
               </motion.span>
             )}
           </AnimatePresence>
+
+          {showChatUnread && (
+            <span className="ml-auto inline-flex min-w-5 h-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+              {chatUnreadCount > 99 ? "99+" : chatUnreadCount}
+            </span>
+          )}
 
           {active && (
             <span className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400" />

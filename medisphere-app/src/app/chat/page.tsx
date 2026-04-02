@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { MessageSquare, Video, Users, Plus, Search } from "lucide-react";
+import { useSocket } from "@/hooks/use-socket";
 
 interface Appointment {
   id: string;
@@ -15,6 +16,7 @@ interface Appointment {
 export default function ChatPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { emit } = useSocket();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +60,19 @@ export default function ChatPage() {
   };
 
   const startVideoCall = (appointmentId: string) => {
-    router.push(`/appointment/${appointmentId}`);
+    if (!session?.user?.id) {
+      router.push("/auth/signin");
+      return;
+    }
+
+    // Trigger patient incoming-call modal before doctor enters video page.
+    emit("call:initiate", {
+      appointmentId,
+      from: session.user.id,
+      doctorName: session.user.name || "Doctor",
+    });
+
+    router.push(`/appointments/${appointmentId}/video`);
   };
 
   if (!session) {

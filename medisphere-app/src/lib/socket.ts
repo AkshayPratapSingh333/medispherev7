@@ -6,12 +6,17 @@ import { getSession } from "next-auth/react";
 let socket: Socket | null = null;
 export async function getSocket() {
   if (socket) return socket;
-  const url = process.env.NEXT_PUBLIC_SIGNALING_URL || "http://localhost:4000";
+  const url =
+    process.env.NEXT_PUBLIC_SIGNALING_URL ||
+    process.env.NEXT_PUBLIC_SIGNALING_SERVER ||
+    "http://localhost:4000";
   console.log("🔌 Connecting to signaling server:", url);
   const session = await getSession();
   const token = (session as any)?.sessionToken || (session as any)?.accessToken || "";
   socket = io(url, { 
-    transports: ["websocket", "polling"], 
+    transports: ["polling", "websocket"],
+    upgrade: true,
+    timeout: 20000,
     withCredentials: true, 
     auth: { token, userId: session?.user?.id },
     reconnection: true,
@@ -28,7 +33,7 @@ export async function getSocket() {
   });
   
   socket.on("connect_error", (err) => {
-    console.error("❌ Socket connection error:", err.message);
+    console.warn("⚠️ Socket connection error:", err.message);
   });
   
   return socket;
