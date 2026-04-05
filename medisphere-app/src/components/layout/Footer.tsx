@@ -12,16 +12,16 @@ const footerLinks = {
     { href: "/ai", label: "AI Assistant" },
   ],
   support: [
-    { href: "/help", label: "Help Center" },
-    { href: "/contact", label: "Contact Us" },
-    { href: "/privacy", label: "Privacy Policy" },
-    { href: "/terms", label: "Terms of Service" },
+    { href: "/help", label: "Help Center", description: "Step-by-step guidance for appointments, reports, and account settings." },
+    { href: "/contact", label: "Contact Us", description: "Reach our care team for platform support and urgent assistance." },
+    { href: "/privacy", label: "Privacy Policy", description: "Understand how we protect your personal and medical information." },
+    { href: "/terms", label: "Terms of Service", description: "Read the rules and responsibilities for using MediSphere." },
   ],
   company: [
-    { href: "/about", label: "About Us" },
-    { href: "/blog", label: "Blog" },
-    { href: "/careers", label: "Careers" },
-    { href: "/press", label: "Press Kit" },
+    { href: "/about", label: "About Us", description: "Learn our mission to modernize trusted Ayurvedic care." },
+    { href: "/blog", label: "Blog", description: "Read expert insights on wellness, prevention, and digital health." },
+    { href: "/careers", label: "Careers", description: "Join our team to build meaningful healthcare experiences." },
+    { href: "/press", label: "Press Kit", description: "Access official brand assets, announcements, and media resources." },
   ],
 };
 
@@ -87,27 +87,6 @@ export default function Footer() {
                 Revolutionizing Ayurvedic healthcare through modern technology. 
                 Connect with certified practitioners and embark on your wellness journey.
               </p>
-              
-              {/* Social Links */}
-              <div className="flex space-x-4">
-                {['Twitter', 'Facebook', 'LinkedIn', 'Instagram'].map((social, i) => (
-                  <motion.a
-                    key={social}
-                    href="#"
-                    className="w-10 h-10 bg-gradient-to-br from-teal-500/10 to-cyan-500/10 rounded-full flex items-center justify-center text-gray-600 hover:text-teal-600 transition-colors duration-300 backdrop-blur-sm border border-white/20"
-                    whileHover={{ scale: 1.05, y: -1 }}
-                    whileTap={{ scale: 0.9 }}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.15 + (i * 0.04), duration: 0.25 }}
-                  >
-                    <span className="text-sm font-medium">
-                      {social.slice(0, 1)}
-                    </span>
-                  </motion.a>
-                ))}
-              </div>
             </motion.div>
 
             {/* Links Sections */}
@@ -133,9 +112,14 @@ export default function Footer() {
                     >
                       <Link
                         href={link.href}
-                        className="text-sm text-gray-600 hover:text-teal-600 transition-colors duration-300 relative group"
+                        className="block text-sm text-gray-600 hover:text-teal-600 transition-colors duration-300 relative group"
                       >
-                        <span>{link.label}</span>
+                        <span className="font-medium">{link.label}</span>
+                        {"description" in link && link.description ? (
+                          <span className="mt-1 block text-xs leading-relaxed text-gray-500 group-hover:text-teal-600/80">
+                            {link.description}
+                          </span>
+                        ) : null}
                         <span className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 w-0 group-hover:w-full transition-all duration-300 ease-out" />
                       </Link>
                     </motion.li>
