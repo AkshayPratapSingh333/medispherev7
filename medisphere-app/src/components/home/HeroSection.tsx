@@ -2,96 +2,31 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 
 export default function HeroSection() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
   return (
     <section className="relative text-center py-24 bg-gradient-to-br from-emerald-50 via-cyan-100 to-teal-100 overflow-hidden">
-      {/* Animated Background Elements */}
+      {/* Static background accents keep depth without runtime animation cost */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-200/30 to-emerald-200/30 rounded-full blur-3xl"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-teal-200/30 to-blue-200/30 rounded-full blur-3xl"
-          animate={{
-            x: [0, -30, 0],
-            y: [0, 40, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        
-        {/* Floating Particles */}
-        {isClient && [...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full opacity-60"
-            style={{
-              left: `${20 + (i * 15)}%`,
-              top: `${30 + (i * 10)}%`,
-            }}
-            animate={{
-              y: [-20, -40, -20],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{
-              duration: 3 + (i * 0.3),
-              repeat: Infinity,
-              delay: i * 0.5,
-            }}
-          />
-        ))}
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-200/30 to-emerald-200/30 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-teal-200/30 to-blue-200/30 rounded-full blur-3xl" />
       </div>
 
       {/* Main Content */}
       <div className="relative z-10">
         <motion.h1
           className="text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 bg-clip-text text-transparent"
-          initial={{ opacity: 0, y: -50 }}
+          initial={{ opacity: 0, y: -24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.45 }}
         >
           Welcome to{" "}
           <motion.span 
             className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 bg-clip-text text-transparent relative inline-block"
-            whileHover={{ 
-              scale: 1.05,
-              textShadow: "0 0 20px rgba(59, 130, 246, 0.3)"
-            }}
+            whileHover={{ scale: 1.02 }}
           >
-            Panchkarma
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-teal-400/20 blur-xl -z-10"
-              animate={{
-                opacity: [0.5, 0.8, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
+            MediSphere
+            <span className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-teal-400/20 blur-xl -z-10" />
           </motion.span>
         </motion.h1>
 
@@ -99,10 +34,9 @@ export default function HeroSection() {
           className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          whileHover={{ scale: 1.02 }}
+          transition={{ delay: 0.1, duration: 0.35 }}
         >
-          A modern telemedicine platform for Ayurvedic wellness and Panchkarma
+          A modern telemedicine platform for Ayurvedic wellness and MediSphere
           therapies — connect with doctors, book sessions, and track your health
           journey.
         </motion.p>
@@ -111,7 +45,7 @@ export default function HeroSection() {
           className="mt-8 flex justify-center gap-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
+          transition={{ delay: 0.2, duration: 0.35 }}
         >
           <motion.div
             whileHover={{ scale: 1.05, y: -2 }}
@@ -123,34 +57,7 @@ export default function HeroSection() {
               className="relative px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-xl shadow-lg overflow-hidden font-semibold transition-all duration-300 hover:shadow-2xl hover:shadow-teal-200"
             >
               <span className="relative z-10">Get Started</span>
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-teal-400 to-emerald-400 opacity-0 group-hover:opacity-100"
-                initial={false}
-                animate={{
-                  background: [
-                    "linear-gradient(45deg, #14b8a6, #10b981)",
-                    "linear-gradient(225deg, #06b6d4, #14b8a6)",
-                    "linear-gradient(45deg, #14b8a6, #10b981)",
-                  ],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.div
-                className="absolute inset-0 bg-white/20"
-                animate={{
-                  x: [-100, 100],
-                  opacity: [0, 0.5, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  repeatDelay: 1,
-                }}
-              />
+              <span className="absolute inset-0 bg-gradient-to-r from-teal-400 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
           </motion.div>
           

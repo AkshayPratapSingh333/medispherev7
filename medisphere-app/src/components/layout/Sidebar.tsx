@@ -18,7 +18,6 @@ const NAV = [
   { href: "/medicines", label: "Medicines" },
   { href: "/chat", label: "Chat" },
   { href: "/ai", label: "AI Assistant" },
-  { href: "/admin", label: "Admin" },
 ];
 
 const Dot = () => <span className="text-cyan-700/80">•</span>;
@@ -31,6 +30,11 @@ export default function Sidebar() {
   // Mobile drawer open
   const [mobileOpen, setMobileOpen] = useState(false);
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Restore collapsed state
   useEffect(() => {
@@ -51,7 +55,7 @@ export default function Sidebar() {
       .getPropertyValue("--header-h")
       .trim();
     if (!existing) {
-      document.documentElement.style.setProperty("--header-h", "56px"); // h-14
+      document.documentElement.style.setProperty("--header-h", "64px"); // h-16
     }
   }, []);
 
@@ -90,11 +94,11 @@ export default function Sidebar() {
   const width = collapsed ? 64 : 256;
 
   const linkBase =
-    "relative group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200";
+    "relative group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition duration-200";
   const linkClass = (active: boolean) =>
     active
-      ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-teal-800 ring-1 ring-teal-200"
-      : "text-gray-700 hover:text-teal-700 hover:bg-white/70";
+      ? "bg-gradient-to-r from-cyan-500/12 to-teal-500/10 text-cyan-900 ring-1 ring-cyan-200 shadow-sm"
+      : "text-slate-700 hover:text-cyan-800 hover:bg-white/80";
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
@@ -152,20 +156,18 @@ export default function Sidebar() {
           "fixed left-0",
           // lies BELOW header; header should have z-30, we go z-20
           "z-20",
-          "bg-gradient-to-b from-white/95 via-teal-50/40 to-cyan-50/40 backdrop-blur-md",
-          "border-r border-cyan-100/70 shadow-lg",
+          "bg-white/78 backdrop-blur-md border border-cyan-100/80 shadow-[0_10px_28px_-20px_rgba(14,116,144,0.5)]",
+          "bg-gradient-to-b from-white/92 via-cyan-50/35 to-teal-50/30",
+          "border-r border-cyan-100/80 shadow-[0_18px_45px_-28px_rgba(8,145,178,0.55)] ring-1 ring-cyan-100/70",
         ].join(" ")}
       >
         {/* Row: title + collapse toggle */}
         <div className="flex items-center justify-between px-3 py-3">
           <div className="flex items-center gap-2">
-           
-            {!collapsed && (
-              <div className="text-cyan-800 font-bold">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-700 to-emerald-700">
-                  Panchkarma
-                </span>
-              </div>
+            {mounted && !collapsed && (
+              <span className="text-base font-semibold tracking-wide bg-gradient-to-r from-cyan-700 via-sky-700 to-teal-700 bg-clip-text text-transparent">
+                MediSphere
+              </span>
             )}
           </div>
 
@@ -173,7 +175,7 @@ export default function Sidebar() {
           <button
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             onClick={() => setCollapsed((v) => !v)}
-            className="inline-flex items-center justify-center size-8 rounded-md ring-1 ring-cyan-200 text-cyan-700 bg-white hover:bg-cyan-50"
+            className="inline-flex items-center justify-center size-8 rounded-md ring-1 ring-cyan-200 text-cyan-700 bg-white/90 hover:bg-cyan-50 transition-transform duration-200 ease-out hover:-translate-y-0.5"
             title={collapsed ? "Expand" : "Collapse"}
           >
             <span className="text-xl leading-none select-none">{collapsed ? "»" : "«"}</span>

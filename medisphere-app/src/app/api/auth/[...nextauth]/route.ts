@@ -5,50 +5,60 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+const providers: NextAuthOptions["providers"] = [
+  CredentialsProvider({
+    name: "Credentials",
+    credentials: {
+      email: { label: "Email", type: "text" },
+      password: { label: "Password", type: "password" },
+    },
+    async authorize(credentials) {
+      if (!credentials?.email || !credentials?.password) return null;
+
+      const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+      if (!user || !user.password) return null;
+
+      const valid = await bcrypt.compare(credentials.password, user.password);
+      if (!valid) return null;
+
+      // Return a plain object (not Prisma model proxy)
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name ?? "",
+        image: user.image ?? null,
+        role: user.role,
+      };
+    },
+  }),
+];
+
+if (googleClientId && googleClientSecret) {
+  providers.push(
+    GoogleProvider({
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+      allowDangerousEmailAccountLinking: true,
+    })
+  );
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
-  providers: [
-    // Email + Password
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-
-        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
-        if (!user || !user.password) return null;
-
-        const valid = await bcrypt.compare(credentials.password, user.password);
-        if (!valid) return null;
-
-        // Return a plain object (not Prisma model proxy)
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name ?? "",
-          image: user.image ?? null,
-          role: user.role,
-        } as any;
-      },
-    }),
-
-    // Google OAuth
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      allowDangerousEmailAccountLinking: true,
-    }),
-  ],
+  providers,
 
   callbacks: {
     // Runs on sign-in and on every request to refresh token
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user }) {
       // On first sign in (user present)
       if (user) {
+        const incomingRole =
+          "role" in user && typeof user.role === "string" ? user.role : "PATIENT";
+
         // Ensure DB has a user with a role (Google users may not exist yet)
         const dbUser =
           (await prisma.user.findUnique({ where: { email: user.email! } })) ??
@@ -56,8 +66,8 @@ export const authOptions: NextAuthOptions = {
             data: {
               email: user.email!,
               name: user.name ?? "",
-              image: (user as any).image ?? null,
-              role: (user as any).role ?? "PATIENT", // default
+              image: user.image ?? null,
+              role: incomingRole, // default
             },
           }));
 

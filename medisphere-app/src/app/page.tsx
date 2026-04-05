@@ -1,25 +1,15 @@
 // app/page.tsx
 "use client";
 
-
-
-// import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
 import HeroSection from "../components/home/HeroSection";
 import FeaturesSection from "../components/home/FeaturesSection";
-import HowItWorks from "../components/home/HowItWorks";
+import HowItWorks from "@/components/home/HowItWorks";
 import Testimonials from "../components/home/Testimonials";
 import CTASection from "../components/home/CTASection";
 
 export default function HomePage() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   return (
-    <div className="relative  w-fit min-h-screen overflow-hidden md:ml-64">
+    <div className="relative w-full min-h-full overflow-x-clip">
       {/* Enhanced Background Layers */}
       <div className="fixed inset-0 -z-10">
         {/* Primary Gradient Background */}
@@ -60,28 +50,47 @@ export default function HomePage() {
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           }}
         />
+
+        {/* New animation style: slow horizontal sweep */}
+        <div className="absolute inset-0 pointer-events-none bg-sweep" />
       </div>
 
       {/* Content Sections with Enhanced Spacing */}
       <div className="relative z-10">
         {/* Hero Section */}
-        <HeroSection />
+        <div className="reveal-stagger" style={{ animationDelay: "40ms" }}>
+          <HeroSection />
+        </div>
+
         {/* Section Divider */}
         <div className="h-20 bg-gradient-to-b from-transparent via-white/30 to-transparent" />
+
         {/* Features Section */}
-        <FeaturesSection />
+        <div className="reveal-stagger" style={{ animationDelay: "120ms" }}>
+          <FeaturesSection />
+        </div>
+
         {/* Section Divider */}
         <div className="h-16 bg-gradient-to-b from-transparent via-cyan-50/40 to-transparent" />
+
         {/* How It Works Section */}
-        <HowItWorks />
+        <div className="reveal-stagger" style={{ animationDelay: "180ms" }}>
+          <HowItWorks />
+        </div>
+
         {/* Section Divider */}
         <div className="h-16 bg-gradient-to-b from-transparent via-emerald-50/40 to-transparent" />
+
         {/* Testimonials Section */}
-        <Testimonials />
+        <div className="reveal-stagger" style={{ animationDelay: "240ms" }}>
+          <Testimonials />
+        </div>
+
         {/* Final CTA Section */}
-        <CTASection />
+        <div className="reveal-stagger" style={{ animationDelay: "300ms" }}>
+          <CTASection />
+        </div>
       </div>
-      {/* Removed Scroll Progress Indicator Animation */}
     </div>
   );
 }

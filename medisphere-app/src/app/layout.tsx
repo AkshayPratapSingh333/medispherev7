@@ -3,6 +3,7 @@ import NextAuthProvider from "../components/providers/NextAuthProvider";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import Sidebar from "../components/layout/Sidebar";
+import PageTransition from "../components/layout/PageTransition";
 import IncomingCallModal from "../components/video/IncomingCallModal";
 import { Toaster } from "sonner";
 import ChatNotificationListener from "../components/chat/ChatNotificationListener";
@@ -13,13 +14,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen">
         <NextAuthProvider>
           <Sidebar />
-          
 
-          <div className="pt-14 md:pt-0 md:pl-[var(--sidebar-w)] transition-[padding-left] duration-300 ease-out">
-          <Header />
-            <main className="flex-1 p-4">{children}</main>
+          <div className="pointer-events-none fixed inset-0 -z-10 opacity-40 bg-[radial-gradient(circle_at_20%_12%,rgba(45,212,191,0.14),transparent_30%),radial-gradient(circle_at_86%_18%,rgba(56,189,248,0.18),transparent_34%)]" />
+
+          <div className="min-h-screen flex flex-col md:pl-[var(--sidebar-w)] transition-[padding-left] duration-300 ease-out">
+            <Header />
+            <main className="flex-1 pt-16 p-4 w-full">
+              <PageTransition>{children}</PageTransition>
+            </main>
+            <Footer />
           </div>
-          <Footer />
+
           {/* Global Incoming Call Modal - always listening for incoming calls */}
           <IncomingCallModal />
           {/* Global chat listener for toast + unread badge updates */}

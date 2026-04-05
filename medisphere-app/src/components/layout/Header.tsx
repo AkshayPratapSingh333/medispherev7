@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -15,11 +16,9 @@ export default function Header() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const [chatUnreadCount, setChatUnreadCount] = useState(0);
 
   useEffect(() => {
-    setIsClient(true);
     const onScroll = () => setIsScrolled(window.scrollY > 12);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
@@ -66,25 +65,26 @@ export default function Header() {
   ];
 
   const bgScrolled =
-    "bg-white/90 backdrop-blur-md shadow-lg border-b border-cyan-100";
+    "bg-white/78 backdrop-blur-md border-b border-cyan-100/80 shadow-[0_10px_28px_-20px_rgba(14,116,144,0.5)]";
   const bgTop =
-    "bg-gradient-to-r from-teal-50/90 via-cyan-50/90 to-blue-50/90 backdrop-blur-sm shadow-md border-b border-white/30";
+    "bg-gradient-to-r from-cyan-50/85 via-sky-50/90 to-teal-50/85 backdrop-blur-sm border-b border-cyan-100/70 shadow-[0_10px_30px_-24px_rgba(14,116,144,0.6)]";
 
   // Decide dashboard path by role
+  const userRole = (session?.user as { role?: string } | undefined)?.role;
+  const isAdminAuthorized = userRole === "ADMIN" && Boolean(session?.user?.email);
   const dashHref =
-    (session?.user as any)?.role === "DOCTOR"
+    userRole === "DOCTOR"
       ? "/doctor/dashboard"
-      : (session?.user as any)?.role === "ADMIN"
+      : userRole === "ADMIN"
       ? "/admin"
       : "/patient/dashboard";
+  const dashLabel = isAdminAuthorized ? "Admin" : "Dashboard";
 
   return (
     <motion.header
       className={[
         // Fixed header; content must add pt-14 in layout
         "fixed top-0 left-0 right-0 h-16 z-30",
-        // On desktop, pad-left by live sidebar width (set by Sidebar)
-        "md:pl-[var(--sidebar-w)] transition-[padding-left] duration-300 ease-out",
         // Theme based on scroll
         "transition-colors duration-300",
         isScrolled ? bgScrolled : bgTop,
@@ -94,20 +94,6 @@ export default function Header() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       role="banner"
     >
-      {/* Soft animated background accents (subtle) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {isClient &&
-          [...Array(6)].map((_, i) => (
-            <motion.div
-              key={`hdr-dot-${i}`}
-              className="absolute w-1 h-1 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full opacity-30"
-              style={{ left: `${12 + i * 12}%`, top: `${30 + i * 6}%` }}
-              animate={{ y: [-4, -10, -4], opacity: [0.2, 0.6, 0.2] }}
-              transition={{ duration: 4 + i * 0.4, repeat: Infinity, delay: i * 0.25, ease: "easeInOut" }}
-            />
-          ))}
-      </div>
-
       {/* Content row */}
       <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 h-full flex items-center justify-between">
         {/* Brand */}
@@ -116,9 +102,15 @@ export default function Header() {
           className="flex items-center gap-2 group"
           aria-label="Go to home"
         >
-          <span className="font-bold text-2xl  text-cyan-800 group-hover:text-cyan-900">
-            PanchKarma
-          </span>
+          <Image
+            src="/MedisphereSharpBgRemCrop.png"
+            alt="MediSphere logo"
+            width={130}
+            height={130}
+            quality={100}
+            className="h-{3px} w-{3px} object-contain"
+            priority
+          />
         </Link>
 
         {/* Nav (desktop) */}
@@ -132,7 +124,7 @@ export default function Header() {
             >
               <Link
                 href={item.href}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:text-teal-700 hover:bg-white/60 transition-colors"
+                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-cyan-800 hover:bg-white/70 transition-transform duration-200 ease-out hover:-translate-y-0.5"
               >
                 <span className="inline-flex items-center gap-2">
                   <span>{item.label}</span>
@@ -164,9 +156,9 @@ export default function Header() {
 
               <Link
                 href={dashHref}
-                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-emerald-500 shadow hover:from-cyan-600 hover:to-emerald-600"
+                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-600 to-teal-500 shadow-md hover:from-cyan-700 hover:to-teal-600 transition-transform duration-200 ease-out hover:-translate-y-0.5"
               >
-                Dashboard
+                {dashLabel}
               </Link>
 
               <motion.button
@@ -197,12 +189,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Bottom shimmer line */}
-      <motion.div
-        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-300/60 to-transparent"
-        animate={{ opacity: [0.3, 0.8, 0.3] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-300/60 to-transparent" />
     </motion.header>
   );
 }
