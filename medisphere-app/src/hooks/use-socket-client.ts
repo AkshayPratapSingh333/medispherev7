@@ -48,7 +48,7 @@ export function useSocketClient() {
     };
   }, [session]);
 
-  const emit = useCallback((event: string, data?: any) => {
+  const emit = useCallback(<T = unknown>(event: string, data?: T) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit(event, data);
     } else {
@@ -56,7 +56,7 @@ export function useSocketClient() {
     }
   }, []);
 
-  const on = useCallback((event: string, callback: (data: any) => void) => {
+  const on = useCallback(<T = unknown>(event: string, callback: (data: T) => void) => {
     if (socketRef.current) {
       socketRef.current.on(event, callback);
     }
@@ -68,7 +68,7 @@ export function useSocketClient() {
     }
   }, []);
 
-  const once = useCallback((event: string, callback: (data: any) => void) => {
+  const once = useCallback(<T = unknown>(event: string, callback: (data: T) => void) => {
     if (socketRef.current) {
       socketRef.current.once(event, callback);
     }

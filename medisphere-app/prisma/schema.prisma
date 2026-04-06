@@ -21,6 +21,13 @@ enum AppointmentStatus {
   RESCHEDULED
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
 enum DoctorStatus {
   PENDING
   APPROVED
@@ -47,6 +54,7 @@ model User {
   sessions    Session[]
   doctor      Doctor?
   patient     Patient?
+  chatUploads ChatUpload[]
 
   @@map("users")
 }
@@ -155,6 +163,12 @@ model Appointment {
   scheduledAt DateTime
   duration    Int               @default(30)
   status      AppointmentStatus @default(PENDING)
+  paymentStatus PaymentStatus   @default(PENDING)
+  paymentOrderId String?
+  paymentId      String?        @unique
+  paymentSignature String?
+  paymentAmount   Int?
+  paymentCurrency String?
   meetingLink String?
   notes       String?           @db.Text
   createdAt   DateTime          @default(now())
@@ -164,11 +178,13 @@ model Appointment {
   patient      Patient       @relation(fields: [patientId], references: [id])
   prescription Prescription?
   chatMessages ChatMessage[]
+  chatUploads  ChatUpload[]
   callSessions CallSession[]   // 
 
   @@map("appointments")
   @@index([doctorId])
   @@index([patientId])
+  @@index([paymentOrderId])
 }
 
 model Report {
@@ -259,6 +275,24 @@ model ChatMessage {
 
   @@map("chat_messages")
   @@index([appointmentId])
+}
+
+model ChatUpload {
+  id            String   @id @default(cuid())
+  appointmentId String
+  uploaderId    String
+  fileName      String
+  fileType      String
+  fileSize      Int
+  fileData      Bytes    @db.LongBlob
+  createdAt     DateTime @default(now())
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  uploader    User        @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@map("chat_uploads")
+  @@index([appointmentId])
+  @@index([uploaderId])
 }
 
 model AuditLog {

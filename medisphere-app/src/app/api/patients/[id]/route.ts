@@ -59,14 +59,15 @@ async function ensureOwnerOrAdmin(patientId: string, session: any) {
   return { ok: true, me };
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await context.params;
     const session = await getServerSession(authOptions);
-    const guard = await ensureOwnerOrAdmin(params.id, session);
+    const guard = await ensureOwnerOrAdmin(id, session);
     if (!guard.ok) return NextResponse.json({ error: guard.msg }, { status: guard.status });
 
     const patient = await prisma.patient.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { user: true, appointments: true, reports: true },
     });
     if (!patient) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -78,10 +79,11 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await context.params;
     const session = await getServerSession(authOptions);
-    const guard = await ensureOwnerOrAdmin(params.id, session);
+    const guard = await ensureOwnerOrAdmin(id, session);
     if (!guard.ok) return NextResponse.json({ error: guard.msg }, { status: guard.status });
 
     const raw = await req.json().catch(() => null);
@@ -107,7 +109,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     const updated = await prisma.patient.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     });
 

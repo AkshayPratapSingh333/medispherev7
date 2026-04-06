@@ -20,11 +20,12 @@ async function getOwnedOrAdmin(reportId: string, userId: string) {
   }).then(r => r && { r, isOwner: r.patient.userId === userId });
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const found = await getOwnedOrAdmin(params.id, session.user.id);
+  const found = await getOwnedOrAdmin(id, session.user.id);
   if (!found) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const isAdmin = (session.user as any).role === "ADMIN";
@@ -34,7 +35,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   return NextResponse.json(report);
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -47,13 +49,13 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     aiAnalysis?: string | null;
   };
 
-  const found = await getOwnedOrAdmin(params.id, session.user.id);
+  const found = await getOwnedOrAdmin(id, session.user.id);
   if (!found) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const isAdmin = (session.user as any).role === "ADMIN";
   if (!(found.isOwner || isAdmin)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const updated = await prisma.report.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       ...(typeof fileName === "string" && fileName.trim().length > 0 ? { fileName: fileName.trim() } : {}),
       ...(typeof description === "string" || description === null ? { description } : {}),
@@ -68,12 +70,13 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   return NextResponse.json(updated);
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const found = await prisma.report.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { id: true, patient: { select: { userId: true } } },
   });
   if (!found) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -82,6 +85,6 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   const isAdmin = (session.user as any).role === "ADMIN";
   if (!(isOwner || isAdmin)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  await prisma.report.delete({ where: { id: params.id } });
+  await prisma.report.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

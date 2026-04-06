@@ -4,7 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../auth/[...nextauth]/route";
 import prisma from "../../../../../../lib/prisma";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
   const role = (session?.user as { role?: string } | undefined)?.role;
   if (!session?.user || role !== "ADMIN") {
@@ -17,7 +18,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 
   const doctor = await prisma.doctor.update({
-    where: { id: params.id },
+    where: { id },
     data: { status },
   });
   return NextResponse.json(doctor);

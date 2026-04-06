@@ -7,7 +7,8 @@ import { authOptions } from "../../../auth/[...nextauth]/route";
 const ALLOWED = ["PENDING","CONFIRMED","COMPLETED","CANCELLED","RESCHEDULED"] as const;
 type Status = typeof ALLOWED[number];
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -15,7 +16,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   if (!ALLOWED.includes(status)) return NextResponse.json({ error: "Invalid status" }, { status: 422 });
 
   const appt = await prisma.appointment.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { doctor: { select: { userId: true } }, patient: { select: { userId: true } } },
   });
   if (!appt) return NextResponse.json({ error: "Not found" }, { status: 404 });

@@ -37,7 +37,7 @@ export default function AIPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-cyan-600">📄</span>
-                  <span>Document analysis (PDF, TXT, DOC)</span>
+                  <span>Document analysis (PDF, TXT, DOCX)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-cyan-600">📷</span>

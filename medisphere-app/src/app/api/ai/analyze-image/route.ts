@@ -5,17 +5,18 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
+const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || process.env.GEMINI_CHAT_MODEL || "gemini-2.5-flash";
 
 export async function POST(req: Request) {
-  if (!GEMINI_API_KEY) return NextResponse.json({ error: "Missing GEMINI_API_KEY" }, { status: 500 });
+  if (!GEMINI_API_KEY) return NextResponse.json({ error: "Missing GEMINI_API_KEY / GOOGLE_API_KEY" }, { status: 500 });
 
   try {
     const { imageBase64, mimeType = "image/png" } = await req.json();
     if (!imageBase64) return NextResponse.json({ error: "Missing image data" }, { status: 400 });
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+    const model = genAI.getGenerativeModel({ model: IMAGE_MODEL });
 
     const prompt =
       "You are a medical education assistant. Analyze this image cautiously. Describe notable findings in plain language, avoid diagnosis, and suggest what a clinician might focus on. Keep it concise.";

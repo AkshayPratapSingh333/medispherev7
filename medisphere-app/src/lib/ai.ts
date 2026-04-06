@@ -2,13 +2,18 @@ import { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } from "@langchain
 import { Pinecone } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 
-const GEMINI_KEY = process.env.GEMINI_API_KEY!;
+const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
 const PINECONE_KEY = process.env.PINECONE_API_KEY!;
 const PINECONE_INDEX = process.env.PINECONE_INDEX || "telemed-ai";
+const GEMINI_LANGCHAIN_MODEL = process.env.GEMINI_LANGCHAIN_MODEL || process.env.GEMINI_CHAT_MODEL || "gemini-2.5-flash";
 
 const pinecone = new Pinecone({ apiKey: PINECONE_KEY });
 
 export async function runAIChat(messages: { role: string; content: string }[], language = "en") {
+  if (!GEMINI_KEY) {
+    throw new Error("Missing GEMINI_API_KEY / GOOGLE_API_KEY");
+  }
+
   const lastMessage = messages[messages.length - 1]?.content || "";
 
   const embeddings = new GoogleGenerativeAIEmbeddings({
@@ -24,7 +29,7 @@ export async function runAIChat(messages: { role: string; content: string }[], l
 
   const model = new ChatGoogleGenerativeAI({
     apiKey: GEMINI_KEY,
-    model: "gemini-pro",
+    model: GEMINI_LANGCHAIN_MODEL,
     temperature: 0.4,
   });
 

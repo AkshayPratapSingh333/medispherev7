@@ -20,6 +20,32 @@ type ChatMessage = {
   timestamp: string;
 };
 
+type AttachmentPayload = {
+  fileName: string;
+  fileUrl: string;
+  mimeType?: string;
+  fileSize?: number;
+};
+
+function parseAttachment(message: string): AttachmentPayload | null {
+  try {
+    const parsed = JSON.parse(message) as AttachmentPayload;
+    if (!parsed?.fileName || !parsed?.fileUrl) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function toToastDescription(message: ChatMessage) {
+  if (message.messageType === "text") return message.message;
+  const attachment = parseAttachment(message.message);
+  if (!attachment) return message.message;
+  return message.messageType === "image"
+    ? `📷 ${attachment.fileName}`
+    : `📎 ${attachment.fileName}`;
+}
+
 export default function ChatWindow({ appointmentId }: { appointmentId: string }) {
   const { data: session } = useSession();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -63,7 +89,7 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
             const senderLabel =
               message.senderType === "DOCTOR" ? "Doctor" : "Patient";
             toast(`New message from ${senderLabel}`, {
-              description: message.message,
+              description: toToastDescription(message),
               duration: 5000,
             });
           }
@@ -102,10 +128,19 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
     const message = content.trim();
     if (!message) return;
 
+    await persistAndBroadcast({
+      message,
+      messageType: "text",
+    });
+  }
+
+  async function persistAndBroadcast(input: { message: string; messageType: "text" | "image" | "file" }) {
+    if (!input.message.trim()) return;
+
     const res = await fetch(`/api/appointments/${appointmentId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, messageType: "text" }),
+      body: JSON.stringify({ message: input.message, messageType: input.messageType }),
     });
     const msg = await res.json();
     if (res.ok) {
@@ -115,6 +150,36 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
     } else {
       alert(msg.error || "Failed to send message");
     }
+  }
+
+  async function sendAttachment(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const uploadRes = await fetch(`/api/appointments/${appointmentId}/messages/upload`, {
+      method: "POST",
+      body: formData,
+    });
+    const uploadJson = await uploadRes.json();
+
+    if (!uploadRes.ok) {
+      throw new Error(uploadJson?.error || "Failed to upload file");
+    }
+
+    const payload: AttachmentPayload = {
+      fileName: uploadJson.fileName,
+      fileUrl: uploadJson.fileUrl,
+      mimeType: uploadJson.mimeType,
+      fileSize: uploadJson.fileSize,
+    };
+
+    const messageType: "image" | "file" =
+      uploadJson.messageType === "image" ? "image" : "file";
+
+    await persistAndBroadcast({
+      message: JSON.stringify(payload),
+      messageType,
+    });
   }
 
   return (
@@ -146,7 +211,7 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
       )}
 
       <ChatHistory messages={messages} currentUserId={session?.user?.id} />
-      <ChatInput onSend={sendMessage} />
+      <ChatInput onSend={sendMessage} onSendAttachment={sendAttachment} />
     </div>
   );
 }

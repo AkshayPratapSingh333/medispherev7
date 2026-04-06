@@ -23,9 +23,15 @@ export async function POST(req: Request) {
     const ext = getExt(lower);
     const mime = file.type || "";
 
-    if (!ALLOWED_EXT.includes(ext) || !ALLOWED_MIME.includes(mime)) {
+    if (!ALLOWED_EXT.includes(ext)) {
       return NextResponse.json(
         { error: "Unsupported file type. Allowed: PDF (.pdf), DOCX (.docx), TXT (.txt)." },
+        { status: 400 }
+      );
+    }
+    if (mime && !ALLOWED_MIME.includes(mime) && mime !== "application/octet-stream") {
+      return NextResponse.json(
+        { error: "Unsupported file MIME type. Allowed: PDF, DOCX, TXT." },
         { status: 400 }
       );
     }

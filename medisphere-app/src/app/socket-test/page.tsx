@@ -41,9 +41,10 @@ export default function SocketTest() {
     });
 
     newSocket.on("connect_error", (err) => {
-      addLog(`❌ Connection Error: ${err.message}`);
-      addLog(`   Error type: ${err.type || 'unknown'}`);
-      addLog(`   Error description: ${err.description || 'none'}`);
+      const details = err as Error & { type?: string; description?: string };
+      addLog(`❌ Connection Error: ${details.message}`);
+      addLog(`   Error type: ${details.type || "unknown"}`);
+      addLog(`   Error description: ${details.description || "none"}`);
       setStatus("Connection Failed ❌");
     });
 
@@ -126,7 +127,7 @@ export default function SocketTest() {
           <h2 className="text-xl font-semibold mb-4">📝 Connection Logs</h2>
           <div className="bg-black rounded p-4 h-96 overflow-y-auto font-mono text-sm">
             {logs.length === 0 ? (
-              <div className="text-gray-500">Click "Test Connection" to start...</div>
+              <div className="text-gray-500">Click &quot;Test Connection&quot; to start...</div>
             ) : (
               logs.map((log, i) => (
                 <div key={i} className="mb-1">
@@ -149,7 +150,7 @@ export default function SocketTest() {
               </pre>
             </li>
             <li>
-              <strong>Should see:</strong> "Signaling server running on 4000"
+              <strong>Should see:</strong> &quot;Signaling server running on 4000&quot;
             </li>
             <li>
               <strong>Test the server directly:</strong> 

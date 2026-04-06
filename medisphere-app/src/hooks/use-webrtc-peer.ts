@@ -20,8 +20,10 @@ export function useWebRTCPeer(meetingId: string, isInitiator: boolean) {
 
   // Refs
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
-  const dataChannelRef = useRef<RTCDataChannel | null>(null);
   const remoteSocketIdRef = useRef<string | null>(null);
+
+  // Keep API stable while making the unused intent explicit.
+  void isInitiator;
 
   // State
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
@@ -218,7 +220,7 @@ export function useWebRTCPeer(meetingId: string, isInitiator: boolean) {
 
   // Listen for start-webrtc-exchange
   const handleStartExchange = useCallback(
-    async ({ initiator, responder }: any) => {
+    async ({ initiator, responder }: { initiator: { socketId: string }; responder: { socketId: string } }) => {
       try {
         if (!peerConnectionRef.current) {
           throw new Error("Peer connection not initialized");
@@ -264,7 +266,6 @@ export function useWebRTCPeer(meetingId: string, isInitiator: boolean) {
   // Setup effect
   useEffect(() => {
     let isMounted = true;
-    let readyPromise: Promise<void> | null = null;
 
     const initialize = async () => {
       try {
@@ -292,27 +293,27 @@ export function useWebRTCPeer(meetingId: string, isInitiator: boolean) {
         if (!isMounted) return;
 
         // Now listen for WebRTC events
-        on("webrtc:offer", ({ from, offer }) => {
+        on<{ from: string; offer: RTCSessionDescriptionInit }>("webrtc:offer", ({ from, offer }) => {
           if (isMounted && peerConnectionRef.current) {
             console.log("📨 Received offer from", from);
             handleRemoteOffer(offer, from);
           }
         });
 
-        on("webrtc:answer", ({ answer }) => {
+        on<{ answer: RTCSessionDescriptionInit }>("webrtc:answer", ({ answer }) => {
           if (isMounted && peerConnectionRef.current) {
             console.log("📨 Received answer");
             handleRemoteAnswer(answer);
           }
         });
 
-        on("webrtc:ice-candidate", ({ candidate }) => {
+        on<{ candidate: RTCIceCandidateInit }>("webrtc:ice-candidate", ({ candidate }) => {
           if (isMounted && peerConnectionRef.current) {
             handleICECandidate(candidate);
           }
         });
 
-        on("start-webrtc-exchange", (data) => {
+        on<{ initiator: { socketId: string }; responder: { socketId: string } }>("start-webrtc-exchange", (data) => {
           if (isMounted && peerConnectionRef.current) {
             console.log("🎬 Starting WebRTC exchange", data);
             handleStartExchange(data);
@@ -323,7 +324,7 @@ export function useWebRTCPeer(meetingId: string, isInitiator: boolean) {
       }
     };
 
-    readyPromise = initialize() as Promise<void>;
+    void initialize();
 
     return () => {
       isMounted = false;
@@ -393,7 +394,10 @@ export function useWebRTCPeer(meetingId: string, isInitiator: boolean) {
     if (!peerConnectionRef.current) return null;
 
     const stats = await peerConnectionRef.current.getStats();
-    const result: any = {
+    const result: {
+      video: Record<string, unknown>;
+      audio: Record<string, unknown>;
+    } = {
       video: {},
       audio: {},
     };

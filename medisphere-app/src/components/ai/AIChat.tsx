@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -131,6 +132,14 @@ export default function AIChat() {
 
   const hasContext = uploadedDocs.length > 0 || uploadedImages.length > 0;
 
+  function removeDoc(index: number) {
+    setUploadedDocs((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function removeImage(index: number) {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
   return (
     <div className="rounded-2xl border border-cyan-100 bg-white shadow-sm">
       {hasContext && (
@@ -203,6 +212,60 @@ export default function AIChat() {
       </div>
 
       <div className="border-t border-cyan-100 p-3">
+        {hasContext && (
+          <div className="mb-3 rounded-xl border border-cyan-100 bg-cyan-50/50 p-2">
+            <div className="mb-2 text-xs font-medium text-cyan-800">Attached in chat</div>
+            <div className="flex flex-wrap gap-2">
+              {uploadedImages.map((img, idx) => (
+                <div
+                  key={`${img.name}-${idx}`}
+                  className="group flex items-center gap-2 rounded-lg border border-emerald-200 bg-white px-2 py-1"
+                >
+                  <Image
+                    src={`data:${img.mimeType};base64,${img.base64}`}
+                    alt={img.name}
+                    width={32}
+                    height={32}
+                    unoptimized
+                    className="h-8 w-8 rounded object-cover ring-1 ring-emerald-100"
+                  />
+                  <span className="max-w-[170px] truncate text-xs text-emerald-900" title={img.name}>
+                    {img.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(idx)}
+                    className="text-xs text-rose-600 hover:text-rose-700"
+                    aria-label={`Remove image ${img.name}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+
+              {uploadedDocs.map((doc, idx) => (
+                <div
+                  key={`${doc.name}-${idx}`}
+                  className="group flex items-center gap-2 rounded-lg border border-cyan-200 bg-white px-2 py-1"
+                >
+                  <span className="text-sm">📄</span>
+                  <span className="max-w-[170px] truncate text-xs text-cyan-900" title={doc.name}>
+                    {doc.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeDoc(idx)}
+                    className="text-xs text-rose-600 hover:text-rose-700"
+                    aria-label={`Remove document ${doc.name}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-2 mb-2">
           <input
             ref={fileInputRef}
@@ -217,7 +280,7 @@ export default function AIChat() {
             htmlFor="file-upload"
             className="cursor-pointer rounded-xl border border-cyan-200 bg-white/90 px-3 py-2 text-sm text-cyan-700 hover:bg-cyan-50 transition-colors"
           >
-            📎 Attach File
+            📎 Attach Image/Doc
           </label>
         </div>
 

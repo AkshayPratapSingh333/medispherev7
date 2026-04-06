@@ -54,7 +54,7 @@ export default function VideoCall({ appointmentId, doctorId, patientId }: VideoC
     });
 
     // Listen for participant joined
-    on('participant-joined', ({ participant }) => {
+    on<{ participant: ParticipantInfo }>('participant-joined', ({ participant }) => {
       console.log('Participant joined:', participant);
       setOtherParticipantInfo(participant);
     });

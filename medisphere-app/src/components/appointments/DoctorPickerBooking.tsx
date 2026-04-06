@@ -135,7 +135,7 @@ export default function DoctorPickerBooking({
             </div>
 
             <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
-              <AppointmentBookingForm doctorId={doc.id} />
+              <AppointmentBookingForm doctorId={doc.id} consultationFee={doc.consultationFee} />
             </div>
           </div>
         )}

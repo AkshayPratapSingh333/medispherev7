@@ -1,9 +1,9 @@
 // hooks/use-async.ts
 import { useCallback, useState } from "react";
 
-export function useAsync<TArgs extends any[], TResult>() {
+export function useAsync<TArgs extends unknown[], TResult>() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<any | null>(null);
+  const [error, setError] = useState<unknown | null>(null);
   const [result, setResult] = useState<TResult | null>(null);
 
   const run = useCallback(async (fn: (...args: TArgs) => Promise<TResult>, ...args: TArgs) => {

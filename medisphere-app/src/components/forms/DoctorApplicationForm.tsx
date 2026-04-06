@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function DoctorApplicationForm() {
   const router = useRouter();
@@ -36,10 +37,10 @@ export default function DoctorApplicationForm() {
 
     const data = await res.json();
     if (res.ok) {
+      toast.success("Application submitted successfully");
       router.push("/doctor/dashboard");
-      alert("Application submitted ✅");
     } else {
-      alert(data.error || "Failed to submit");
+      toast.error(data.error || "Failed to submit application");
     }
   }
 
@@ -57,77 +58,106 @@ export default function DoctorApplicationForm() {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            className={inputClass}
-            placeholder="License Number"
-            value={form.licenseNumber}
-            onChange={(e) =>
-              setForm({ ...form, licenseNumber: e.target.value })
-            }
-            required
-          />
-          <input
-            className={inputClass}
-            placeholder="Specialization"
-            value={form.specialization}
-            onChange={(e) =>
-              setForm({ ...form, specialization: e.target.value })
-            }
-            required
-          />
-          <input
-            type="number"
-            className={inputClass}
-            placeholder="Experience (years)"
-            value={form.experience}
-            onChange={(e) =>
-              setForm({ ...form, experience: +e.target.value })
-            }
-            required
-          />
-          <input
-            className={inputClass}
-            placeholder="Education / Qualification"
-            value={form.qualification}
-            onChange={(e) =>
-              setForm({ ...form, qualification: e.target.value })
-            }
-            required
-          />
-          <input
-            className={inputClass}
-            placeholder="Hospital / Clinic Name"
-            value={form.hospitalName}
-            onChange={(e) =>
-              setForm({ ...form, hospitalName: e.target.value })
-            }
-          />
-          <input
-            type="number"
-            className={inputClass}
-            placeholder="Consultation Fee"
-            value={form.consultationFee}
-            onChange={(e) =>
-              setForm({ ...form, consultationFee: +e.target.value })
-            }
-            required
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Medical License Number</label>
+            <input
+              className={inputClass}
+              placeholder="Enter your registration/license number"
+              value={form.licenseNumber}
+              onChange={(e) =>
+                setForm({ ...form, licenseNumber: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Specialization</label>
+            <input
+              className={inputClass}
+              placeholder="e.g. Cardiology, Pediatrics"
+              value={form.specialization}
+              onChange={(e) =>
+                setForm({ ...form, specialization: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Experience (in years)</label>
+            <input
+              type="number"
+              className={inputClass}
+              placeholder="e.g. 5"
+              value={form.experience}
+              onChange={(e) =>
+                setForm({ ...form, experience: +e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Education / Qualification</label>
+            <input
+              className={inputClass}
+              placeholder="e.g. MBBS, MD"
+              value={form.qualification}
+              onChange={(e) =>
+                setForm({ ...form, qualification: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Hospital / Clinic Name</label>
+            <input
+              className={inputClass}
+              placeholder="Where you currently practice"
+              value={form.hospitalName}
+              onChange={(e) =>
+                setForm({ ...form, hospitalName: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700">Consultation Fee (INR per session)</label>
+            <input
+              type="number"
+              className={inputClass}
+              placeholder="e.g. 500"
+              value={form.consultationFee}
+              onChange={(e) =>
+                setForm({ ...form, consultationFee: +e.target.value })
+              }
+              required
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-gray-700">Short Professional Bio</label>
+          <textarea
+            className={`${inputClass} w-full`}
+            rows={4}
+            placeholder="Briefly describe your expertise and patient care approach"
+            value={form.bio}
+            onChange={(e) => setForm({ ...form, bio: e.target.value })}
           />
         </div>
 
-        <textarea
-          className={`${inputClass} w-full`}
-          rows={4}
-          placeholder="Short Bio"
-          value={form.bio}
-          onChange={(e) => setForm({ ...form, bio: e.target.value })}
-        />
-
-        <input
-          className={inputClass + " w-full"}
-          placeholder="Languages (comma separated)"
-          value={form.languages}
-          onChange={(e) => setForm({ ...form, languages: e.target.value })}
-        />
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-gray-700">Languages Spoken</label>
+          <input
+            className={inputClass + " w-full"}
+            placeholder="e.g. English, Hindi, Gujarati"
+            value={form.languages}
+            onChange={(e) => setForm({ ...form, languages: e.target.value })}
+          />
+        </div>
 
         <button
           type="submit"

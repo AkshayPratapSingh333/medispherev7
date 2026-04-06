@@ -5,7 +5,9 @@ import { Socket } from "socket.io-client";
 interface DiagnosticsProps {
   socket: Socket | null;
   roomId: string;
-  peersRef: React.MutableRefObject<Map<string, any>>;
+  peersRef: React.MutableRefObject<
+    Map<string, { pc: { connectionState: RTCPeerConnectionState } }>
+  >;
 }
 
 export default function ConnectionDiagnostics({ socket, roomId, peersRef }: DiagnosticsProps) {

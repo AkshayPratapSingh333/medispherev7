@@ -164,15 +164,15 @@ export function useWebRTCCall({
         peerRef.current = peer;
 
         // Listen for WebRTC signals
-        on('webrtc:offer', ({ from, offer }) => {
+        on<{ from: string; offer: RTCSessionDescription }>('webrtc:offer', ({ from, offer }) => {
           handleOffer(offer, from);
         });
 
-        on('webrtc:answer', ({ answer }) => {
+        on<{ answer: RTCSessionDescription }>('webrtc:answer', ({ answer }) => {
           handleAnswer(answer);
         });
 
-        on('webrtc:ice-candidate', ({ candidate }) => {
+        on<{ candidate: RTCIceCandidate }>('webrtc:ice-candidate', ({ candidate }) => {
           handleICECandidate(candidate);
         });
 
@@ -202,7 +202,7 @@ export function useWebRTCCall({
 
     return () => {
       // Cleanup
-      localStream?.getTracks().forEach((track) => track.stop());
+      peerRef.current?.getSenders().forEach((sender) => sender.track?.stop());
       peerRef.current?.close();
       off('webrtc:offer');
       off('webrtc:answer');

@@ -8,12 +8,13 @@ import { authOptions } from "../../../auth/[...nextauth]/route";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return new NextResponse("Unauthorized", { status: 401 });
 
   const report = await prisma.report.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: {
       fileName: true,
       fileType: true,

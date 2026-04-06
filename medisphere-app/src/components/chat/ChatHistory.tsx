@@ -1,5 +1,24 @@
 "use client";
 
+import Image from "next/image";
+
+type AttachmentPayload = {
+  fileName: string;
+  fileUrl: string;
+  mimeType?: string;
+  fileSize?: number;
+};
+
+function parseAttachment(message: string): AttachmentPayload | null {
+  try {
+    const parsed = JSON.parse(message) as AttachmentPayload;
+    if (!parsed?.fileName || !parsed?.fileUrl) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 export default function ChatHistory({
   messages,
   currentUserId,
@@ -9,6 +28,7 @@ export default function ChatHistory({
     senderId: string;
     senderType: "DOCTOR" | "PATIENT";
     message: string;
+    messageType?: "text" | "image" | "file";
     timestamp?: string;
   }>;
   currentUserId?: string;
@@ -17,6 +37,11 @@ export default function ChatHistory({
     <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gradient-to-br from-cyan-50 to-emerald-50">
       {messages.map((m) => {
         const mine = m.senderId === currentUserId;
+        const attachment =
+          m.messageType === "image" || m.messageType === "file"
+            ? parseAttachment(m.message)
+            : null;
+
         return (
           <div key={m.id || `${m.senderId}-${m.timestamp}`} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
             <div
@@ -26,7 +51,37 @@ export default function ChatHistory({
                   : "bg-white ring-1 ring-cyan-100 text-cyan-900"
               }`}
             >
-              {m.message}
+              {m.messageType === "image" && attachment ? (
+                <div className="space-y-2">
+                  <Image
+                    src={attachment.fileUrl}
+                    alt={attachment.fileName}
+                    width={260}
+                    height={180}
+                    unoptimized
+                    className="rounded-lg object-cover"
+                  />
+                  <a
+                    href={attachment.fileUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`text-xs underline ${mine ? "text-white/90" : "text-cyan-700"}`}
+                  >
+                    {attachment.fileName}
+                  </a>
+                </div>
+              ) : m.messageType === "file" && attachment ? (
+                <a
+                  href={attachment.fileUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`underline ${mine ? "text-white" : "text-cyan-700"}`}
+                >
+                  📎 {attachment.fileName}
+                </a>
+              ) : (
+                m.message
+              )}
             </div>
           </div>
         );
