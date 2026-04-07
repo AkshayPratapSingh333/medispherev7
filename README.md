@@ -19,14 +19,13 @@ This monorepo contains comprehensive documentation organized by service:
 
 1. [Introduction](#introduction)
 2. [Purpose](#purpose)
-3. [Feature Scope Classification](#feature-scope-classification)
-4. [Problem Statement & Objectives](#problem-statement--objectives)
-5. [Proposed System & Methodology](#proposed-system--methodology)
-6. [System Architecture (HLD & LLD)](#system-architecture-hld--lld)
-7. [Tools & Technologies](#tools--technologies)
-8. [Quick Start](#quick-start)
-9. [Command Reference](#command-reference)
-10. [Architecture Decisions](#architecture-decisions)
+3. [Problem Statement & Objectives](#problem-statement--objectives)
+4. [Proposed System & Methodology](#proposed-system--methodology)
+5. [System Architecture (HLD & LLD)](#system-architecture-hld--lld)
+6. [Tools & Technologies](#tools--technologies)
+7. [Quick Start](#quick-start)
+8. [Command Reference](#command-reference)
+9. [Architecture Decisions](#architecture-decisions)
 
 ---
 
@@ -49,29 +48,7 @@ This repository contains two deployable services:
 
 The project purpose is to digitize end-to-end outpatient consultation workflows while improving accessibility, reducing waiting/travel overhead, and making healthcare interactions more continuous and data-driven.
 
-## 3. Feature Scope Classification (Big Features vs Small Features)
-
-### Big Features (Platform-defining)
-
-| Feature | Why it is a big feature |
-|---|---|
-| Role-based healthcare portal | Multiple personas (Admin/Doctor/Patient), authorization boundaries, separate journeys |
-| Appointment and consultation lifecycle | Booking, confirmation, reschedule, completion, payment, post-consultation continuity |
-| Real-time communication stack | Chat + room management + signaling + WebRTC negotiation + media controls |
-| AI assistant subsystem | Conversational AI, document/image processing, voice support, language options |
-| Medical data management | Reports, uploads, prescriptions, medications, history, relational integrity |
-
-### Small to Medium Features (Focused capabilities)
-
-| Feature | Description |
-|---|---|
-| Medicine and disease knowledge search | External knowledge aggregation using openFDA + MedlinePlus |
-| Doctor rating/review surfaces | Feedback and discoverability signals |
-| Admin moderation/status controls | Operational governance for doctors/users |
-| Utility hooks and reusable UI components | Better maintainability and consistency |
-| Startup/setup scripts | Faster local onboarding and environment repeatability |
-
-## 4. Problem Statement/Objectives
+## 3. Problem Statement & Objectives
 
 ### Problem Statement
 
@@ -85,43 +62,7 @@ Traditional healthcare access suffers from fragmented patient experience: in-per
 4. Improve decision support and patient literacy with AI and curated health knowledge APIs.
 5. Maintain secure, scalable architecture with strong data modeling and modular services.
 
-## Purpose
-
-The primary goal of Medisphere is to:
-
-1. **Eliminate Healthcare Fragmentation**: Replace scattered systems (phone calls, paper records, separate apps) with a unified platform
-2. **Reduce Patient Barriers**: Enable consultations from home without travel; provide 24/7 appointment booking
-3. **Empower Doctors**: Automate scheduling, provide quick access to patient history, enable asynchronous follow-ups
-4. **Enhance Data Quality**: Maintain centralized, structured patient records with prescriptions and consultation history
-5. **Support Decision-Making**: Integrate AI-powered medical knowledge (drugs, diseases, interactions) to support clinical decision-making
-
 ---
-
-## Feature Scope Classification
-
-### 🟢 BIG Features (Core Complex Systems)
-1. **Doctor-Patient Portal with RBAC** - Role-based access control with personalized dashboards
-2. **Real-Time Video Consultations** - WebRTC peer-to-peer with dedicated signaling orchestration
-3. **Appointment Management System** - Complete booking, confirmation, rescheduling workflow
-4. **Asynchronous Messaging System** - Socket.io-based real-time chat with persistence
-5. **AI-Powered Medical Knowledge** - Gemini + LangChain + Pinecone integration
-6. **Payment & Billing** - Razorpay integration with transaction history
-
-### 🟡 MEDIUM Features
-1. **Medicine & Disease Knowledge Search** - openFDA + MedlinePlus with fuzzy matching
-2. **Prescription Management** - Doctor-issued digital prescriptions
-3. **Doctor Reviews & Ratings** - Patient feedback system
-4. **Admin Analytics Dashboard** - System metrics and monitoring
-
-### 🔵 SMALL Features
-1. **Static Pages** - About, Help, Contact, Privacy, Terms
-2. **Profile Management** - Basic CRUD operations
-3. **Doctor Directory** - Search and filtering
-4. **Prescription Downloads** - PDF export
-
----
-
-## Problem Statement & Objectives
 
 ### Problem Statement
 The current healthcare ecosystem suffers from:
@@ -140,7 +81,7 @@ The current healthcare ecosystem suffers from:
 
 ---
 
-## Proposed System & Methodology
+## 4. Proposed System & Methodology
 
 ### System Architecture
 
@@ -161,7 +102,7 @@ The system is implemented as a modular, service-oriented web architecture:
 
 ---
 
-## System Architecture (HLD & LLD)
+## 5. System Architecture (HLD & LLD)
 
 ### High-Level Design (HLD)
 
@@ -612,7 +553,7 @@ erDiagram
 
 ---
 
-## Tools & Technologies
+## 6. Tools & Technologies
 
 The implementation follows an iterative, module-driven methodology:
 
