@@ -556,7 +556,7 @@ graph TB
 
 ```mermaid
 sequenceDiagram
-    participant User as 👤 Patient UI
+    participant User as Patient UI
     participant Pages as Pages/Components
     participant API as API Route Handler
     participant Auth as NextAuth Session
@@ -580,13 +580,13 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant UI as 🔍 Medicine Search UI
-    participant API as /api/medicines/search
+    participant UI as Medicine Search UI
+    participant API as API Route Handler
     participant OpenFDA as openFDA API
     participant MedlinePlus as MedlinePlus API
     participant Sanitizer as Text Sanitizer
 
-    UI->>API: GET ?q=diabetes
+    UI->>API: GET /api/medicines/search?q=diabetes
     API->>OpenFDA: Fetch drug labels
     API->>MedlinePlus: Fetch topics XML
     OpenFDA-->>API: Drug data with HTML entities
@@ -594,7 +594,7 @@ sequenceDiagram
     API->>Sanitizer: Decode entities, clean HTML
     Sanitizer-->>API: Normalized text
     API-->>UI: Aggregated + cleaned results
-    UI->>UI: Render article-style + suggestions
+    UI->>UI: Render article + suggestions
 ```
 
 ### D. Authentication Flow Component Hierarchy
