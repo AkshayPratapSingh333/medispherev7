@@ -180,59 +180,53 @@ graph TB
 ### Service Landscape - All Components
 
 ```mermaid
-flowchart LR
-    User["👥 Users<br/>(Doctor, Patient, Admin)"]
+graph TB
+    User["Users<br/>(Doctor, Patient, Admin)"]
     
     subgraph Presentation["Presentation Tier"]
-        NextApp["Next.js App Router<br/>• Pages<br/>• Server Components<br/>• Client Components"]
-        
-        subgraph ClientLib["Client Libraries"]
-            UI["UI Components<br/>(TailwindCSS)"]
-            Hooks["Custom Hooks<br/>(useSocket, useWebRTC)"]
-            State["React State<br/>(useState)"]
-        end
-        
-        NextApp --> UI
-        NextApp --> Hooks
-        NextApp --> State
+        NextApp["Next.js App Router<br/>(Pages, Components)"]
+        UI["UI Libraries<br/>(TailwindCSS, Radix)"]
+        Hooks["Custom Hooks<br/>(useSocket, useWebRTC)"]
     end
     
     subgraph API["API Tier"]
-        APIRoutes["Next.js API Routes<br/>• /auth<br/>• /appointments<br/>• /medicines<br/>• /chat"]
-        AuthService["Auth Service<br/>• NextAuth.js<br/>• JWT Signing<br/>• Session Mgmt"]
-        BizLogic["Business Logic<br/>• Appointment CRUD<br/>• Chat Events<br/>• Search"]
+        APIRoutes["API Routes<br/>(auth, appointments, chat)"]
+        AuthService["Auth Service<br/>(NextAuth, JWT)"]
+        BizLogic["Business Logic<br/>(CRUD, validation)"]
     end
     
     subgraph RealTime["Real-Time Tier"]
-        SocketServer["Express + Socket.io<br/>• WebRTC Signaling<br/>• Chat Events<br/>• Room Mgmt"]
-        Handlers["Event Handlers<br/>• offer/answer<br/>• message<br/>• join/leave"]
+        SocketServer["Socket.io Server<br/>(signaling, events)"]
+        Handlers["Event Handlers<br/>(room mgmt, relay)"]
     end
     
-    subgraph Data["Data Tier"]
-        Prisma["Prisma ORM<br/>• Type Generation<br/>• Migrations"]
-        MySQL["MySQL Database<br/>• Users, Doctors<br/>• Appointments<br/>• Chat Messages"]
+    subgraph Data["Data Layer"]
+        Prisma["Prisma ORM"]
+        MySQL["MySQL Database"]
     end
     
-    subgraph Integration["Integration Tier"]
-        LLM["LLM Service<br/>• Gemini<br/>• LangChain<br/>• Pinecone"]
-        ExternalAPI["External APIs<br/>• openFDA<br/>• MedlinePlus<br/>• Razorpay"]
+    subgraph External["External Services"]
+        Gemini["Gemini API"]
+        OpenFDA["openFDA API"]
+        Razorpay["Razorpay"]
     end
     
     User --> Presentation
-    Presentation -->|HTTP/REST| API
-    Presentation -->|WebSocket| RealTime
-    Presentation -->|Streaming| LLM
+    Presentation --> APIRoutes
+    Presentation --> SocketServer
     
-    API --> AuthService
+    APIRoutes --> AuthService
+    APIRoutes --> BizLogic
     AuthService --> MySQL
     BizLogic --> Prisma
     Prisma --> MySQL
     
-    RealTime --> MySQL
+    SocketServer --> Handlers
+    Handlers --> MySQL
     
-    APIRoutes --> BizLogic
-    APIRoutes --> ExternalAPI
-    APIRoutes --> LLM
+    APIRoutes --> Gemini
+    APIRoutes --> OpenFDA
+    APIRoutes --> Razorpay
 ```
 
 ### Next.js Service - Low-Level Design
@@ -590,37 +584,37 @@ graph TD
 ### 6.2 Service Landscape (All Services)
 
 ```mermaid
-flowchart LR
-   subgraph ClientLayer[Client Layer]
-      C1[Patient UI]
-      C2[Doctor UI]
-      C3[Admin UI]
+graph TB
+   subgraph ClientLayer["Client Layer"]
+      C1["Patient UI"]
+      C2["Doctor UI"]
+      C3["Admin UI"]
    end
 
-   subgraph AppLayer[Application Layer]
-      N1[Next.js Pages]
-      N2[Next.js API Routes]
-      N3[Auth Middleware / RBAC]
+   subgraph AppLayer["Application Layer"]
+      N1["Next.js Pages"]
+      N2["API Routes"]
+      N3["Auth & RBAC"]
    end
 
-   subgraph RealtimeLayer[Real-time Layer]
-      R1[Socket.io Signaling Server]
-      R2[Meeting/Room State]
-      R3[Offer/Answer/ICE Relay]
+   subgraph RealtimeLayer["Real-time Layer"]
+      R1["Socket.io Server"]
+      R2["Room State"]
+      R3["Signal Relay"]
    end
 
-   subgraph DataLayer[Data Layer]
-      D1[(MySQL)]
-      D2[Prisma Client]
+   subgraph DataLayer["Data Layer"]
+      D1["MySQL"]
+      D2["Prisma ORM"]
    end
 
-   subgraph IntegrationLayer[External Integration Layer]
-      I1[Google Gemini]
-      I2[LangChain + Pinecone]
-      I3[Razorpay]
-      I4[openFDA]
-      I5[MedlinePlus]
-      I6[Google OAuth]
+   subgraph IntegrationLayer["External APIs"]
+      I1["Gemini"]
+      I2["LangChain"]
+      I3["Razorpay"]
+      I4["openFDA"]
+      I5["MedlinePlus"]
+      I6["OAuth"]
    end
 
    C1 --> N1
