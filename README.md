@@ -1,0 +1,987 @@
+# Medisphere: Integrated Telemedicine Platform
+
+> A comprehensive digital healthcare solution enabling seamless doctor-patient collaboration through real-time communication, AI-powered medical insights, and intelligent appointment management.
+
+## 📚 Documentation Structure
+
+This monorepo contains comprehensive documentation organized by service:
+
+- **[Main README](./README.md)** - You are here (High-level overview)
+- **[Frontend Service README](./medisphere-app/README.md)** - Next.js app, components, hooks
+- **[Signaling Service README](./medisphere-signaling-server/README.md)** - Express + Socket.io, WebRTC signaling
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Deep dive into system design patterns
+- **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Detailed development environment setup
+- **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** - Fast command reference
+
+---
+
+## 📋 Table of Contents
+
+1. [Introduction](#introduction)
+2. [Purpose](#purpose)
+3. [Feature Scope Classification](#feature-scope-classification)
+4. [Problem Statement & Objectives](#problem-statement--objectives)
+5. [Proposed System & Methodology](#proposed-system--methodology)
+6. [System Architecture (HLD & LLD)](#system-architecture-hld--lld)
+7. [Tools & Technologies](#tools--technologies)
+8. [Quick Start](#quick-start)
+9. [Command Reference](#command-reference)
+10. [Architecture Decisions](#architecture-decisions)
+
+---
+
+## Introduction
+
+Medisphere is designed as a multi-role healthcare system for patients, doctors, and administrators. The platform combines:
+
+- Clinical workflow support (appointments, reports, prescriptions, reviews)
+- Real-time communication (chat + WebRTC calls via Socket.io signaling)
+- AI-assisted interactions (chat, document/image understanding, speech support)
+- Role-governed operations and secure data handling
+- Multilingual user experience for broader accessibility
+
+This repository contains two deployable services:
+
+- `medisphere-app` (Next.js 15 app with UI + API routes)
+- `medisphere-signaling-server` (Express + Socket.io signaling service)
+
+## 2. Project Purpose
+
+The project purpose is to digitize end-to-end outpatient consultation workflows while improving accessibility, reducing waiting/travel overhead, and making healthcare interactions more continuous and data-driven.
+
+## 3. Feature Scope Classification (Big Features vs Small Features)
+
+### Big Features (Platform-defining)
+
+| Feature | Why it is a big feature |
+|---|---|
+| Role-based healthcare portal | Multiple personas (Admin/Doctor/Patient), authorization boundaries, separate journeys |
+| Appointment and consultation lifecycle | Booking, confirmation, reschedule, completion, payment, post-consultation continuity |
+| Real-time communication stack | Chat + room management + signaling + WebRTC negotiation + media controls |
+| AI assistant subsystem | Conversational AI, document/image processing, voice support, language options |
+| Medical data management | Reports, uploads, prescriptions, medications, history, relational integrity |
+
+### Small to Medium Features (Focused capabilities)
+
+| Feature | Description |
+|---|---|
+| Medicine and disease knowledge search | External knowledge aggregation using openFDA + MedlinePlus |
+| Doctor rating/review surfaces | Feedback and discoverability signals |
+| Admin moderation/status controls | Operational governance for doctors/users |
+| Utility hooks and reusable UI components | Better maintainability and consistency |
+| Startup/setup scripts | Faster local onboarding and environment repeatability |
+
+## 4. Problem Statement/Objectives
+
+### Problem Statement
+
+Traditional healthcare access suffers from fragmented patient experience: in-person dependency, poor continuity, delayed follow-up communication, and weak digital record handling. Existing solutions often lack integrated real-time consultation, AI support, and role-specific operational workflows in one system.
+
+### Objectives
+
+1. Provide role-aware digital healthcare journeys for patients, doctors, and admins.
+2. Support remote consultation through secure real-time video and messaging.
+3. Enable operational continuity through appointments, records, prescriptions, and follow-up communication.
+4. Improve decision support and patient literacy with AI and curated health knowledge APIs.
+5. Maintain secure, scalable architecture with strong data modeling and modular services.
+
+## Purpose
+
+The primary goal of Medisphere is to:
+
+1. **Eliminate Healthcare Fragmentation**: Replace scattered systems (phone calls, paper records, separate apps) with a unified platform
+2. **Reduce Patient Barriers**: Enable consultations from home without travel; provide 24/7 appointment booking
+3. **Empower Doctors**: Automate scheduling, provide quick access to patient history, enable asynchronous follow-ups
+4. **Enhance Data Quality**: Maintain centralized, structured patient records with prescriptions and consultation history
+5. **Support Decision-Making**: Integrate AI-powered medical knowledge (drugs, diseases, interactions) to support clinical decision-making
+
+---
+
+## Feature Scope Classification
+
+### 🟢 BIG Features (Core Complex Systems)
+1. **Doctor-Patient Portal with RBAC** - Role-based access control with personalized dashboards
+2. **Real-Time Video Consultations** - WebRTC peer-to-peer with dedicated signaling orchestration
+3. **Appointment Management System** - Complete booking, confirmation, rescheduling workflow
+4. **Asynchronous Messaging System** - Socket.io-based real-time chat with persistence
+5. **AI-Powered Medical Knowledge** - Gemini + LangChain + Pinecone integration
+6. **Payment & Billing** - Razorpay integration with transaction history
+
+### 🟡 MEDIUM Features
+1. **Medicine & Disease Knowledge Search** - openFDA + MedlinePlus with fuzzy matching
+2. **Prescription Management** - Doctor-issued digital prescriptions
+3. **Doctor Reviews & Ratings** - Patient feedback system
+4. **Admin Analytics Dashboard** - System metrics and monitoring
+
+### 🔵 SMALL Features
+1. **Static Pages** - About, Help, Contact, Privacy, Terms
+2. **Profile Management** - Basic CRUD operations
+3. **Doctor Directory** - Search and filtering
+4. **Prescription Downloads** - PDF export
+
+---
+
+## Problem Statement & Objectives
+
+### Problem Statement
+The current healthcare ecosystem suffers from:
+- **Fragmentation**: Doctors and patients use separate apps for calls, messages, records, payments
+- **Accessibility**: Rural/remote patients face barriers to specialist consultations
+- **Inefficiency**: Manual appointment scheduling, paper records, duplicate information entry
+- **Data Loss**: No centralized patient history across consultations
+- **Poor Decision Support**: Doctors lack quick access to drug/disease information
+
+### Objectives
+1. **Unified System**: Single platform for consultations, messaging, appointments, payments
+2. **Accessibility**: Enable consultations from any location with internet
+3. **Efficiency**: Automate scheduling, maintain centralized records
+4. **Data Continuity**: Retain full consultation history with prescriptions
+5. **Clinical Support**: Integrate real-time medical knowledge
+
+---
+
+## Proposed System & Methodology
+
+### System Architecture
+
+The system is implemented as a modular, service-oriented web architecture:
+
+- **Frontend Service**: Next.js 15 application provides UI and integrated API routes
+- **Signaling Service**: Dedicated Express + Socket.io server for real-time events and WebRTC orchestration
+- **Data Layer**: MySQL with Prisma ORM for type-safe database access
+- **External Integrations**: AI (Gemini), Knowledge APIs (openFDA, MedlinePlus), Payments (Razorpay), Auth (OAuth)
+
+### Engineering Methodology
+
+1. **Domain Decomposition**: Split into auth, appointments, reports, chat, video, AI, admin modules
+2. **Contract-First APIs**: Define API schemas before implementation
+3. **Type Safety**: TypeScript across frontend + backend with Prisma auto-generated types
+4. **Progressive Hardening**: Start MVP, then add security, validation, error handling
+5. **Cross-Platform**: Windows and Unix scripts for reproducible local development
+
+---
+
+## System Architecture (HLD & LLD)
+
+### High-Level Design (HLD)
+
+```mermaid
+graph TB
+    subgraph Clients["Client Layer"]
+        Doctor["🩺 Doctor Portal"]
+        Patient["👤 Patient Portal"]
+        Admin["⚙️ Admin Portal"]
+    end
+
+    subgraph Frontend["Frontend Service<br/>(Next.js 15)"]
+        Pages["Pages & Routes"]
+        Components["React Components"]
+        Hooks["Custom Hooks"]
+        Store["Client State"]
+    end
+
+    subgraph RealTime["Real-Time Service<br/>(Express + Socket.io)"]
+        Signaling["WebRTC Signaling"]
+        ChatEvents["Chat Events"]
+        RoomMgmt["Room Management"]
+    end
+
+    subgraph API["Backend API<br/>(Next.js Routes)"]
+        Routes["API Routes"]
+        Services["Business Logic"]
+        Auth["Authentication"]
+    end
+
+    subgraph AI["AI/Knowledge Layer"]
+        Gemini["Google Gemini"]
+        Pinecone["Pinecone Vector DB"]
+        LangChain["LangChain"]
+        openFDA["openFDA API"]
+        MedlinePlus["MedlinePlus API"]
+    end
+
+    subgraph Data["Data Layer"]
+        MySQL["MySQL Database"]
+        Prisma["Prisma ORM"]
+    end
+
+    subgraph External["External Services"]
+        Razorpay["Razorpay<br/>(Payments)"]
+        OAuth["OAuth Providers"]
+        STUN["STUN/TURN<br/>(NAT)"]
+    end
+
+    Doctor --> Frontend
+    Patient --> Frontend
+    Admin --> Frontend
+
+    Frontend -->|WebSocket| RealTime
+    Frontend -->|HTTP/REST| API
+    Frontend -->|Streaming| Gemini
+
+    RealTime -->|Coordinates| STUN
+    RealTime -->|Query| MySQL
+    
+    API --> Auth
+    API --> Gemini
+    API --> openFDA
+    API --> MedlinePlus
+    API --> Razorpay
+    
+    Auth --> MySQL
+    Services --> MySQL
+    Prisma -.->|Type Generation| Services
+    Prisma --> MySQL
+
+    OAuth -.->|Login Flow| Auth
+```
+
+### Service Landscape - All Components
+
+```mermaid
+flowchart LR
+    User["👥 Users<br/>(Doctor, Patient, Admin)"]
+    
+    subgraph Presentation["Presentation Tier"]
+        NextApp["Next.js App Router<br/>• Pages<br/>• Server Components<br/>• Client Components"]
+        
+        subgraph ClientLib["Client Libraries"]
+            UI["UI Components<br/>(TailwindCSS)"]
+            Hooks["Custom Hooks<br/>(useSocket, useWebRTC)"]
+            State["React State<br/>(useState)"]
+        end
+        
+        NextApp --> UI
+        NextApp --> Hooks
+        NextApp --> State
+    end
+    
+    subgraph API["API Tier"]
+        APIRoutes["Next.js API Routes<br/>• /auth<br/>• /appointments<br/>• /medicines<br/>• /chat"]
+        AuthService["Auth Service<br/>• NextAuth.js<br/>• JWT Signing<br/>• Session Mgmt"]
+        BizLogic["Business Logic<br/>• Appointment CRUD<br/>• Chat Events<br/>• Search"]
+    end
+    
+    subgraph RealTime["Real-Time Tier"]
+        SocketServer["Express + Socket.io<br/>• WebRTC Signaling<br/>• Chat Events<br/>• Room Mgmt"]
+        Handlers["Event Handlers<br/>• offer/answer<br/>• message<br/>• join/leave"]
+    end
+    
+    subgraph Data["Data Tier"]
+        Prisma["Prisma ORM<br/>• Type Generation<br/>• Migrations"]
+        MySQL["MySQL Database<br/>• Users, Doctors<br/>• Appointments<br/>• Chat Messages"]
+    end
+    
+    subgraph Integration["Integration Tier"]
+        LLM["LLM Service<br/>• Gemini<br/>• LangChain<br/>• Pinecone"]
+        ExternalAPI["External APIs<br/>• openFDA<br/>• MedlinePlus<br/>• Razorpay"]
+    end
+    
+    User --> Presentation
+    Presentation -->|HTTP/REST| API
+    Presentation -->|WebSocket| RealTime
+    Presentation -->|Streaming| LLM
+    
+    API --> AuthService
+    AuthService --> MySQL
+    BizLogic --> Prisma
+    Prisma --> MySQL
+    
+    RealTime --> MySQL
+    
+    APIRoutes --> BizLogic
+    APIRoutes --> ExternalAPI
+    APIRoutes --> LLM
+```
+
+### Next.js Service - Low-Level Design
+
+```mermaid
+graph TD
+    subgraph Pages["Pages Layer (App Router)"]
+        HomePage["page.tsx<br/>(Home)"]
+        DoctorPage["page.tsx<br/>(Doctor Portal)"]
+        PatientPage["page.tsx<br/>(Patient Portal)"]
+        Appointments["page.tsx<br/>(Appointments)"]
+        Chat["page.tsx<br/>(Chat)"]
+        Medicines["page.tsx<br/>(Medicines Search)"]
+    end
+
+    subgraph API["API Routes Layer"]
+        AuthAPI["/api/auth<br/>(NextAuth)"]
+        AppointmentAPI["/api/appointments<br/>(CRUD)"]
+        ChatAPI["/api/chat<br/>(Message Events)"]
+        MedicineAPI["/api/medicines/search<br/>(Aggregation)"]
+        UserAPI["/api/users<br/>(Profile)"]
+    end
+
+    subgraph Components["Components Layer"]
+        CommonComp["common/<br/>(Header, Footer, Nav)"]
+        DoctorComp["doctors/<br/>(List, Profile)"]
+        PatientComp["patients/<br/>(Dashboard)"]
+        ApptComp["appointments/<br/>(BookingForm)"]
+        ChatComp["chat/<br/>(ChatUI, MessageList)"]
+        MedComp["medicines/<br/>(SearchUI, ResultCard)"]
+    end
+
+    subgraph Hooks["Hooks Layer"]
+        SocketHook["use-socket.ts<br/>(Socket.io init)"]
+        WebRTCHook["use-webrtc.ts<br/>(Peer connection)"]
+        AsyncHook["use-async.ts<br/>(Fetch wrapper)"]
+        StorageHook["use-local-storage.ts<br/>(Persistence)"]
+    end
+
+    subgraph Services["Services Layer"]
+        AuthLib["lib/auth.ts<br/>(Session, Creds)"]
+        SocketLib["lib/socket.ts<br/>(Socket config)"]
+        ChatLib["lib/chat-unread.ts<br/>(Message count)"]
+        ValidationLib["lib/validation.ts<br/>(Input schemas)"]
+    end
+
+    subgraph Data["Data Layer"]
+        PrismaClient["Prisma Client<br/>(ORM instance)"]
+        MySQLDB["MySQL Database<br/>(Persistent)"]
+        EnvConfig["Environment Config<br/>(.env.local)"]
+    end
+
+    HomePage --> CommonComp
+    DoctorPage --> DoctorComp
+    PatientPage --> PatientComp
+    AppointmentAPI --> Services
+    ChatAPI --> SocketHook
+    MedicineAPI --> Services
+
+    DoctorComp --> Hooks
+    ChatComp --> SocketHook
+    ApptComp --> AsyncHook
+    MedComp --> AsyncHook
+
+    AuthAPI --> AuthLib
+    ChatAPI --> ChatLib
+    MedicineAPI --> ValidationLib
+
+    SocketLib --> EnvConfig
+    AuthLib --> PrismaClient
+    PrismaClient --> MySQLDB
+```
+
+### Signaling Service - Low-Level Design
+
+```mermaid
+graph TD
+    subgraph Entry["Entry Point"]
+        ServerJS["server.js<br/>(Express + Socket.io)"]
+    end
+
+    subgraph Routes["Route Handlers"]
+        AuthMW["verifyToken<br/>(Middleware)"]
+        RoomRoutes["Room Routes<br/>(/join, /leave)"]
+        ChatRoutes["Chat Routes<br/>(/message, /typing)"]
+    end
+
+    subgraph Controllers["Controllers"]
+        RoomCtrl["roomController.js<br/>(Join, Leave, List)"]
+        ChatCtrl["chatController.js<br/>(Message Events)"]
+    end
+
+    subgraph Handlers["WebRTC Handlers"]
+        SignalHandler["webrtc-handler.js<br/>(Offer, Answer, ICE)"]
+    end
+
+    subgraph Services["Services"]
+        SocketService["socketService.js<br/>(Room State, Users)"]
+    end
+
+    subgraph Utils["Utilities"]
+        Logger["logger.js<br/>(Logging)"]
+        JWTVerify["JWT Verify<br/>(Token Validation)"]
+    end
+
+    subgraph State["State Management"]
+        RoomState["In-Memory Rooms<br/>(Map<roomId, users>)"]
+        UserMap["User Mapping<br/>(userId -> socketId)"]
+    end
+
+    subgraph Events["Socket.io Events"]
+        ConnectionEv["connection<br/>(New client)"]
+        OfferEv["offer<br/>(SDP)"]
+        AnswerEv["answer<br/>(SDP)"]
+        ICEEv["icecandidate<br/>(Candidate)"]
+        MessageEv["message<br/>(Chat)"]
+        DisconnectEv["disconnect<br/>(Cleanup)"]
+    end
+
+    ServerJS --> Routes
+    Routes --> AuthMW
+    AuthMW --> Controllers
+
+    RoomCtrl --> SocketService
+    ChatCtrl --> SocketService
+    SignalHandler --> SocketService
+
+    SocketService --> RoomState
+    SocketService --> UserMap
+
+    ConnectionEv --> Controllers
+    OfferEv --> SignalHandler
+    AnswerEv --> SignalHandler
+    ICEEv --> SignalHandler
+    MessageEv --> ChatCtrl
+    DisconnectEv --> SocketService
+
+    JWTVerify --> AuthMW
+    Logger --> ServerJS
+```
+
+### Doctor-Patient Call Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Patient as 👤 Patient<br/>Browser
+    participant Frontend as 🌐 Frontend<br/>(Next.js)
+    participant Signaling as 🔌 Signaling<br/>(Express+Socket.io)
+    participant Doctor as 🩺 Doctor<br/>Browser
+    participant STUN as 🌍 STUN/TURN<br/>Servers
+
+    Patient->>Frontend: Initiate call
+    Frontend->>Signaling: Socket.emit('offer_call', roomId)
+    Signaling->>Doctor: Socket.emit('incoming_call', roomId)
+    
+    Doctor->>Doctor: Accept call
+    
+    Note over Patient,Doctor: WebRTC Peer Connection Setup
+    
+    Patient->>Patient: Create RTCPeerConnection
+    Patient->>STUN: Get ICE candidates
+    
+    Patient->>Signaling: Socket.emit('offer', {sdp, roomId})
+    Signaling->>Doctor: Socket.emit('offer', {sdp})
+    
+    Doctor->>Doctor: Create RTCPeerConnection + setRemoteDescription
+    Doctor->>STUN: Get ICE candidates
+    
+    Doctor->>Signaling: Socket.emit('answer', {sdp, roomId})
+    Signaling->>Patient: Socket.emit('answer', {sdp})
+    
+    Patient->>Patient: setRemoteDescription(answer)
+    
+    loop ICE Candidates Exchange
+        Patient->>Signaling: Socket.emit('icecandidate', {candidate})
+        Signaling->>Doctor: Socket.emit('icecandidate', {candidate})
+        Doctor->>Signaling: Socket.emit('icecandidate', {candidate})
+        Signaling->>Patient: Socket.emit('icecandidate', {candidate})
+    end
+    
+    Note over Patient,Doctor: WebRTC Connected
+    
+    Patient->>Patient: addTrack(audio, video)
+    Doctor->>Doctor: addTrack(audio, video)
+    
+    Patient->>Patient: ontrack event
+    Doctor->>Doctor: ontrack event
+    
+    rect rgb(200, 220, 255)
+        Note over Patient,Doctor: Call Active - Media Flowing P2P
+        Patient->>Doctor: Audio/Video Stream (P2P)
+        Doctor->>Patient: Audio/Video Stream (P2P)
+    end
+    
+    Doctor->>Frontend: End call
+    Frontend->>Signaling: Socket.emit('end_call', roomId)
+    Signaling->>Patient: Socket.emit('end_call')
+    
+    Patient->>Patient: Close RTCPeerConnection
+    Doctor->>Doctor: Close RTCPeerConnection
+```
+
+### Database Entity-Relationship Diagram
+
+```mermaid
+erDiagram
+    USER ||--o{ APPOINTMENT : books
+    USER ||--o{ CHAT_MESSAGE : sends
+    USER ||--o{ REVIEW : writes
+    USER ||--o{ CHAT_UPLOAD : uploads
+
+    DOCTOR ||--o{ APPOINTMENT : schedules
+    DOCTOR ||--o{ CHAT_MESSAGE : receives
+    DOCTOR ||--o{ PRESCRIPTION : issues
+    DOCTOR ||--o{ REVIEW : receives
+
+    PATIENT ||--o{ APPOINTMENT : attends
+    PATIENT ||--o{ CHAT_MESSAGE : sends
+    PATIENT ||--o{ PRESCRIPTION : receives
+    PATIENT ||--o{ REVIEW : reads
+
+    APPOINTMENT ||--o| PRESCRIPTION : generates
+    APPOINTMENT ||--o{ CHAT_MESSAGE : contains
+    
+    REVIEW ||--o{ REVIEWER : "written by"
+
+    USER {
+        string id PK
+        string email UK
+        string password
+        string role
+        string full_name
+        string phone
+        string avatar_url
+        string status
+        datetime created_at
+        datetime updated_at
+    }
+
+    DOCTOR {
+        string id PK FK
+        string specialization
+        string license_number
+        float rating
+        int total_consultations
+        string bio
+        int consultation_fee
+        string availability
+    }
+
+    PATIENT {
+        string id PK FK
+        int age
+        string gender
+        string blood_group
+        string medical_history
+        string allergies
+        string address
+    }
+
+    APPOINTMENT {
+        string id PK
+        string doctor_id FK
+        string patient_id FK
+        string booking_user_id FK
+        datetime scheduled_at
+        datetime started_at
+        datetime ended_at
+        string status
+        string notes
+        int amount
+        string payment_status
+        datetime created_at
+    }
+
+    CHAT_MESSAGE {
+        string id PK
+        string sender_id FK
+        string receiver_id FK
+        string content
+        boolean is_read
+        string message_type
+        string attachment_url
+        datetime created_at
+    }
+
+    CHAT_UPLOAD {
+        string id PK
+        string uploader_id FK
+        string file_url
+        string file_type
+        string file_name
+        datetime created_at
+    }
+
+    PRESCRIPTION {
+        string id PK
+        string appointment_id FK
+        string doctor_id FK
+        string patient_id FK
+        string medicines
+        string instructions
+        string duration
+        datetime created_at
+        datetime expires_at
+    }
+
+    REVIEW {
+        string id PK
+        string appointment_id FK
+        string reviewer_id FK
+        string doctor_id FK
+        int rating
+        string comment
+        datetime created_at
+    }
+
+    REVIEWER {
+        string id PK
+        string name
+        string avatar_url
+    }
+```
+
+---
+
+## Tools & Technologies
+
+The implementation follows an iterative, module-driven methodology:
+
+1. Domain decomposition: split into auth, appointments, reports, chat, video, AI, admin modules.
+2. Contract-first APIs: route-level handlers encapsulate validation, auth checks, and response schemas.
+3. Shared abstractions: hooks (`use-webrtc*`, `use-socket*`) and utility libs (`lib/*`) reduce duplication.
+4. Progressive hardening: role guards, secure headers, JWT/session checks, encryption for sensitive blobs.
+5. Cross-platform operability: Windows and Unix setup/start scripts for reproducible local environments.
+
+### 5.3 Functional Method Flow (Example: Knowledge Search)
+
+1. User submits disease/medicine query from the medicines knowledge UI.
+2. Backend route calls openFDA drug labels and MedlinePlus health topics.
+3. Response data is sanitized/normalized for readability.
+4. UI renders article-style content with follow-up suggestions and typo assistance.
+
+## 6. System Architecture / Design (HLD and LLD)
+
+### 6.1 High-Level Design (HLD)
+
+```mermaid
+graph TD
+   U[Users: Patient / Doctor / Admin] --> WEB[Web Browser / Mobile Browser]
+   WEB --> APP[medisphere-app - Next.js 15]
+   APP --> DB[(MySQL via Prisma)]
+   APP --> SIG[medisphere-signaling-server - Express + Socket.io]
+   APP --> AUTH[NextAuth + OAuth Providers]
+   APP --> PAY[Razorpay]
+   APP --> AI[Google Gemini + LangChain + Pinecone]
+   APP --> KNOW[openFDA + MedlinePlus]
+   SIG --> RTC[WebRTC Peer-to-Peer Media]
+```
+
+### 6.2 Service Landscape (All Services)
+
+```mermaid
+flowchart LR
+   subgraph ClientLayer[Client Layer]
+      C1[Patient UI]
+      C2[Doctor UI]
+      C3[Admin UI]
+   end
+
+   subgraph AppLayer[Application Layer]
+      N1[Next.js Pages]
+      N2[Next.js API Routes]
+      N3[Auth Middleware / RBAC]
+   end
+
+   subgraph RealtimeLayer[Real-time Layer]
+      R1[Socket.io Signaling Server]
+      R2[Meeting/Room State]
+      R3[Offer/Answer/ICE Relay]
+   end
+
+   subgraph DataLayer[Data Layer]
+      D1[(MySQL)]
+      D2[Prisma Client]
+   end
+
+   subgraph IntegrationLayer[External Integration Layer]
+      I1[Google Gemini]
+      I2[LangChain + Pinecone]
+      I3[Razorpay]
+      I4[openFDA]
+      I5[MedlinePlus]
+      I6[Google OAuth]
+   end
+
+   C1 --> N1
+   C2 --> N1
+   C3 --> N1
+   N1 --> N2
+   N2 --> N3
+   N2 --> D2
+   D2 --> D1
+   N2 --> R1
+   R1 --> R2
+   R1 --> R3
+   N2 --> I1
+   N2 --> I2
+   N2 --> I3
+   N2 --> I4
+   N2 --> I5
+   N2 --> I6
+```
+
+### 6.3 Layered Architecture
+
+- Presentation Layer: Next.js App Router pages and reusable React components.
+- Application Layer: API routes for auth, appointments, reports, payments, AI, medicines knowledge.
+- Real-time Layer: Socket.io signaling service + room orchestration + event relays.
+- Data Layer: MySQL schema managed through Prisma models and relations.
+- Integration Layer: AI, payment, OAuth, and public health APIs.
+
+### 6.4 Low-Level Design (LLD)
+
+#### A. LLD - Next.js Service Internal Design
+
+```mermaid
+flowchart TD
+   PAGES[App Router Pages] --> UI[Domain Components]
+   UI --> HOOKS[Custom Hooks]
+   HOOKS --> SOCKET[Socket Client Hooks]
+   UI --> APIREQ[Fetch API Routes]
+
+   APIREQ --> AUTHZ[Auth Guard + Session Check]
+   APIREQ --> VALID[Validation / Parsing]
+   APIREQ --> DOMAIN[Domain Service Logic]
+   DOMAIN --> PRISMA[Prisma ORM]
+   PRISMA --> MYSQL[(MySQL)]
+
+   DOMAIN --> EXT1[Gemini / LangChain / Pinecone]
+   DOMAIN --> EXT2[Razorpay]
+   DOMAIN --> EXT3[openFDA + MedlinePlus]
+```
+
+#### B. LLD - Signaling Service Internal Design
+
+```mermaid
+flowchart TD
+   CONN[Socket Connection] --> AUTHN[Token Verification / Guest Fallback]
+   AUTHN --> PART[Participant Registry]
+   PART --> ROOM[Room Join and Leave]
+   ROOM --> STATE[Meeting State Manager]
+   STATE --> EVENTS[Call Events: initiate/accept/decline]
+   STATE --> WEBRTCSIG[WebRTC Signaling: offer/answer/ICE]
+   WEBRTCSIG --> PEERS[Peer Connection Establishment]
+   EVENTS --> CHAT[Room Chat Broadcast]
+```
+
+#### C. LLD - Doctor to Patient Call Sequence
+
+```mermaid
+sequenceDiagram
+   participant D as Doctor Client
+   participant S as Signaling Server
+   participant P as Patient Client
+
+   D->>S: call:initiate(appointmentId, doctorName)
+   S-->>P: call:incoming
+   P->>S: call:accept
+   S-->>D: call:accepted
+   D->>S: webrtc:offer
+   S-->>P: webrtc:offer
+   P->>S: webrtc:answer
+   S-->>D: webrtc:answer
+   D->>S: webrtc:ice-candidate
+   S-->>P: webrtc:ice-candidate
+   P->>S: webrtc:ice-candidate
+   S-->>D: webrtc:ice-candidate
+```
+
+#### D. LLD - Data Model View
+
+```mermaid
+erDiagram
+   USER ||--o| DOCTOR : has
+   USER ||--o| PATIENT : has
+   DOCTOR ||--o{ APPOINTMENT : attends
+   PATIENT ||--o{ APPOINTMENT : books
+   APPOINTMENT ||--o{ CHATMESSAGE : contains
+   APPOINTMENT ||--o{ CHATUPLOAD : contains
+   APPOINTMENT ||--o{ CALLSESSION : tracks
+   PATIENT ||--o{ REPORT : uploads
+   DOCTOR ||--o{ PRESCRIPTION : writes
+   PATIENT ||--o{ MEDICATION : tracks
+   PATIENT ||--o{ AICHAT : owns
+```
+
+#### E. Core Services and Responsibilities
+
+| Module | Primary Responsibility |
+|---|---|
+| `src/app/api/auth` | Authentication + session management integration |
+| `src/app/api/appointments` | Appointment lifecycle APIs |
+| `src/app/api/reports` | Report upload/download and metadata management |
+| `src/app/api/ai` | AI chat, document/image processing endpoints |
+| `src/app/api/medicines/search` | openFDA + MedlinePlus aggregation and normalization |
+| `medisphere-signaling-server/server.js` | Socket server bootstrap, room events, call signaling |
+| `medisphere-signaling-server/src/webrtc-handler.js` | Offer/answer/ICE relay and meeting participant state |
+
+#### F. Data Model Essentials
+
+Important entities in `prisma/schema.prisma` include:
+
+- `User`, `Doctor`, `Patient` (identity and role context)
+- `Appointment` (doctor-patient interaction anchor)
+- `Report`, `ChatUpload` (clinical artifact storage)
+- `Prescription`, `Medication` (treatment continuity)
+- `ChatMessage`, `CallSession` (communication tracking)
+- `AIChat`, `Review`, `AuditLog` (assistant history, quality, observability)
+
+#### G. Real-Time Call Flow (Simplified LLD)
+
+1. Doctor emits call initiation event for an appointment.
+2. Signaling server notifies room participants with incoming call event.
+3. Patient accepts and joins meeting context.
+4. WebRTC exchange begins with offer/answer and ICE candidate relays.
+5. Peer connection establishes media streams.
+6. Leave/end events clean up meeting state.
+
+#### H. Security Design Notes
+
+- Session/JWT-aware route protection and role checks.
+- Helmet-based secure headers in signaling service.
+- Password hashing (`bcryptjs`) and token validation (`jose`/`jsonwebtoken`).
+- Sensitive binary data support with encrypted storage patterns.
+
+## 7. Tools & Technologies Used
+
+### 7.1 Frontend and Full-Stack Framework
+
+| Technology | Usage |
+|---|---|
+| Next.js 15 | App Router UI, server rendering, API routes |
+| React 19 | Component model and client interactions |
+| TypeScript | Type safety and maintainable contracts |
+| Tailwind CSS | Utility-first styling and responsive layouts |
+| Framer Motion + Radix UI | Interaction and accessible primitives |
+
+### 7.2 Backend and Data
+
+| Technology | Usage |
+|---|---|
+| Next.js Route Handlers | Domain APIs inside app service |
+| Prisma ORM | DB access, model typing, migrations |
+| MySQL | Primary relational datastore |
+| NextAuth | Credentials/OAuth authentication integration |
+
+### 7.3 Real-Time and Communication
+
+| Technology | Usage |
+|---|---|
+| Socket.io | Real-time signaling and event transport |
+| WebRTC | Peer-to-peer audio/video communication |
+| Express | Signaling server runtime |
+| STUN infrastructure | NAT traversal support |
+
+### 7.4 AI and External Integrations
+
+| Technology | Usage |
+|---|---|
+| Google Gemini | Medical assistant chat and reasoning support |
+| LangChain + Pinecone | Orchestration and retrieval-oriented AI workflows |
+| Razorpay | Appointment/payment workflows |
+| openFDA + MedlinePlus | Drug label and disease/topic knowledge retrieval |
+
+## 8. Repository Structure
+
+```text
+medispherev7/
+├── medisphere-app/                 # Next.js monolith app (UI + APIs)
+│   ├── src/app/                    # Routes/pages/API handlers
+│   ├── src/components/             # UI modules by domain
+│   ├── src/hooks/                  # Reusable client hooks
+│   ├── src/lib/                    # Utilities/services
+│   ├── src/types/                  # Shared TS types
+│   └── prisma/schema.prisma        # Database schema
+├── medisphere-signaling-server/    # Express + Socket.io signaling service
+│   ├── server.js
+│   └── src/webrtc-handler.js
+├── SETUP_GUIDE.md
+├── STARTUP_GUIDE.md
+├── WEBRTC_SETUP.md
+└── PROJECT_REPORT.md
+```
+
+## 9. Setup and Run
+
+### Quick Setup
+
+1. Run initial setup script once:
+   - Windows: `setup.bat`
+   - macOS/Linux: `./setup-dev.sh`
+2. Configure environment files:
+   - `medisphere-app/.env.local`
+   - `medisphere-signaling-server/.env`
+3. Run database migration/generation from `medisphere-app`:
+   - `npx prisma migrate dev --name init`
+   - `npx prisma generate`
+4. Start both services:
+   - Windows: `start-medisphere.bat` or `start-dev.bat`
+   - macOS/Linux: `./start-dev.sh`
+
+### Local Endpoints
+
+- Frontend: `http://localhost:3000`
+- Signaling Health: `http://localhost:4000/health`
+
+## 10. Command Reference
+
+### 10.1 Setup Commands
+
+```bash
+# Windows
+setup.bat
+
+# macOS/Linux
+chmod +x setup-dev.sh start-dev.sh stop-dev.sh
+./setup-dev.sh
+```
+
+### 10.2 Start Commands
+
+```bash
+# Windows (all services)
+start-medisphere.bat
+
+# Alternative Windows starter
+start-dev.bat
+
+# macOS/Linux (all services)
+./start-dev.sh
+```
+
+### 10.3 Manual Service Start
+
+```bash
+# Terminal 1
+cd medisphere-signaling-server
+npm run dev
+
+# Terminal 2
+cd medisphere-app
+npm run dev
+```
+
+### 10.4 Database Commands
+
+```bash
+cd medisphere-app
+npx prisma generate
+npx prisma migrate dev --name init
+npx prisma studio
+```
+
+### 10.5 Build and Production Commands
+
+```bash
+cd medisphere-app
+npm run build
+npm run start
+
+cd ../medisphere-signaling-server
+npm run start
+```
+
+### 10.6 Health and Verification Commands
+
+```bash
+# App health check (HTML response expected)
+curl http://localhost:3000
+
+# Signaling service health check (JSON expected)
+curl http://localhost:4000/health
+```
+
+## 11. Documentation Map
+
+- `PROJECT_REPORT.md`: Full project report and domain context.
+- `DOCTOR_PATIENT_CALL_FLOW.md`: Doctor-initiated incoming-call flow.
+- `SETUP_GUIDE.md`: Detailed setup and testing path.
+- `STARTUP_GUIDE.md`: Startup, configuration, and deployment notes.
+- `WEBRTC_SETUP.md`: WebRTC-oriented setup and troubleshooting.
+- `QUICK_REFERENCE.md`: Fast operational command reference.
