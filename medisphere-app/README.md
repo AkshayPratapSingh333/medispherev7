@@ -1042,12 +1042,10 @@ The implementation follows iterative, module-driven design:
 2. **Contract-First APIs**: Each route handler encapsulates validation, authorization, error handling, and response serialization
 3. **Shared Abstractions**: Custom hooks (`use-webrtc`, `use-socket`, etc.) and typed utility libraries reduce code duplication
 4. **Progressive Hardening**: Role guards, secure headers, JWT/session verification, password hashing, encryption for sensitive data
-5. **Type Safety**: Full TypeScript coverage with shared type definitions across API and UI layers
 6. **Responsive Design**: TailwindCSS utility framework with Framer Motion animations for smooth UX
 
 ### 5.3 Functional Method Flow (Example: Medicine Knowledge Search)
 
-\`\`\`
 1. User navigates to Medicines page and enters a disease/medicine query
 2. Frontend calls API route: /api/medicines/search?q=diabetes
 3. API route fetches and aggregates data from openFDA and MedlinePlus APIs
@@ -1058,13 +1056,12 @@ The implementation follows iterative, module-driven design:
    - "Did you mean" spell correction with fuzzy matching
    - Prebuilt dropdown suggestions for common medicines/diseases
 6. User can explore follow-up topics or navigate to doctor consultation
-\`\`\`
 
 ## 6. System Architecture / Design (HLD and LLD)
 
 ### 6.1 Next.js App Internal High-Level Design
 
-\`\`\`mermaid
+```mermaid
 graph TB
    subgraph Client["Client Layer"]
       U1["Patient UI"]
@@ -1117,13 +1114,13 @@ graph TB
    APIRoutes --> ExternalAPIs
    L2 --> DB
    L3 --> CACHE
-\`\`\`
+```
 
 ### 6.2 Low-Level Design (LLD) - Next.js App Service
 
 #### A. Data Flow - Appointment Booking
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
    participant User as Patient UI
    participant Pages as Pages/Components
@@ -1143,11 +1140,11 @@ sequenceDiagram
    API->>Email: Send confirmation email
    API-->>Pages: 201 Created + appointmentId
    Pages-->>User: Show success + redirect to appointments
-\`\`\`
+```
 
 #### B. Data Flow - Medicine Knowledge Search
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
    participant UI as Medicine Search UI
    participant API as /api/medicines/search
@@ -1164,11 +1161,11 @@ sequenceDiagram
    Sanitizer-->>API: Normalized text
    API-->>UI: Aggregated + cleaned results
    UI->>UI: Render article-style + suggestions
-\`\`\`
+```
 
 #### C. Component Hierarchy - Authentication Flow
 
-\`\`\`mermaid
+```mermaid
 graph TD
    AuthPage["Auth Pages<br/>login, signup, forgot-password"]
    AuthForms["Auth Forms<br/>credentials, oauth-button"]
@@ -1185,11 +1182,11 @@ graph TD
    CredProvider --> AppRouter
    OAuthProvider --> AppRouter
    AppRouter --> ProtectedPages
-\`\`\`
+```
 
 #### D. Module Organization
 
-\`\`\`mermaid
+```mermaid
 graph LR
    APP["src/app"]
    COMPONENTS["src/components"]
@@ -1220,11 +1217,11 @@ graph LR
    LIB --> INTEGRATIONS["ai.ts, email.ts,<br/>razor pay.ts"]
 
    TYPES --> CORE["api.ts, auth.ts,<br/>appointment.ts"]
-\`\`\`
+```
 
 #### E. API Route Structure and Security
 
-\`\`\`mermaid
+```mermaid
 graph TD
    REQUEST["HTTP Request"]
    ROUTE["Route Handler"]
@@ -1252,7 +1249,7 @@ graph TD
    PRISMA --> RESPONSE
    RESPONSE --> REQUEST
    ERROR --> REQUEST
-\`\`\`
+```
 
 #### F. Key Service Routes and Responsibilities
 
@@ -1270,7 +1267,7 @@ graph TD
 
 #### G. Real-Time Event Flow (Socket.io Integration)
 
-\`\`\`mermaid
+```mermaid
 graph LR
    UI["UI Event"]
    HOOK["Socket Hook<br/>useSocketClient"]
@@ -1286,7 +1283,7 @@ graph LR
    SIGSERVER --> RELAY
    RELAY --> RECV_HOOK
    RECV_HOOK --> UPDATE_UI
-\`\`\`
+```
 
 ## 7. Tools & Technologies Used
 
@@ -1349,7 +1346,7 @@ graph LR
 
 ## 8. Directory Structure
 
-\`\`\`text
+```text
 medisphere-app/
 ├── src/
 │   ├── app/                        # Next.js App Router
@@ -1422,7 +1419,7 @@ medisphere-app/
 ├── tailwind.config.js              # TailwindCSS configuration
 ├── eslint.config.mjs               # ESLint rules
 └── middleware.ts                   # Next.js middleware (auth guards)
-\`\`\`
+```
 
 ## 9. Setup and Run
 
@@ -1436,7 +1433,7 @@ medisphere-app/
 
 ### Quick Setup
 
-\`\`\`bash
+```bash
 # 1. Install dependencies
 npm install
 
@@ -1450,22 +1447,22 @@ npx prisma generate
 
 # 4. Run development server
 npm run dev
-\`\`\`
+```
 
 ### Running in Production
 
-\`\`\`bash
+```bash
 npm run build
 npm start
-\`\`\`
+```
 
-The app will be available at \`http://localhost:3000\`
+The app will be available at `http://localhost:3000`
 
 ## 10. Command Reference
 
 ### Development
 
-\`\`\`bash
+```bash
 # Start development server (with hot reload)
 npm run dev
 
@@ -1477,11 +1474,11 @@ npm run lint
 
 # Format code
 npm run format
-\`\`\`
+```
 
 ### Database
 
-\`\`\`bash
+```bash
 # Create new migration
 npx prisma migrate dev --name <migration_name>
 
@@ -1493,11 +1490,11 @@ npx prisma migrate reset
 
 # Open database UI
 npx prisma studio
-\`\`\`
+```
 
 ### Build and Deploy
 
-\`\`\`bash
+```bash
 # Build for production
 npm run build
 
@@ -1506,30 +1503,30 @@ npm start
 
 # Analyze bundle
 npm run build -- --analyze
-\`\`\`
+```
 
 ### Health Checks
 
-\`\`\`bash
+```bash
 # Frontend health (should return HTML)
 curl http://localhost:3000
 
 # API health (should return 404 or auth error)
 curl http://localhost:3000/api/health
-\`\`\`
+```
 
 ## 11. Contributing Guidelines
 
 1. Follow the existing module structure when adding features
 2. Use TypeScript for all new code
-3. Run \`npm run lint\` before committing
+3. Run `npm run lint` before committing
 4. Keep API routes focused on a single domain responsibility
 5. Add database migrations when schema changes
 6. Test API endpoints with provided examples before submitting
 
 ## 12. API Documentation
 
-Comprehensive API documentation is available in \`PROJECT_REPORT.md\` and \`DOCTOR_PATIENT_CALL_FLOW.md\`.
+Comprehensive API documentation is available in `PROJECT_REPORT.md` and `DOCTOR_PATIENT_CALL_FLOW.md`.
 
 ---
 
