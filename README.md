@@ -498,121 +498,115 @@ sequenceDiagram
 
 ```mermaid
 erDiagram
-    USER ||--o{ APPOINTMENT : books
-    USER ||--o{ CHAT_MESSAGE : sends
-    USER ||--o{ REVIEW : writes
-    USER ||--o{ CHAT_UPLOAD : uploads
+    USER ||--o{ APPOINTMENT : "books"
+    USER ||--o{ CHAT_MESSAGE : "sends"
+    USER ||--o{ REVIEW : "writes"
+    USER ||--o{ CHAT_UPLOAD : "uploads"
+    USER ||--o{ DOCTOR : "has"
+    USER ||--o{ PATIENT : "has"
 
-    DOCTOR ||--o{ APPOINTMENT : schedules
-    DOCTOR ||--o{ CHAT_MESSAGE : receives
-    DOCTOR ||--o{ PRESCRIPTION : issues
-    DOCTOR ||--o{ REVIEW : receives
+    DOCTOR ||--o{ APPOINTMENT : "schedules"
+    DOCTOR ||--o{ PRESCRIPTION : "issues"
+    DOCTOR ||--o{ REVIEW : "receives"
 
-    PATIENT ||--o{ APPOINTMENT : attends
-    PATIENT ||--o{ CHAT_MESSAGE : sends
-    PATIENT ||--o{ PRESCRIPTION : receives
-    PATIENT ||--o{ REVIEW : reads
+    PATIENT ||--o{ APPOINTMENT : "attends"
+    PATIENT ||--o{ PRESCRIPTION : "receives"
+    PATIENT ||--o{ REVIEW : "reads"
 
-    APPOINTMENT ||--o| PRESCRIPTION : generates
-    APPOINTMENT ||--o{ CHAT_MESSAGE : contains
+    APPOINTMENT ||--o| PRESCRIPTION : "generates"
+    APPOINTMENT ||--o{ CHAT_MESSAGE : "contains"
     
-    REVIEW ||--o{ REVIEWER : "written by"
+    REVIEW ||--o{ USER : "written_by"
 
     USER {
-        string id PK
-        string email UK
-        string password
-        string role
-        string full_name
-        string phone
-        string avatar_url
-        string status
-        datetime created_at
-        datetime updated_at
+        string id PK "User ID"
+        string email UK "Email Address"
+        string password "Hashed Password"
+        string role "doctor, patient, admin"
+        string full_name "Full Name"
+        string phone "Phone Number"
+        string avatar_url "Avatar URL"
+        string status "active, inactive"
+        datetime created_at "Creation Date"
+        datetime updated_at "Last Updated"
     }
 
     DOCTOR {
-        string id PK FK
-        string specialization
-        string license_number
-        float rating
-        int total_consultations
-        string bio
-        int consultation_fee
-        string availability
+        string user_id FK "User Reference"
+        string specialization "Medical Specialization"
+        string license_number UK "License Number"
+        float rating "Star Rating"
+        int total_consultations "Total Consultations"
+        string bio "Doctor Bio"
+        int consultation_fee "Fee Amount"
+        string availability "Schedule"
     }
 
     PATIENT {
-        string id PK FK
-        int age
-        string gender
-        string blood_group
-        string medical_history
-        string allergies
-        string address
+        string user_id FK "User Reference"
+        int age "Age"
+        string gender "Male, Female, Other"
+        string blood_group "Blood Type"
+        string medical_history "History"
+        string allergies "Known Allergies"
+        string address "Address"
     }
 
     APPOINTMENT {
-        string id PK
-        string doctor_id FK
-        string patient_id FK
-        string booking_user_id FK
-        datetime scheduled_at
-        datetime started_at
-        datetime ended_at
-        string status
-        string notes
-        int amount
-        string payment_status
-        datetime created_at
+        string id PK "Appointment ID"
+        string doctor_id FK "Doctor Reference"
+        string patient_id FK "Patient Reference"
+        string booking_user_id FK "Booked By User"
+        datetime scheduled_at "Scheduled Time"
+        datetime started_at "Start Time"
+        datetime ended_at "End Time"
+        string status "scheduled, completed, cancelled"
+        string notes "Doctor Notes"
+        int amount "Fee Amount"
+        string payment_status "paid, pending"
+        datetime created_at "Created Date"
     }
 
     CHAT_MESSAGE {
-        string id PK
-        string sender_id FK
-        string receiver_id FK
-        string content
-        boolean is_read
-        string message_type
-        string attachment_url
-        datetime created_at
+        string id PK "Message ID"
+        string sender_id FK "Sender User"
+        string receiver_id FK "Receiver User"
+        string content "Message Content"
+        boolean is_read "Read Status"
+        string message_type "text, file, image"
+        string attachment_url "Attachment URL"
+        datetime created_at "Sent Time"
     }
 
     CHAT_UPLOAD {
-        string id PK
-        string uploader_id FK
-        string file_url
-        string file_type
-        string file_name
-        datetime created_at
+        string id PK "Upload ID"
+        string uploader_id FK "Uploader User"
+        string file_url "File Location"
+        string file_type "MIME Type"
+        string file_name "File Name"
+        datetime created_at "Upload Time"
     }
 
     PRESCRIPTION {
-        string id PK
-        string appointment_id FK
-        string doctor_id FK
-        string patient_id FK
-        string medicines
-        string instructions
-        string duration
-        datetime created_at
-        datetime expires_at
+        string id PK "Prescription ID"
+        string appointment_id FK "Appointment"
+        string doctor_id FK "Doctor"
+        string patient_id FK "Patient"
+        string medicines "JSON Medicines"
+        string instructions "Usage Instructions"
+        string duration "Duration"
+        datetime created_at "Issued Date"
+        datetime expires_at "Expiry Date"
     }
 
     REVIEW {
-        string id PK
-        string appointment_id FK
-        string reviewer_id FK
-        string doctor_id FK
-        int rating
-        string comment
-        datetime created_at
-    }
-
-    REVIEWER {
-        string id PK
-        string name
-        string avatar_url
+        string id PK "Review ID"
+        string appointment_id FK "Appointment"
+        string reviewer_id FK "Reviewer User"
+        string doctor_id FK "Doctor Being Reviewed"
+        int rating "1-5 Stars"
+        string comment "Review Text"
+        datetime created_at "Review Date"
     }
 ```
 

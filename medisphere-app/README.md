@@ -493,61 +493,524 @@ interface Props {
 
 ---
 
-## API Routes## 1. Introduction
+## Low-Level Design (LLD)
 
-The medisphere-app is the primary user-facing service in the Medisphere platform. It provides:
+### A. Service Architecture Overview
 
-- **Multi-role Web UI**: Distinct interfaces for patients, doctors, and administrators
-- **Domain APIs**: RESTful endpoints for authentication, appointments, reports, prescriptions, payments, AI chat, and medical knowledge
-- **Real-time Integration**: Socket.io client connections for live chat, call signaling, and event streaming
-- **Data Persistence**: Prisma ORM interface to MySQL for secure, scalable data management
-- **External Integrations**: Google OAuth, Gemini AI, Razorpay, openFDA, MedlinePlus
+```mermaid
+graph TB
+    subgraph Client["Client Layer"]
+        U1["Patient UI"]
+        U2["Doctor UI"]
+        U3["Admin UI"]
+    end
 
-The application is built with modern Next.js patterns including the App Router, server components, API route handlers, and TypeScript for type safety.
+    subgraph AppRouter["App Router Pages"]
+        P1["Pages: auth, appointments, chat, reports, medicines"]
+        P2["Domain Components: forms, cards, modals, lists"]
+    end
 
-## 2. Project Purpose
+    subgraph APIRoutes["API Route Handlers"]
+        R1["Authentication Routes"]
+        R2["Appointment Routes"]
+        R3["Report Routes"]
+        R4["Chat Routes"]
+        R5["AI Routes"]
+        R6["Medicines Routes"]
+        R7["Admin Routes"]
+    end
 
-The medisphere-app purpose is to:
+    subgraph CoreLogic["Core Logic & Libraries"]
+        L1["Socket.io Client Integration"]
+        L2["Prisma ORM Client"]
+        L3["NextAuth Session Handler"]
+        L4["Email Service"]
+        L5["AI Service Wrapper"]
+        L6["Encryption Utils"]
+    end
 
-1. **Digitize healthcare workflows** for patients, doctors, and administrative staff
-2. **Provide unified access** to appointment scheduling, consultations, medical records, and prescriptions
-3. **Enable continuous care** through messaging, call signaling, and follow-up management
-4. **Support clinical decision-making** with AI assistance and curated medical knowledge APIs
-5. **Secure user identity and data** through NextAuth integration, role-based access control, and encrypted storage
+    subgraph DataLayer["Data Layer"]
+        DB["MySQL Database"]
+        CACHE["Session Cache"]
+    end
 
-## 3. Feature Scope Classification (Big Features vs Small/Medium Features)
+    subgraph ExternalAPIs["External Services"]
+        OA["Google OAuth"]
+        GEMINI["Google Gemini API"]
+        RAZORPAY["Razorpay"]
+        OPENFDA["openFDA API"]
+        MEDLINE["MedlinePlus API"]
+        EMAIL["Email Service"]
+    end
 
-### Big Features (Platform-defining)
+    Client --> AppRouter
+    AppRouter --> APIRoutes
+    APIRoutes --> CoreLogic
+    CoreLogic --> DataLayer
+    APIRoutes --> ExternalAPIs
+    L2 --> DB
+    L3 --> CACHE
+```
 
-| Feature | Why it is a big feature |
-|---|---|
-| Role-based healthcare portal | Three distinct personas (Admin/Doctor/Patient), separate authorization boundaries, unique user journeys |
-| Appointment and consultation lifecycle | Complete workflow from booking → confirmation → reschedule → completion → payment → follow-up |
-| Real-time communication stack | Chat, WebRTC call signaling, room management, media controls, event streaming |
-| AI assistant subsystem | Conversational AI, document/image processing, voice support, multi-language options |
-| Medical data management | Reports, uploads, prescriptions, medications, patient history, relational integrity |
+### B. Data Flow - Appointment Booking
 
-### Small to Medium Features (Focused capabilities)
+```mermaid
+sequenceDiagram
+    participant User as 👤 Patient UI
+    participant Pages as Pages/Components
+    participant API as API Route Handler
+    participant Auth as NextAuth Session
+    participant Prisma as Prisma ORM
+    participant DB as MySQL
+    participant Email as Email Service
 
-| Feature | Description |
-|---|---|
-| Medicine and disease knowledge search | External aggregation from openFDA and MedlinePlus with spell correction |
-| Doctor rating and review surfaces | Feedback collection and discoverability signals |
-| Admin moderation and status controls | Operational governance over doctors and patient accounts |
-| Utility hooks and component library | Reusable UI patterns and custom React hooks for maintainability |
-| User session management | OAuth login, credential validation, session expiration, role preservation |
+    User->>Pages: Submit appointment form
+    Pages->>API: POST /api/appointments/book
+    API->>Auth: Verify session + patient role
+    Auth-->>API: Session valid
+    API->>Prisma: Create appointment record
+    Prisma->>DB: INSERT appointment
+    DB-->>Prisma: Appointment ID returned
+    API->>Email: Send confirmation email
+    API-->>Pages: 201 Created + appointmentId
+    Pages-->>User: Show success + redirect to appointments
+```
 
-## 4. Problem Statement/Objectives
+### C. Data Flow - Medicine Knowledge Search
 
-### Problem Statement
+```mermaid
+sequenceDiagram
+    participant UI as 🔍 Medicine Search UI
+    participant API as /api/medicines/search
+    participant OpenFDA as openFDA API
+    participant MedlinePlus as MedlinePlus API
+    participant Sanitizer as Text Sanitizer
 
-Traditional healthcare access suffers from:
-- **Fragmented patient experience**: Dispersed information across providers, poor continuity of care
-- **Operational inefficiency**: In-person dependency, manual scheduling, delayed follow-ups
-- **Information asymmetry**: Limited access to medical knowledge and specialist insights
-- **Poor digital support**: Weak record handling, lack of integrated communication, minimal decision support
+    UI->>API: GET ?q=diabetes
+    API->>OpenFDA: Fetch drug labels
+    API->>MedlinePlus: Fetch topics XML
+    OpenFDA-->>API: Drug data with HTML entities
+    MedlinePlus-->>API: Topic data with markup
+    API->>Sanitizer: Decode entities, clean HTML
+    Sanitizer-->>API: Normalized text
+    API-->>UI: Aggregated + cleaned results
+    UI->>UI: Render article-style + suggestions
+```
 
-Existing solutions often lack integrated real-time consultation, AI support, and role-specific operational workflows in one unified platform.
+### D. Authentication Flow Component Hierarchy
+
+```mermaid
+graph TD
+    AuthPage["Auth Pages<br/>login, signup, forgot-password"]
+    AuthForms["Auth Forms<br/>credentials, oauth-button"]
+    NextAuthLib["NextAuth.js Session<br/>Provider, useSession hook"]
+    CredProvider["Credential Provider<br/>bcryptjs validation"]
+    OAuthProvider["OAuth Provider<br/>Google strategy"]
+    AppRouter["App Router Middleware<br/>redirects, role guards"]
+    ProtectedPages["Protected Pages<br/>appointments, reports, chat"]
+
+    AuthPage --> AuthForms
+    AuthForms --> NextAuthLib
+    NextAuthLib --> CredProvider
+    NextAuthLib --> OAuthProvider
+    CredProvider --> AppRouter
+    OAuthProvider --> AppRouter
+    AppRouter --> ProtectedPages
+```
+
+### E. Module Organization
+
+```mermaid
+graph LR
+    APP["src/app"]
+    COMPONENTS["src/components"]
+    HOOKS["src/hooks"]
+    LIB["src/lib"]
+    TYPES["src/types"]
+
+    APP --> AUTH["api/auth"]
+    APP --> APT["api/appointments"]
+    APP --> REPORTS["api/reports"]
+    APP --> CHAT["api/chat"]
+    APP --> AI["api/ai"]
+    APP --> MEDS["api/medicines"]
+    APP --> ADMIN["api/admin"]
+
+    COMPONENTS --> AUTH_C["auth/"]
+    COMPONENTS --> APT_C["appointments/"]
+    COMPONENTS --> REPORT_C["reports/"]
+    COMPONENTS --> CHAT_C["chat/"]
+    COMPONENTS --> DOCTORS_C["doctors/"]
+    COMPONENTS --> MEDICINES_C["medicines/"]
+
+    HOOKS --> WEBRTC["use-webrtc.ts<br/>use-socket.ts"]
+    HOOKS --> FORMS["use-async.ts<br/>use-debounce.ts"]
+
+    LIB --> AUTH_L["auth.ts<br/>encryption.ts"]
+    LIB --> DATA["prisma.ts<br/>utils.ts"]
+    LIB --> INTEGRATIONS["ai.ts<br/>email.ts<br/>razorpay.ts"]
+
+    TYPES --> CORE["api.ts<br/>auth.ts<br/>appointment.ts"]
+```
+
+### F. API Route Security & Validation Flow
+
+```mermaid
+graph TD
+    REQUEST["HTTP Request"]
+    ROUTE["Route Handler"]
+    VERIFY["Verify Session"]
+    AUTHN["Check Authentication"]
+    AUTHZ["Check Role Authorization"]
+    VALIDATE["Parse + Validate Body"]
+    LOGIC["Domain Logic"]
+    PRISMA["Prisma Query"]
+    RESPONSE["Format Response"]
+    ERROR["Error Handler"]
+
+    REQUEST --> ROUTE
+    ROUTE --> VERIFY
+    VERIFY -->|Invalid| ERROR
+    VERIFY --> AUTHN
+    AUTHN -->|No session| ERROR
+    AUTHN --> AUTHZ
+    AUTHZ -->|Role mismatch| ERROR
+    AUTHZ --> VALIDATE
+    VALIDATE -->|Invalid input| ERROR
+    VALIDATE --> LOGIC
+    LOGIC --> PRISMA
+    PRISMA -->|DB error| ERROR
+    PRISMA --> RESPONSE
+    RESPONSE --> REQUEST
+    ERROR --> REQUEST
+```
+
+---
+
+## API Routes
+
+The medisphere-app includes comprehensive REST API endpoints organized by domain. Each route handler:
+1. Verifies user session and authentication
+2. Checks role-based authorization (patient, doctor, admin)
+3. Validates request body with typed schemas
+4. Executes domain logic with Prisma queries
+5. Returns formatted JSON responses with proper status codes
+
+### Route Organization
+
+```
+src/app/api/
+├── auth/                    # Authentication endpoints
+│   ├── [...nextauth]/      # NextAuth.js credentials + OAuth providers
+│   ├── signup              # Patient/doctor registration with verification
+│   ├── verify-email        # Email token validation
+│   └── reset-password      # Forgot password flow
+├── appointments/
+│   ├── book                # Create appointment
+│   ├── [id]/cancel         # Cancel/reschedule
+│   ├── list                # List user appointments
+│   └── confirm             # Doctor confirmation
+├── chat/
+│   ├── messages            # Send/receive messages
+│   ├── history             # Chat history pagination
+│   └── unread              # Unread message count
+├── reports/
+│   ├── upload              # File upload with virus scanning
+│   ├── [id]/download       # Secure download link
+│   └── [id]/share          # Share with specific users
+├── medicines/
+│   ├── search              # openFDA + MedlinePlus aggregation
+│   └── history             # User search history
+├── ai/
+│   ├── chat                # Gemini AI conversation
+│   ├── document-analyze    # OCR + understanding
+│   └── audio-transcribe    # Speech-to-text with Deepgram
+└── admin/
+    ├── users               # User management, status changes
+    ├── doctors             # Verification, profile controls
+    ├── analytics           # Platform metrics aggregation
+    └── content-moderation  # Chat and review filtering
+```
+
+---
+
+## Project Structure (Complete Directory Tree)
+
+```
+medisphere-app/
+├── public/                          # Static assets (images, icons, fonts)
+│   └── images/
+├── prisma/
+│   ├── schema.prisma               # Database schema definition
+│   └── migrations/                 # Migration history
+├── src/
+│   ├── app/                        # Next.js 15 App Router
+│   │   ├── globals.css             # Global Tailwind styles
+│   │   ├── layout.tsx              # Root layout wrapper
+│   │   ├── page.tsx                # Homepage
+│   │   ├── api/                    # API route handlers (see above)
+│   │   ├── auth/                   # Auth pages (login, signup, verify)
+│   │   ├── appointments/           # Appointment booking & management
+│   │   ├── chat/                   # Chat interface & conversation
+│   │   ├── doctor/                 # Doctor profile & schedule
+│   │   ├── doctors/                # Doctor discovery & filtering
+│   │   ├── medicines/              # Medicine search & details
+│   │   ├── reports/                # Medical reports upload & view
+│   │   ├── meet/                   # WebRTC call interface
+│   │   ├── patient/                # Patient profile & records
+│   │   ├── admin/                  # Admin dashboard
+│   │   │   ├── users/              # User management
+│   │   │   ├── doctors/            # Doctor verification
+│   │   │   └── analytics/          # Platform metrics
+│   │   ├── blog/                   # Blog articles
+│   │   ├── careers/                # Careers page
+│   │   ├── contact/                # Contact form
+│   │   ├── help/                   # Help & FAQ
+│   │   ├── privacy/                # Privacy policy
+│   │   ├── terms/                  # Terms of service
+│   │   ├── press/                  # Press kit
+│   │   └── about/                  # About page
+│   │
+│   ├── components/                 # Reusable React components
+│   │   ├── auth/                   # Auth forms & SSO buttons
+│   │   ├── appointments/           # Booking, list, detail components
+│   │   ├── chat/                   # Message container, input, sidebar
+│   │   ├── medicines/              # Search, results, article rendering
+│   │   ├── reports/                # Upload, list, viewer components
+│   │   ├── doctors/                # Doctor card, filter, availability
+│   │   ├── common/                 # Navbar, footer, sidebar
+│   │   ├── layout/                 # Layout wrappers & containers
+│   │   ├── ui/                     # UI primitives (button, modal, input)
+│   │   ├── video/                  # WebRTC call components
+│   │   ├── patients/               # Patient-specific components
+│   │   ├── prescriptions/          # Rx list & detail views
+│   │   ├── reviews/                # Review form & display
+│   │   ├── providers/              # Context providers setup
+│   │   └── admin/                  # Admin-only components
+│   │
+│   ├── hooks/                      # Custom React hooks
+│   │   ├── use-webrtc.ts           # WebRTC peer connection management
+│   │   ├── use-socket.ts           # Socket.io event subscriptions
+│   │   ├── use-socket-client.ts    # Socket client initialization
+│   │   ├── use-async.ts            # Async state + loader/error handling
+│   │   ├── use-debounce.ts         # Input debouncing for search
+│   │   ├── use-geolocation.ts      # Browser geolocation API wrapper
+│   │   ├── use-local-storage.ts    # Persistent client-side storage
+│   │   ├── use-multi-peer.ts       # Group call peer management
+│   │   ├── use-webrtc-peer.ts      # Individual peer connection lifecycle
+│   │   ├── use-webrtc-call.ts      # Complete call flow orchestration
+│   │   └── use-speech-recognition.ts  # Browser speech API integration
+│   │
+│   ├── lib/                        # Utility functions & service clients
+│   │   ├── auth.ts                 # NextAuth config, JWT validation
+│   │   ├── prisma.ts               # Global Prisma singleton instance
+│   │   ├── socket.ts               # Socket.io client configuration
+│   │   ├── ai.ts                   # Google Gemini AI integration wrapper
+│   │   ├── email.ts                # Email service (Nodemailer setup)
+│   │   ├── encryption.ts           # AES-256-GCM for sensitive data
+│   │   ├── razorpay.ts             # Razorpay payment gateway client
+│   │   ├── chat-unread.ts          # Unread message counter logic
+│   │   ├── constants.ts            # App-wide constants & configuration
+│   │   ├── utils.ts                # Generic helpers (format, parse, etc)
+│   │   ├── validation.ts           # Zod schemas for request validation
+│   │   └── types.ts                # Shared TS types
+│   │
+│   ├── types/                      # TypeScript type definitions
+│   │   ├── index.ts                # Central type exports
+│   │   ├── api.ts                  # API request/response types
+│   │   ├── auth.ts                 # Authentication & user role types
+│   │   ├── appointment.ts          # Appointment domain types
+│   │   ├── chat.ts                 # Message & conversation types
+│   │   ├── doctor.ts               # Doctor profile & schedule types
+│   │   ├── patient.ts              # Patient record & history types
+│   │   ├── next-auth.d.ts          # NextAuth session extension types
+│   │   └── styles.d.ts             # CSS module declarations
+│   │
+│   ├── messages/                   # i18n translation files
+│   │   ├── en.json                 # English strings
+│   │   ├── hi.json                 # Hindi translations
+│   │   ├── gu.json                 # Gujarati translations
+│   │   ├── kn.json                 # Kannada translations
+│   │   ├── mr.json                 # Marathi translations
+│   │   └── ta.json                 # Tamil translations
+│   │
+│   ├── i18n.ts                     # i18n configuration & locale helpers
+│   ├── middleware.ts               # NextAuth middleware for protected routes
+│   └── scripts/
+│       └── admin-grant.mjs         # CLI tool for granting admin roles
+│
+├── node_modules/                   # Dependencies (npm install)
+├── package.json                    # Dependencies, scripts, config
+├── tsconfig.json                   # TypeScript compiler config
+├── next.config.ts                  # Next.js build & runtime config
+├── tailwind.config.ts              # Tailwind CSS theme customization
+├── postcss.config.mjs              # PostCSS plugins (Tailwind processing)
+├── eslint.config.mjs               # ESLint rules & format enforcement
+├── components.json                 # Component library metadata
+├── .env.local                      # Environment variables (.gitignored)
+└── README.md                       # This file
+```
+
+---
+
+## Setup Instructions (Quick Start)
+
+### Prerequisites
+- **Node.js 18+** with npm
+- **MySQL 8+** running locally or via Docker
+- **.env.local** configured with database URL and API keys
+
+### Installation & Configuration
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment variables** (copy .env.example)
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your database URL, JWT secret, OAuth credentials, etc
+   ```
+
+3. **Set up database**
+   ```bash
+   npx prisma migrate dev --name init
+   npx prisma db seed                    # Optional: seed with sample data
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   # Opens http://localhost:3000
+   ```
+
+---
+
+## Running in Production
+
+### Build for Production
+```bash
+npm run build                 # Compiles Next.js, optimizes for production
+```
+
+### Start Production Server
+```bash
+npm run start                # Runs optimized build on port 3000
+```
+
+### Environment Configuration
+Ensure all variables from `.env.local` are set in production:
+- Database URL (external MySQL)
+- JWT signing key
+- OAuth provider credentials (Google, GitHub)
+- AI/API keys (Gemini, openFDA, Razorpay)
+- Email service credentials
+
+---
+
+## Commands Reference
+
+### Development Workflow
+
+**Start development server with hot reload:**
+```bash
+npm run dev
+```
+
+**Lint code and fix formatting issues:**
+```bash
+npm run lint
+npm run lint -- --fix            # Auto-fix ESLint violations
+```
+
+**Type-check without building:**
+```bash
+npm run type-check
+```
+
+### Database Management
+
+**Create new migration after schema changes:**
+```bash
+npx prisma migrate dev --name add_new_feature
+```
+
+**View database in Prisma Studio GUI:**
+```bash
+npx prisma studio
+```
+
+**Reset database (removes all data):**
+```bash
+npx prisma migrate reset                # Careful! This is destructive
+```
+
+**Seed database with initial data:**
+```bash
+npx prisma db seed
+```
+
+### Building & Deployment
+
+**Build for production:**
+```bash
+npm run build
+```
+
+**Build and check bundle size:**
+```bash
+npm run build -- --analyze
+```
+
+**Start production server locally:**
+```bash
+npm run build && npm run start
+```
+
+### Testing & Diagnosis
+
+**Type-check entire codebase:**
+```bash
+tsc --noEmit
+```
+
+**Run tests (if Jest configured):**
+```bash
+npm test                        # Run all tests
+npm test -- --watch            # Watch mode
+npm test -- --coverage         # Coverage report
+```
+
+**Check application stack health:**
+```bash
+curl http://localhost:3000/api/health
+```
+
+**View environment configuration:**
+```bash
+env | grep DATABASE             # Database config check
+env | grep NEXTAUTH             # Auth config check
+```
+
+### Utility Scripts
+
+**Grant admin privileges to user (requires admin password):**
+```bash
+node scripts/admin-grant.mjs user@email.com
+```
+
+**Clean and reinstall all dependencies:**
+```bash
+rm -rf node_modules package-lock.json && npm install
+```
+
+**Clear Next.js build cache:**
+```bash
+rm -rf .next
+```
+
+
 
 ### Objectives
 
