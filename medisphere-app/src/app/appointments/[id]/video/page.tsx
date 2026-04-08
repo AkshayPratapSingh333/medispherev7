@@ -10,9 +10,11 @@ export default async function VideoCallPage({
   params: { id: string };
 }) {
   const session = await getSessionServer();
+  const user = session?.user;
 
-  if (!session?.user) {
+  if (!user) {
     redirect('/auth/signin');
+    return null;
   }
 
   // Fetch appointment details
@@ -30,17 +32,20 @@ export default async function VideoCallPage({
 
   if (!appointment) {
     redirect('/appointments');
+    return null;
   }
+  const safeAppointment = appointment;
 
   // Check if user is allowed to join this call
-  const isDoctor = session.user.id === appointment.doctor.userId;
-  const isPatient = session.user.id === appointment.patient.userId;
+  const userId = user.id;
+  const isDoctor = userId === safeAppointment.doctor.userId;
+  const isPatient = userId === safeAppointment.patient.userId;
 
   if (!isDoctor && !isPatient) {
     redirect('/appointments');
   }
 
   return (
-    <MeetingRoomClient roomId={appointment.id} leavePath={`/appointments/${appointment.id}`} />
+    <MeetingRoomClient roomId={safeAppointment.id} leavePath={`/appointments/${safeAppointment.id}`} />
   );
 }
