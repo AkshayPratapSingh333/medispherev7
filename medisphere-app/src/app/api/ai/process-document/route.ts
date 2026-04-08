@@ -89,8 +89,11 @@ export async function POST(req: Request) {
             try {
               const page = await doc.getPage(i);
               const content = await page.getTextContent();
-              const strings = content.items
-                .map((it: { str?: string }) => ("str" in it ? it.str : ""))
+              const strings = (content.items as unknown[])
+                .map((it: unknown) => {
+                  const item = it as { str?: string };
+                  return item.str || "";
+                })
                 .filter(Boolean);
               pagesText.push(strings.join(" "));
             } catch (pageErr) {
