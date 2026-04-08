@@ -5,12 +5,25 @@ import { getSession } from "next-auth/react";
 import type { Session } from "next-auth";
 
 let socket: Socket | null = null;
+
+function resolveSignalingUrl() {
+  const envUrl =
+    process.env.NEXT_PUBLIC_SIGNALING_URL ||
+    process.env.NEXT_PUBLIC_SIGNALING_SERVER;
+
+  if (envUrl) return envUrl;
+
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+    // Production-safe fallback to hosted signaling service.
+    return "https://medispherev7.onrender.com";
+  }
+
+  return "http://localhost:4000";
+}
+
 export async function getSocket() {
   if (socket) return socket;
-  const url =
-    process.env.NEXT_PUBLIC_SIGNALING_URL ||
-    process.env.NEXT_PUBLIC_SIGNALING_SERVER ||
-    "http://localhost:4000";
+  const url = resolveSignalingUrl();
   console.log("🔌 Connecting to signaling server:", url);
   const session: Session | null = await getSession();
   const token = (session as Session & { sessionToken?: string; accessToken?: string })?.sessionToken || (session as Session & { sessionToken?: string; accessToken?: string })?.accessToken || "";

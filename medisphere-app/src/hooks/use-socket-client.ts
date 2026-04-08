@@ -4,6 +4,21 @@ import { useSession } from 'next-auth/react';
 
 let socketInstance: Socket | null = null;
 
+function getSignalingServerUrl() {
+  const envUrl =
+    process.env.NEXT_PUBLIC_SIGNALING_URL ||
+    process.env.NEXT_PUBLIC_SIGNALING_SERVER;
+
+  if (envUrl) return envUrl;
+
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    // Production-safe fallback to hosted signaling service.
+    return 'https://medispherev7.onrender.com';
+  }
+
+  return 'http://localhost:4000';
+}
+
 export function useSocketClient() {
   const { data: session } = useSession();
   const socketRef = useRef<Socket | null>(null);
@@ -12,7 +27,7 @@ export function useSocketClient() {
     // Only create socket on client side
     if (typeof window === 'undefined') return;
 
-    const signalingServer = process.env.NEXT_PUBLIC_SIGNALING_SERVER || 'http://localhost:4000';
+    const signalingServer = getSignalingServerUrl();
 
     if (!socketInstance) {
       socketInstance = io(signalingServer, {
