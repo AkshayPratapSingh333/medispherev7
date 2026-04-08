@@ -28,6 +28,24 @@ export default async function PatientProfilePage() {
     );
   }
 
+  const dto = {
+    id: patient.id,
+    user: patient.user
+      ? {
+          name: patient.user.name ?? null,
+          email: patient.user.email ?? null,
+        }
+      : null,
+    dateOfBirth: patient.dateOfBirth,
+    gender: patient.gender ?? null,
+    phoneNumber: patient.phoneNumber ?? null,
+    emergencyContact: patient.emergencyContact ?? null,
+    medicalHistory: patient.medicalHistory ?? null,
+    allergies: patient.allergies ?? null,
+    createdAt: patient.createdAt,
+    updatedAt: patient.updatedAt,
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50">
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
@@ -49,7 +67,7 @@ export default async function PatientProfilePage() {
           </div>
         </div>
 
-        <PatientProfile patient={patient as Record<string, unknown>} />
+        <PatientProfile patient={dto} />
       </div>
     </div>
   );
