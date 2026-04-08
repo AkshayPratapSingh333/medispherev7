@@ -15,11 +15,22 @@ function getPathKey(path?: string) {
   return path || "";
 }
 
-function createSocket(path?: string) {
-  const url =
+function resolveSignalingUrl() {
+  const envUrl =
     process.env.NEXT_PUBLIC_SIGNALING_URL ||
-    process.env.NEXT_PUBLIC_SIGNALING_SERVER ||
-    "http://localhost:4000";
+    process.env.NEXT_PUBLIC_SIGNALING_SERVER;
+
+  if (envUrl) return envUrl;
+
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+    return "https://medispherev7.onrender.com";
+  }
+
+  return "http://localhost:4000";
+}
+
+function createSocket(path?: string) {
+  const url = resolveSignalingUrl();
   const key = getPathKey(path);
   const existing = socketByPath.get(key);
   if (existing) return existing;

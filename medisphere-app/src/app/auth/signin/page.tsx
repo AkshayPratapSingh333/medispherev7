@@ -62,8 +62,8 @@ function SignInContent() {
         {err && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{err}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Input type="password" autoComplete="current-password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </Button>

@@ -71,9 +71,9 @@ export default function SignUpPage() {
         {err && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{err}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input type="password" placeholder="Password (min 6 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+          <Input placeholder="Full name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required />
+          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Input type="password" autoComplete="new-password" placeholder="Password (min 6 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
 
           <div className="flex items-center justify-between gap-3 text-sm">
             <label className="flex items-center gap-2">
