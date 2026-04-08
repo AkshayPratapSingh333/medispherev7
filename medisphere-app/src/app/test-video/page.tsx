@@ -130,7 +130,7 @@ export default function VideoTestPage() {
                 Single Browser Test
               </h3>
               <ol className="space-y-2 text-sm text-gray-700">
-                <li>1. Click "Create Test Room"</li>
+                <li>1. Click &quot;Create Test Room&quot;</li>
                 <li>2. Copy the URL from browser</li>
                 <li>3. Open in new tab/window (use incognito)</li>
                 <li>4. Test video/audio/chat between tabs</li>

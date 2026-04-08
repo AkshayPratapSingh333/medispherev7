@@ -33,7 +33,7 @@ export default async function DoctorProfilePage({ params }: Params) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50">
       <div className="max-w-6xl mx-auto px-6 py-8">
-        <DoctorProfile doctor={doctor as any} />
+        <DoctorProfile doctor={doctor as Record<string, unknown>} />
       </div>
     </div>
   );

@@ -165,8 +165,8 @@ export default function SimpleTest() {
           <h2 className="text-2xl font-semibold mb-4">📋 How to Test</h2>
           <ol className="list-decimal list-inside space-y-2">
             <li>Open this page in one browser window (Doctor)</li>
-            <li>Click "Start Camera & Mic" and allow permissions</li>
-            <li>Enter your name (e.g., "Doctor") and click "Join Room"</li>
+            <li>Click &quot;Start Camera &amp; Mic&quot; and allow permissions</li>
+            <li>Enter your name (e.g., &quot;Doctor&quot;) and click &quot;Join Room&quot;</li>
             <li>Open this page in another window/browser (Patient) - use Incognito or different browser</li>
             <li>Repeat steps 2-3 with a different name (e.g., &quot;Patient&quot;)</li>
             <li>You should see each other&apos;s video within 5 seconds</li>

@@ -31,7 +31,7 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
   const isAdmin = session.user.role === "ADMIN";
   if (!(found.isOwner || isAdmin)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const { patient, ...report } = found.r!;
+  const { ...report } = found.r!;
   return NextResponse.json(report);
 }
 

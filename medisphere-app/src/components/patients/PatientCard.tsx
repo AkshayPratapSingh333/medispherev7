@@ -1,4 +1,5 @@
 // components/patients/PatientCard.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export default function PatientCard({ patient }: { patient: any }) {
   return (
     <div className="group rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">

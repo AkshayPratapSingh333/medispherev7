@@ -1,4 +1,5 @@
 // components/reports/ReportViewer.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export default function ReportViewer({ report }: { report: any }) {
   const isImage = report.fileType?.startsWith("image/");
   const isPdf = report.fileType === "application/pdf";

@@ -1,4 +1,5 @@
 // components/doctors/DoctorList.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import useSWR from "swr";

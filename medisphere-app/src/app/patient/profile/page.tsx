@@ -49,7 +49,7 @@ export default async function PatientProfilePage() {
           </div>
         </div>
 
-        <PatientProfile patient={patient as any} />
+        <PatientProfile patient={patient as Record<string, unknown>} />
       </div>
     </div>
   );

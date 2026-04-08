@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import MedicineReminders from "./MedicineReminders";
 
 export default function MedicineCard({ med }: { med: any }) {

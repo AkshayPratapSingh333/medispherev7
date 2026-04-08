@@ -14,7 +14,7 @@ export default async function ReportViewPage({ params }: { params: { id: string 
   if (!report) return <div className="min-h-[50vh] grid place-items-center text-cyan-800">Report not found</div>;
 
   const isOwner = report.patient.userId === session.user.id;
-  const isAdmin = (session.user as any).role === "ADMIN";
+  const isAdmin = session.user.role === "ADMIN";
   if (!(isOwner || isAdmin)) return <div className="min-h-[50vh] grid place-items-center text-cyan-800">Forbidden</div>;
 
   const isImage = report.fileType.startsWith("image/");

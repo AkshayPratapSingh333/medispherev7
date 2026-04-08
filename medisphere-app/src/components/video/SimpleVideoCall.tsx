@@ -63,7 +63,7 @@ export function SimpleVideoCall({ appointmentId }: { appointmentId: string }) {
   // Track connection state changes
   useEffect(() => {
     console.log("🔌 Connection state:", { connectionState, iceConnectionState, isConnected });
-    setDebugInfo((prev) => `Connection: ${connectionState}\nICE: ${iceConnectionState}\nConnected: ${isConnected ? "Yes" : "No"}`);
+    setDebugInfo(`Connection: ${connectionState}\nICE: ${iceConnectionState}\nConnected: ${isConnected ? "Yes" : "No"}`);
   }, [connectionState, iceConnectionState, isConnected]);
 
   // Toggle mute handler

@@ -51,7 +51,7 @@ export function useBrowserSTT(opts?: { lang?: string }) {
     };
     try {
       recRef.current.start();
-    } catch (e) {
+    } catch {
       setListening(false);
       setError("Could not start microphone. Check browser permissions.");
     }

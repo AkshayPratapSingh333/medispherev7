@@ -111,7 +111,7 @@ export default async function DoctorDashboard() {
   const upcomingCount = doctor.appointments.length;
 
   // Tone for status
-  const statusTone =
+  const statusTone: "emerald" | "amber" | "cyan" =
     doctor.status === "APPROVED" ? "emerald" : doctor.status === "PENDING" ? "amber" : "cyan";
 
   return (
@@ -130,7 +130,7 @@ export default async function DoctorDashboard() {
                   Welcome, {doctor.user.name ?? session.user.email}
                 </p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Badge tone={statusTone as any}>Status: {doctor.status}</Badge>
+                  <Badge tone={statusTone}>Status: {doctor.status}</Badge>
                   {doctor.specialization ? (
                     <Badge>Specialization: {doctor.specialization}</Badge>
                   ) : null}

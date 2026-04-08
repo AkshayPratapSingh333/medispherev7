@@ -1,4 +1,5 @@
 // components/doctors/DoctorProfile.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import DoctorAvailability from "./DoctorAvailability";
 
 type DoctorProfileProps = {

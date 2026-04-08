@@ -14,8 +14,6 @@ function fmt(d: string | Date) {
 export default function AppointmentCard({ appointment }: { appointment: Record<string, unknown> }) {
   const doc = appointment.doctor as Record<string, unknown> | undefined;
   const docUser = (doc?.user as Record<string, unknown> | undefined) ?? {};
-  const pat = appointment.patient as Record<string, unknown> | undefined;
-  const patUser = (pat?.user as Record<string, unknown> | undefined) ?? {};
 
   return (
     <div className="group rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">

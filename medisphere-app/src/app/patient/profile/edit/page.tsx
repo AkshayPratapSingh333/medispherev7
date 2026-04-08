@@ -56,7 +56,7 @@ export default async function PatientProfileEditPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-cyan-100 p-6 shadow-sm">
-          <ProfileUpdateForm patient={dto as any} />
+          <ProfileUpdateForm patient={dto as Record<string, unknown>} />
         </div>
       </div>
     </div>

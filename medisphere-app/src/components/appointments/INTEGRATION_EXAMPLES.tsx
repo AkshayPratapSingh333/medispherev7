@@ -1,4 +1,5 @@
 // Example: Add QuickMeeting to your appointment detail page
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import QuickMeeting from "@/components/appointments/QuickMeeting";
 
@@ -30,32 +31,3 @@ export default function AppointmentDetail({ appointment }: { appointment: any })
 
 // Example: Direct navigation to meeting
 import { useRouter } from "next/navigation";
-
-function StartMeetingButton({ appointmentId }: { appointmentId: string }) {
-  const router = useRouter();
-  
-  return (
-    <button 
-      onClick={() => router.push(`/appointment/${appointmentId}`)}
-      className="px-6 py-3 bg-cyan-500 text-white rounded-lg"
-    >
-      Join Video Call
-    </button>
-  );
-}
-
-// Example: Create standalone meeting
-function CreateMeetingButton() {
-  const router = useRouter();
-  
-  const createMeeting = () => {
-    const meetingId = `meet-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    router.push(`/meet/${meetingId}`);
-  };
-  
-  return (
-    <button onClick={createMeeting} className="px-6 py-3 bg-emerald-500 text-white rounded-lg">
-      Create Meeting
-    </button>
-  );
-}

@@ -1,4 +1,5 @@
 // components/patient/PatientProfile.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type PatientProfileProps = {
   patient: {
     id: string;

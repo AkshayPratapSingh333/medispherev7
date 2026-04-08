@@ -1,4 +1,5 @@
 // types/doctor.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface DoctorDTO {
   id: string;
   userId: string;
