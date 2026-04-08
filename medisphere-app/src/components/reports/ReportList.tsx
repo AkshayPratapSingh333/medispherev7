@@ -1,5 +1,6 @@
 // components/reports/ReportList.tsx
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import useSWR, { mutate } from "swr";
 import Link from "next/link";

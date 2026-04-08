@@ -28,6 +28,3 @@ export default function AppointmentDetail({ appointment }: { appointment: any })
     </div>
   );
 }
-
-// Example: Direct navigation to meeting
-import { useRouter } from "next/navigation";
