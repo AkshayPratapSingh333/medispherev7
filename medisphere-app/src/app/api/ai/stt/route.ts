@@ -9,7 +9,7 @@ const client = new speech.SpeechClient();
 
 export async function POST(req: Request) {
   try {
-    const { audioBase64, mimeType = "audio/webm" } = await req.json();
+    const { audioBase64 } = await req.json();
     if (!audioBase64) {
       return NextResponse.json({ error: "Missing audio base64" }, { status: 400 });
     }
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const [response] = await client.recognize({
       audio: { content: audioBase64 },
       config: {
-        encoding: "WEBM_OPUS" as any,
+        encoding: speech.protos.google.cloud.speech.v1.RecognitionConfig.AudioEncoding.WEBM_OPUS,
         languageCode: "en-US",
       },
     });

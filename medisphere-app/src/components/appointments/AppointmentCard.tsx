@@ -11,9 +11,11 @@ function fmt(d: string | Date) {
   }
 }
 
-export default function AppointmentCard({ appointment }: { appointment: any }) {
-  const doc = appointment.doctor?.user;
-  const pat = appointment.patient?.user;
+export default function AppointmentCard({ appointment }: { appointment: Record<string, unknown> }) {
+  const doc = appointment.doctor as Record<string, unknown> | undefined;
+  const docUser = (doc?.user as Record<string, unknown> | undefined) ?? {};
+  const pat = appointment.patient as Record<string, unknown> | undefined;
+  const patUser = (pat?.user as Record<string, unknown> | undefined) ?? {};
 
   return (
     <div className="group rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
@@ -21,7 +23,7 @@ export default function AppointmentCard({ appointment }: { appointment: any }) {
         <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-200 to-emerald-200 ring-1 ring-cyan-200 overflow-hidden" />
         <div className="min-w-0 flex-1">
           <h3 className="font-semibold text-cyan-900 truncate">
-            {doc?.name ? `Dr. ${doc.name}` : "Doctor"}
+            {docUser?.name ? `Dr. ${docUser.name}` : "Doctor"}
           </h3>
           <div className="text-sm text-cyan-800/80">{fmt(appointment.scheduledAt)}</div>
           <div className="mt-1 text-xs">

@@ -1,4 +1,5 @@
 // components/appointments/AppointmentList.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import useSWR from "swr";
 import AppointmentCard from "./AppointmentCard";

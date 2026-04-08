@@ -1,3 +1,4 @@
+import Link from "next/link";
 import DoctorList from "../../components/doctors/DoctorList";
 
 export const metadata = {
@@ -22,18 +23,18 @@ export default function DoctorsPage() {
         </div>
 
         <div className="mb-6 flex flex-wrap items-center gap-3">
-          <a
+          <Link
             href="/appointments/book"
             className="inline-flex items-center rounded-lg bg-cyan-600/10 px-3 py-2 text-sm font-medium text-cyan-800 ring-1 ring-cyan-200 hover:bg-cyan-600/15"
           >
             Book Appointment
-          </a>
-          <a
+          </Link>
+          <Link
             href="/doctors/apply"
             className="inline-flex items-center rounded-lg bg-emerald-600/10 px-3 py-2 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200 hover:bg-emerald-600/15"
           >
             Apply as Doctor
-          </a>
+          </Link>
         </div>
       </section>
 

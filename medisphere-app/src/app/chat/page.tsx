@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { MessageSquare, Video, Users, Plus, Search } from "lucide-react";
+import { MessageSquare, Video, Users, Search } from "lucide-react";
 import { useSocket } from "@/hooks/use-socket";
 
 interface Appointment {

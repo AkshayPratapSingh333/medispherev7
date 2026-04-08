@@ -117,7 +117,7 @@ export default function Testimonials() {
               <div className={`absolute inset-0 bg-gradient-to-br ${testimonials[currentSlide].gradient} opacity-5`} />
 
               <div className="absolute top-4 left-4 text-6xl text-teal-200 font-serif">
-                "
+                &quot;
               </div>
 
               <div className="relative z-10">
@@ -129,7 +129,7 @@ export default function Testimonials() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.08, duration: 0.25 }}
                 >
-                  "{testimonials[currentSlide].text}"
+                  &quot;{testimonials[currentSlide].text}&quot;
                 </motion.p>
                 
                 <div className="flex items-center space-x-4">
@@ -230,7 +230,7 @@ export default function Testimonials() {
                   className="text-slate-600 italic mb-4 text-sm leading-relaxed group-hover:text-slate-700 transition-colors duration-300"
                   whileHover={{ x: 2 }}
                 >
-                  "{t.text.substring(0, 100)}..."
+                  &quot;{t.text.substring(0, 100)}&quot;...
                 </motion.p>
 
                 {/* User Info */}

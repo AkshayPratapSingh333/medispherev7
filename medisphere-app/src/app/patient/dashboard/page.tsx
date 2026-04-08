@@ -1,4 +1,5 @@
 // app/patient/dashboard/page.tsx
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 import prisma from "../../../lib/prisma";
@@ -106,7 +107,7 @@ export default async function PatientDashboard() {
           <div className="lg:col-span-2 bg-white rounded-2xl border border-cyan-100 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold text-cyan-900">Upcoming Appointments</h2>
-              <a href="/appointments/book" className="text-cyan-700 hover:underline text-sm">Book new</a>
+              <Link href="/appointments/book" className="text-cyan-700 hover:underline text-sm">Book new</Link>
             </div>
             {upcoming.length === 0 ? (
               <Empty message="No upcoming appointments" hint="Book a slot that fits your schedule." />
@@ -118,12 +119,12 @@ export default async function PatientDashboard() {
                       <div className="font-medium text-cyan-900">{fmt(a.scheduledAt)}</div>
                       <div className="text-sm text-cyan-700/70">Status: {a.status}</div>
                     </div>
-                    <a
+                    <Link
                       href={`/appointments/${a.id}`}
                       className="text-sm px-3 py-1.5 rounded-lg bg-cyan-600/10 text-cyan-700 ring-1 ring-cyan-200"
                     >
                       View
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -150,7 +151,7 @@ export default async function PatientDashboard() {
           <div className="bg-white rounded-2xl border border-cyan-100 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold text-cyan-900">Reports</h2>
-              <a href="/reports" className="text-cyan-700 hover:underline text-sm">View all</a>
+              <Link href="/reports" className="text-cyan-700 hover:underline text-sm">View all</Link>
             </div>
             {patient.reports.length === 0 ? (
               <Empty message="No reports uploaded" hint="Your diagnostic reports will appear here." />
@@ -169,12 +170,12 @@ export default async function PatientDashboard() {
               </ul>
             )}
 
-            <a
+            <Link
               href="/reports/upload"
               className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-white font-medium hover:from-cyan-600 hover:to-emerald-600"
             >
               Upload Report
-            </a>
+            </Link>
           </div>
         </div>
       </div>

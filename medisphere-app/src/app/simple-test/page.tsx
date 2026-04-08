@@ -96,7 +96,7 @@ export default function SimpleTest() {
                 disabled={!userName}
                 className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-6 py-3 rounded-lg font-semibold"
               >
-                🚀 Join Room "{roomId}"
+                🚀 Join Room &quot;{roomId}&quot;
               </button>
             </div>
           ) : (
@@ -168,21 +168,21 @@ export default function SimpleTest() {
             <li>Click "Start Camera & Mic" and allow permissions</li>
             <li>Enter your name (e.g., "Doctor") and click "Join Room"</li>
             <li>Open this page in another window/browser (Patient) - use Incognito or different browser</li>
-            <li>Repeat steps 2-3 with a different name (e.g., "Patient")</li>
-            <li>You should see each other's video within 5 seconds</li>
+            <li>Repeat steps 2-3 with a different name (e.g., &quot;Patient&quot;)</li>
+            <li>You should see each other&apos;s video within 5 seconds</li>
             <li><strong>OPEN BROWSER CONSOLE (F12)</strong> to see detailed connection logs</li>
           </ol>
           <div className="mt-4 p-4 bg-yellow-950 rounded">
             <strong>What to look for in console:</strong>
             <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>🚀 "Joining room..." messages</li>
-              <li>🔥 "Initiating connection to..." messages</li>
-              <li>🤝 "Negotiation needed" messages</li>
-              <li>📤 "Sending offer" messages</li>
-              <li>📥 "Received offer/answer" messages</li>
-              <li>🧊 "Added ICE candidate" messages</li>
-              <li>📹 "Received remote track" messages</li>
-              <li>🔌 "Connection state" changes (should end at "connected")</li>
+              <li>🚀 &quot;Joining room...&quot; messages</li>
+              <li>🔥 &quot;Initiating connection to...&quot; messages</li>
+              <li>🤝 &quot;Negotiation needed&quot; messages</li>
+              <li>📤 &quot;Sending offer&quot; messages</li>
+              <li>📥 &quot;Received offer/answer&quot; messages</li>
+              <li>🧊 &quot;Added ICE candidate&quot; messages</li>
+              <li>📹 &quot;Received remote track&quot; messages</li>
+              <li>🔌 &quot;Connection state&quot; changes (should end at &quot;connected&quot;)</li>
             </ul>
           </div>
         </div>

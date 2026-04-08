@@ -101,19 +101,19 @@ export default function ConnectionTestPage() {
           <ol className="space-y-3 text-sm text-gray-800">
             <li className="flex gap-2">
               <span className="font-bold text-yellow-600">1.</span>
-              <span>Click <strong>"Join as Doctor"</strong> button (opens in current tab)</span>
+              <span>Click <strong>&quot;Join as Doctor&quot;</strong> button (opens in current tab)</span>
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-yellow-600">2.</span>
-              <span>Allow camera & microphone permissions</span>
+              <span>Allow camera &amp; microphone permissions</span>
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-yellow-600">3.</span>
-              <span>Click <strong>"Join as Patient"</strong> button (opens in new tab/window)</span>
+              <span>Click <strong>&quot;Join as Patient&quot;</strong> button (opens in new tab/window)</span>
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-yellow-600">4.</span>
-              <span>Allow camera & microphone on second window</span>
+              <span>Allow camera &amp; microphone on second window</span>
             </li>
             <li className="flex gap-2">
               <span className="font-bold text-yellow-600">5.</span>
@@ -131,10 +131,10 @@ export default function ConnectionTestPage() {
           <h3 className="font-bold text-gray-900 mb-3">✅ Expected Results:</h3>
           <ul className="space-y-2 text-sm text-gray-800">
             <li>✓ Both windows show 2 video tiles (yours + other person)</li>
-            <li>✓ Diagnostics shows "Socket Connected: ✓ Yes"</li>
-            <li>✓ Diagnostics shows "Room Joined: ✓ Yes"</li>
-            <li>✓ Diagnostics shows "Peer Connections: 1"</li>
-            <li>✓ Peer state shows "connected" (green)</li>
+            <li>✓ Diagnostics shows &quot;Socket Connected: ✓ Yes&quot;</li>
+            <li>✓ Diagnostics shows &quot;Room Joined: ✓ Yes&quot;</li>
+            <li>✓ Diagnostics shows &quot;Peer Connections: 1&quot;</li>
+            <li>✓ Peer state shows &quot;connected&quot; (green)</li>
             <li>✓ Chat messages sync between both windows</li>
           </ul>
         </div>

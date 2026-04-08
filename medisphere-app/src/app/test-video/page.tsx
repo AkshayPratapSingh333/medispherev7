@@ -61,7 +61,7 @@ export default function VideoTestPage() {
               Create Test Room
             </button>
             <p className="text-sm text-gray-500 mt-3 text-center">
-              You'll get a unique URL to share
+              You&apos;ll get a unique URL to share
             </p>
           </div>
 

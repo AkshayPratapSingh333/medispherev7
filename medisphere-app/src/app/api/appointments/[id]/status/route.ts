@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../auth/[...nextauth]/route";
 
 const ALLOWED = ["PENDING","CONFIRMED","COMPLETED","CANCELLED","RESCHEDULED"] as const;
-type Status = typeof ALLOWED[number];
 
 export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
@@ -24,7 +23,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
   const uid = session.user.id;
   const isDoctorOwner = appt.doctor.userId === uid;
   const isPatientOwner = appt.patient.userId === uid;
-  const isAdmin = (session.user as any).role === "ADMIN";
+  const isAdmin = session.user.role === "ADMIN";
 
   // Authorization rules
   if (isDoctorOwner || isAdmin) {

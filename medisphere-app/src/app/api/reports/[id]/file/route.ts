@@ -25,7 +25,7 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
   if (!report) return new NextResponse("Not found", { status: 404 });
 
   const isOwner = report.patient.userId === session.user.id;
-  const isAdmin = (session.user as any).role === "ADMIN";
+  const isAdmin = session.user.role === "ADMIN";
   if (!(isOwner || isAdmin)) return new NextResponse("Forbidden", { status: 403 });
 
   const headers = new Headers();

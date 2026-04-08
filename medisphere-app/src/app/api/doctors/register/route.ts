@@ -67,10 +67,11 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ doctor });
-  } catch (err: any) {
-    if (err.code === "P2002") {
+  } catch (err: unknown) {
+    const errorObj = err as { code?: string; meta?: { target?: string[] } } | undefined;
+    if (errorObj?.code === "P2002") {
       return NextResponse.json(
-        { error: `Duplicate value for unique field: ${err.meta?.target}` },
+        { error: `Duplicate value for unique field: ${errorObj.meta?.target}` },
         { status: 409 }
       );
     }

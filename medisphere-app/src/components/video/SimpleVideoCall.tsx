@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export function SimpleVideoCall({ appointmentId }: { appointmentId: string }) {
   const { data: session } = useSession();
-  const { emit, on } = useSocket();
+  const { emit } = useSocket();
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string>("");

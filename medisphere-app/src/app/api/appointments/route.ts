@@ -9,7 +9,7 @@ export async function GET() {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const uid = session.user.id;
-  const role = (session.user as any).role as "PATIENT" | "DOCTOR" | "ADMIN" | undefined;
+  const role = session.user.role;
 
   const where =
     role === "DOCTOR"

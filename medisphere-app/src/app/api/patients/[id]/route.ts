@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
+import type { Session } from "next-auth";
 
 type UpdatableFields = {
   dateOfBirth?: string | null;
@@ -25,7 +26,7 @@ function parseDOB(v: unknown): Date | null {
   return isNaN(d.getTime()) ? null : d;
 }
 
-function pickAndCoerce(body: any): UpdatableFields {
+function pickAndCoerce(body: Record<string, unknown>): UpdatableFields {
   const allowed: UpdatableFields = {};
   if ("dateOfBirth" in body) allowed.dateOfBirth = body.dateOfBirth as string | null;
   if ("gender" in body) allowed.gender = normalizeString(body.gender);
@@ -38,14 +39,14 @@ function pickAndCoerce(body: any): UpdatableFields {
   const dob = parseDOB(allowed.dateOfBirth ?? null);
   return {
     ...allowed,
-    dateOfBirth: dob ? (dob.toISOString() as unknown as any) : null, // Prisma accepts Date; we’ll pass Date below
+    dateOfBirth: dob ? dob.toISOString() : null, // Prisma accepts Date; we'll pass Date below
   };
 }
 
-async function ensureOwnerOrAdmin(patientId: string, session: any) {
+async function ensureOwnerOrAdmin(patientId: string, session: Session | null) {
   if (!session?.user?.id) return { ok: false, status: 401 as const, msg: "Unauthorized" };
 
-  const me = { id: session.user.id, role: (session.user as any).role as string | undefined };
+  const me = { id: session.user.id, role: session.user.role };
   // Admins allowed
   if (me.role === "ADMIN") return { ok: true, me };
 
@@ -95,7 +96,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     const data = pickAndCoerce(raw);
 
     // Build Prisma update data (Date object for DOB)
-    const updateData: any = {
+    const updateData: Partial<UpdatableFields & { dateOfBirth: Date | null }> = {
       gender: data.gender ?? null,
       phoneNumber: data.phoneNumber ?? null,
       emergencyContact: data.emergencyContact ?? null,
@@ -114,12 +115,13 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     });
 
     return NextResponse.json(updated);
-  } catch (err: any) {
+  } catch (err: unknown) {
     // Known Prisma errors
-    if (err?.code === "P2025") {
+    const errorObj = err as { code?: string } | undefined;
+    if (errorObj?.code === "P2025") {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
-    if (err?.code === "P2002") {
+    if (errorObj?.code === "P2002") {
       return NextResponse.json({ error: "Unique constraint violated" }, { status: 409 });
     }
     console.error("PUT /patients/[id] error", err);

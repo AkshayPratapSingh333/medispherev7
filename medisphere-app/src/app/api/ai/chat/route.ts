@@ -51,7 +51,11 @@ Guidelines:
 Important: This is for educational purposes only and does not replace professional medical advice.`;
 
     // Convert messages to Gemini format
-    const geminiMessages = messages.map((msg: any) => ({
+    interface Message {
+      role: string;
+      content: string;
+    }
+    const geminiMessages = messages.map((msg: Message) => ({
       role: msg.role === "assistant" ? "model" : "user",
       parts: [{ text: msg.content }],
     }));
@@ -81,7 +85,7 @@ Important: This is for educational purposes only and does not replace profession
 
       // Add image context
       contents[lastUserMsgIndex].parts.unshift({
-        text: `[Context: ${images.length} image(s) uploaded: ${images.map((i: any) => i.name).join(", ")}]`,
+        text: `[Context: ${images.length} image(s) uploaded: ${images.map((i: { name: string }) => i.name).join(", ")}]`,
       });
       
       contents[lastUserMsgIndex].parts.push(...imageParts);

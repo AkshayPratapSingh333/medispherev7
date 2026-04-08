@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { appointmentId, expiresIn } = await req.json();
+    const { appointmentId } = await req.json();
 
     if (!appointmentId) {
       return NextResponse.json(

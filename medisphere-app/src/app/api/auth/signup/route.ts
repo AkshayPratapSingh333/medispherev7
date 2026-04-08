@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ user });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("POST /api/auth/signup error:", err);
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }

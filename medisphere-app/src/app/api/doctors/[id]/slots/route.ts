@@ -11,7 +11,7 @@ export async function GET(_: Request, context: { params: Promise<{ id: string }>
     });
     if (!doctor) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(doctor.availableSchedule);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

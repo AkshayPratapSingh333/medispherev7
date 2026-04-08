@@ -1,4 +1,5 @@
 // components/appointments/AppointmentDetails.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 function fmt(d: string | Date) {
   const date = typeof d === "string" ? new Date(d) : d;
   try {

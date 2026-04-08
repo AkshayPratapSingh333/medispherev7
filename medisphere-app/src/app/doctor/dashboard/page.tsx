@@ -253,12 +253,3 @@ export default async function DoctorDashboard() {
     </div>
   );
 }
-
-function EmptyState({ message, hint }: { message: string; hint?: string }) {
-  return (
-    <div className="rounded-xl border border-cyan-100 p-6 text-center">
-      <div className="text-cyan-800 font-medium">{message}</div>
-      {hint && <div className="text-sm text-cyan-700/70">{hint}</div>}
-    </div>
-  );
-}

@@ -37,7 +37,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
   if (!appt) return NextResponse.json({ error: "Appointment not found" }, { status: 404 });
 
   const uid = session.user.id;
-  const role = (session.user as any).role as "ADMIN" | "DOCTOR" | "PATIENT" | undefined;
+  const role = session.user.role;
 
   const isDoctorOwner = appt.doctor.userId === uid;
   const isPatientOwner = appt.patient.userId === uid;

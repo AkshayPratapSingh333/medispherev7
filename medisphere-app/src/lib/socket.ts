@@ -2,6 +2,7 @@
 "use client";
 import { io, Socket } from "socket.io-client";
 import { getSession } from "next-auth/react";
+import type { Session } from "next-auth";
 
 let socket: Socket | null = null;
 export async function getSocket() {
@@ -11,8 +12,8 @@ export async function getSocket() {
     process.env.NEXT_PUBLIC_SIGNALING_SERVER ||
     "http://localhost:4000";
   console.log("🔌 Connecting to signaling server:", url);
-  const session = await getSession();
-  const token = (session as any)?.sessionToken || (session as any)?.accessToken || "";
+  const session: Session | null = await getSession();
+  const token = (session as Session & { sessionToken?: string; accessToken?: string })?.sessionToken || (session as Session & { sessionToken?: string; accessToken?: string })?.accessToken || "";
   socket = io(url, { 
     transports: ["polling", "websocket"],
     upgrade: true,

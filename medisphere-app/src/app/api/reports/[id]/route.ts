@@ -28,7 +28,7 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
   const found = await getOwnedOrAdmin(id, session.user.id);
   if (!found) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const isAdmin = (session.user as any).role === "ADMIN";
+  const isAdmin = session.user.role === "ADMIN";
   if (!(found.isOwner || isAdmin)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { patient, ...report } = found.r!;
@@ -51,7 +51,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 
   const found = await getOwnedOrAdmin(id, session.user.id);
   if (!found) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const isAdmin = (session.user as any).role === "ADMIN";
+  const isAdmin = session.user.role === "ADMIN";
   if (!(found.isOwner || isAdmin)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const updated = await prisma.report.update({
@@ -82,7 +82,7 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
   if (!found) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const isOwner = found.patient.userId === session.user.id;
-  const isAdmin = (session.user as any).role === "ADMIN";
+  const isAdmin = session.user.role === "ADMIN";
   if (!(isOwner || isAdmin)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   await prisma.report.delete({ where: { id } });

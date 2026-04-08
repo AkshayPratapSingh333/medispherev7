@@ -51,9 +51,10 @@ export async function POST(req: Request) {
         const { default: pdfParse } = await import("pdf-parse");
         const data = await pdfParse(buffer);
         extractedText = data.text || "";
-      } catch (err: any) {
-        const msg = String(err?.message || err);
-        const details = String((err as any)?.details || "");
+      } catch (err: unknown) {
+        const errObj = err as { message?: string; details?: string } | undefined;
+        const msg = String(errObj?.message || err);
+        const details = String(errObj?.details || "");
 
         // Heuristics: typical pdf.js structural failures
         const isXrefFailure =
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
           });
           const doc = await loadingTask.promise;
 
-          let pagesText: string[] = [];
+          const pagesText: string[] = [];
           const numPages = doc.numPages;
 
           for (let i = 1; i <= numPages; i++) {
@@ -89,7 +90,7 @@ export async function POST(req: Request) {
               const page = await doc.getPage(i);
               const content = await page.getTextContent();
               const strings = content.items
-                .map((it: any) => ("str" in it ? it.str : ""))
+                .map((it: { str?: string }) => ("str" in it ? it.str : ""))
                 .filter(Boolean);
               pagesText.push(strings.join(" "));
             } catch (pageErr) {
@@ -99,7 +100,7 @@ export async function POST(req: Request) {
           }
 
           extractedText = pagesText.join("\n\n").trim();
-        } catch (fallbackErr: any) {
+        } catch (fallbackErr: unknown) {
           console.error("pdfjs-dist fallback failed:", fallbackErr);
           // Return specific guidance for broken xref cases
           return NextResponse.json(
