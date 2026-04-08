@@ -96,7 +96,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     const data = pickAndCoerce(raw);
 
     // Build Prisma update data (Date object for DOB)
-    const updateData: Partial<UpdatableFields & { dateOfBirth: Date | null }> = {
+    const updateData: Partial<Omit<UpdatableFields, "dateOfBirth"> & { dateOfBirth: Date | null }> = {
       gender: data.gender ?? null,
       phoneNumber: data.phoneNumber ?? null,
       emergencyContact: data.emergencyContact ?? null,
@@ -106,7 +106,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     if ("dateOfBirth" in raw) {
       // preserve explicit clear vs untouched
       const d = parseDOB(raw.dateOfBirth);
-      updateData.dateOfBirth = d; // Date | null
+      updateData.dateOfBirth = d;
     }
 
     const updated = await prisma.patient.update({
