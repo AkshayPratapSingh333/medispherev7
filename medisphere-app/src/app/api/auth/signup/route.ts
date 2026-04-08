@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -33,6 +34,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ user });
   } catch (err: unknown) {
     console.error("POST /api/auth/signup error:", err);
+
+    if (err instanceof Prisma.PrismaClientInitializationError) {
+      return NextResponse.json(
+        { error: "Database is unavailable. Please try again in a moment." },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 }

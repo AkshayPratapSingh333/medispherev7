@@ -16,22 +16,27 @@ const providers: NextAuthOptions["providers"] = [
       password: { label: "Password", type: "password" },
     },
     async authorize(credentials) {
-      if (!credentials?.email || !credentials?.password) return null;
+      try {
+        if (!credentials?.email || !credentials?.password) return null;
 
-      const user = await prisma.user.findUnique({ where: { email: credentials.email } });
-      if (!user || !user.password) return null;
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
+        if (!user || !user.password) return null;
 
-      const valid = await bcrypt.compare(credentials.password, user.password);
-      if (!valid) return null;
+        const valid = await bcrypt.compare(credentials.password, user.password);
+        if (!valid) return null;
 
-      // Return a plain object (not Prisma model proxy)
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name ?? "",
-        image: user.image ?? null,
-        role: user.role,
-      };
+        // Return a plain object (not Prisma model proxy)
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name ?? "",
+          image: user.image ?? null,
+          role: user.role,
+        };
+      } catch (error) {
+        console.error("NextAuth credentials authorize failed:", error);
+        return null;
+      }
     },
   }),
 ];
@@ -59,16 +64,21 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (token?.email && (!token?.role || !token?.id)) {
-        // Read role/id from DB without creating users here.
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email as string },
-          select: { id: true, role: true, name: true, email: true },
-        });
-        if (dbUser) {
-          token.id = dbUser.id;
-          token.role = dbUser.role;
-          token.name = dbUser.name ?? token.name;
-          token.email = dbUser.email;
+        try {
+          // Read role/id from DB without creating users here.
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email as string },
+            select: { id: true, role: true, name: true, email: true },
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.role = dbUser.role;
+            token.name = dbUser.name ?? token.name;
+            token.email = dbUser.email;
+          }
+        } catch (error) {
+          // Avoid throwing from auth callbacks; NextAuth converts throws to error=Callback redirects.
+          console.error("NextAuth jwt callback DB lookup failed:", error);
         }
       }
 
@@ -85,6 +95,20 @@ export const authOptions: NextAuthOptions = {
         session.user.email = (token.email as string) ?? session.user.email ?? "";
       }
       return session;
+    },
+
+    // Keep redirects on same-origin paths to avoid callback URL validation failures.
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+
+      try {
+        const target = new URL(url);
+        if (target.origin === baseUrl) return url;
+      } catch {
+        // Fall back to base URL when callback URL is malformed.
+      }
+
+      return baseUrl;
     },
   },
   pages: {
