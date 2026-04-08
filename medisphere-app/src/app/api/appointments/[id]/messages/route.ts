@@ -19,9 +19,7 @@ async function ensureMembership(appointmentId: string, userId: string) {
   return { ok: isMember, status: isMember ? 200 : (403 as const) };
 }
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
-  // `params` in Next.js App Router can be a thenable proxy in some environments.
-  // Await it before accessing properties to satisfy the runtime requirement.
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const session = await getServerSession(authOptions);
@@ -38,7 +36,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   return NextResponse.json(messages);
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
