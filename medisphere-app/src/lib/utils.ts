@@ -30,14 +30,14 @@ export function formatDate(d: Date | string | number) {
   }).format(date);
 }
 
-export function throttle<T extends (...args: any[]) => void>(fn: T, wait = 200) {
+export function throttle<T extends (...args: unknown[]) => void>(fn: T, wait = 200) {
   let last = 0;
-  let timer: any;
+  let timer: NodeJS.Timeout | null = null;
   return (...args: Parameters<T>) => {
     const now = Date.now();
     const remaining = wait - (now - last);
     if (remaining <= 0) {
-      clearTimeout(timer);
+      if (timer) clearTimeout(timer);
       last = now;
       fn(...args);
     } else if (!timer) {
