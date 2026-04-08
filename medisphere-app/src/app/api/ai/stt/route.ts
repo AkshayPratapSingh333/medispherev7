@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const [response] = await client.recognize({
       audio: { content: audioBase64 },
       config: {
-        encoding: speech.protos.google.cloud.speech.v1.RecognitionConfig.AudioEncoding.WEBM_OPUS,
+        encoding: 9, // WEBM_OPUS = 9
         languageCode: "en-US",
       },
     });
