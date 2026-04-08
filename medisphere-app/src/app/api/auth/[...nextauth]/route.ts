@@ -52,63 +52,34 @@ export const authOptions: NextAuthOptions = {
   providers,
 
   callbacks: {
-    // Runs on sign-in and on every request to refresh token
+    // Keep jwt callback read-only: adapter handles user/account creation.
     async jwt({ token, user }) {
-      // On first sign in (user present)
       if (user) {
-        const email = typeof user.email === "string" ? user.email : null;
-        const incomingRole =
-          "role" in user && typeof user.role === "string" ? user.role : "PATIENT";
+        token.id = (user.id as string | undefined) ?? (token.sub as string | undefined) ?? token.id;
+      }
 
-        // Ensure DB has a user with a role (Google users may not exist yet).
-        // Guard against missing email/provider edge-cases to avoid callback crashes.
-        if (email) {
-          try {
-            const dbUser =
-              (await prisma.user.findUnique({ where: { email } })) ??
-              (await prisma.user.create({
-                data: {
-                  email,
-                  name: user.name ?? "",
-                  image: user.image ?? null,
-                  role: incomingRole,
-                },
-              }));
-
-            token.id = dbUser.id;
-            token.role = dbUser.role;
-            token.name = dbUser.name;
-            token.email = dbUser.email;
-          } catch (e) {
-            // Do not hard-fail OAuth callback; keep token populated from provider payload.
-            console.error("NextAuth jwt callback DB sync failed:", e);
-            token.role = incomingRole;
-            token.name = user.name ?? token.name;
-            token.email = email;
-          }
-        } else {
-          token.role = incomingRole;
-          token.name = user.name ?? token.name;
-        }
-      } else if (token?.email && !token?.role) {
-        // Harden: ensure role is present if token came from older session
+      if (token?.email && (!token?.role || !token?.id)) {
+        // Read role/id from DB without creating users here.
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email as string },
-          select: { id: true, role: true, name: true },
+          select: { id: true, role: true, name: true, email: true },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.name = dbUser.name ?? token.name;
+          token.email = dbUser.email;
         }
       }
+
+      token.role = (token.role as "ADMIN" | "DOCTOR" | "PATIENT" | undefined) ?? "PATIENT";
       return token;
     },
 
     // Controls what ends up in useSession()
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
+        session.user.id = (token.id as string) ?? (token.sub as string) ?? "";
         session.user.role = (token.role as "ADMIN" | "DOCTOR" | "PATIENT") ?? "PATIENT";
         session.user.name = (token.name as string) ?? session.user.name ?? "";
         session.user.email = (token.email as string) ?? session.user.email ?? "";
