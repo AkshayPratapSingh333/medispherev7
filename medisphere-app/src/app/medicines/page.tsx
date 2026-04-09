@@ -12,7 +12,11 @@ type MedicationItem = {
 };
 
 async function fetchMeds(): Promise<MedicationItem[]> {
-  const res = await fetch("/api/medicines", { cache: "no-store" });
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  const host = process.env.VERCEL_URL || process.env.NEXTAUTH_URL || 'localhost:3000';
+  const baseUrl = `${protocol}://${host}`;
+  
+  const res = await fetch(`${baseUrl}/api/medicines`, { cache: "no-store" });
   if (!res.ok) return [];
   return res.json();
 }
