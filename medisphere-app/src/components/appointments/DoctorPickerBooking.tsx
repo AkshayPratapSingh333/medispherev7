@@ -52,21 +52,21 @@ export default function DoctorPickerBooking({
       {/* Left: doctor list & search */}
       <div className="lg:col-span-2 space-y-4">
         {/* Search + count */}
-        <div className="rounded-2xl border border-cyan-100 bg-white p-4 shadow-sm">
+        <div className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
           <div className="flex items-center gap-3">
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search by name or specialization…"
-              className="flex-1 rounded-lg border border-cyan-200/70 bg-white/90 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 placeholder:text-cyan-600/50"
+              className="flex-1 rounded-lg border border-emerald-200/70 bg-white/90 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-300/70 placeholder:text-emerald-600/50"
             />
-            <span className="text-sm text-cyan-700/70">{filtered.length} found</span>
+            <span className="text-sm text-emerald-700/70">{filtered.length} found</span>
           </div>
         </div>
 
         {/* Doctors grid */}
         {filtered.length === 0 ? (
-          <div className="rounded-2xl border border-cyan-100 bg-white p-8 text-center text-cyan-800">
+          <div className="rounded-2xl border border-emerald-100 bg-white p-8 text-center text-emerald-800">
             No doctors match your search.
           </div>
         ) : (
@@ -81,23 +81,23 @@ export default function DoctorPickerBooking({
                     "text-left group rounded-2xl border p-4 shadow-sm transition-all",
                     active
                       ? "border-emerald-300 bg-emerald-50/60"
-                      : "border-cyan-100 bg-white hover:shadow-md",
+                      : "border-emerald-100 bg-white hover:shadow-md",
                   ].join(" ")}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-200 to-emerald-200 ring-1 ring-cyan-200 overflow-hidden" />
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-200 to-emerald-300 ring-1 ring-emerald-200 overflow-hidden" />
                     <div className="min-w-0">
-                      <div className="font-semibold text-cyan-900 truncate">
+                      <div className="font-semibold text-emerald-900 truncate">
                         {d.user?.name ? `Dr. ${d.user.name}` : "Doctor"}
                       </div>
-                      <div className="text-sm text-cyan-800/80 truncate">{d.specialization}</div>
+                      <div className="text-sm text-emerald-800/80 truncate">{d.specialization}</div>
                       <div className="mt-1 flex items-center gap-2 text-xs">
                         <span className="rounded-md bg-emerald-600/10 px-2 py-0.5 text-emerald-800 ring-1 ring-emerald-200">
                           {inr(d.consultationFee)}
                         </span>
                         <span className="text-amber-600">
                           ⭐ {Number(d.rating ?? 0).toFixed(1)}
-                          <span className="text-cyan-700/60"> ({d.totalRatings ?? 0})</span>
+                          <span className="text-emerald-700/60"> ({d.totalRatings ?? 0})</span>
                         </span>
                       </div>
                     </div>
@@ -117,21 +117,21 @@ export default function DoctorPickerBooking({
       {/* Right: booking form for selected doctor */}
       <div className="lg:col-span-1">
         {!doc ? (
-          <div className="rounded-2xl border border-cyan-100 bg-white p-6 shadow-sm">
-            <div className="text-cyan-900 font-semibold mb-1">Select a doctor</div>
-            <p className="text-sm text-cyan-800/80">
+          <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+            <div className="text-emerald-900 font-semibold mb-1">Select a doctor</div>
+            <p className="text-sm text-emerald-800/80">
               Pick a doctor from the list to continue booking.
             </p>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
-              <div className="font-semibold text-cyan-900">Booking with</div>
-              <div className="mt-0.5 text-cyan-900">
+            <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+              <div className="font-semibold text-emerald-900">Booking with</div>
+              <div className="mt-0.5 text-emerald-900">
                 Dr. {doc.user?.name ?? "Doctor"}
               </div>
-              <div className="text-sm text-cyan-800/80">{doc.specialization}</div>
-              <div className="mt-1 text-sm text-cyan-800/80">{inr(doc.consultationFee)}</div>
+              <div className="text-sm text-emerald-800/80">{doc.specialization}</div>
+              <div className="mt-1 text-sm text-emerald-800/80">{inr(doc.consultationFee)}</div>
             </div>
 
             <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">

@@ -141,14 +141,14 @@ export default function AIChat() {
   }
 
   return (
-    <div className="rounded-2xl border border-cyan-100 bg-white shadow-sm">
+    <div className="rounded-2xl border border-emerald-100 bg-white shadow-sm">
       {hasContext && (
-        <div className="border-b border-cyan-100 p-3 bg-gradient-to-r from-cyan-50 to-emerald-50">
+        <div className="border-b border-emerald-100 p-3 bg-gradient-to-r from-emerald-50 to-emerald-50">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-sm text-cyan-800">
+            <div className="text-sm text-emerald-800">
               <span className="font-medium">Context:</span>{" "}
               {uploadedDocs.length > 0 && (
-                <span className="mr-2 inline-flex items-center rounded-full bg-cyan-600/10 px-2 py-0.5 text-xs text-cyan-900 ring-1 ring-cyan-200">
+                <span className="mr-2 inline-flex items-center rounded-full bg-emerald-600/10 px-2 py-0.5 text-xs text-emerald-900 ring-1 ring-emerald-200">
                   {uploadedDocs.length} doc
                   {uploadedDocs.length > 1 ? "s" : ""}
                 </span>
@@ -178,8 +178,8 @@ export default function AIChat() {
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
                   mine
-                    ? "bg-gradient-to-r from-cyan-500 to-emerald-500 text-white"
-                    : "bg-gradient-to-r from-cyan-50 to-emerald-50 text-cyan-900 ring-1 ring-cyan-100"
+                    ? "bg-gradient-to-r from-emerald-600 to-emerald-700 text-white"
+                    : "bg-gradient-to-r from-stone-100 to-emerald-50 text-emerald-900 ring-1 ring-emerald-100"
                 }`}
               >
                 <div className={mine ? "prose prose-sm prose-invert max-w-none" : "prose prose-sm max-w-none"}>
@@ -191,7 +191,7 @@ export default function AIChat() {
         })}
         {busy && (
           <div className="flex justify-start">
-            <div className="rounded-2xl px-4 py-2 bg-cyan-100 text-cyan-700 text-sm">
+            <div className="rounded-2xl px-4 py-2 bg-emerald-100 text-emerald-700 text-sm">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
                   <span className="animate-bounce" style={{ animationDelay: "0ms" }}>
@@ -211,10 +211,10 @@ export default function AIChat() {
         )}
       </div>
 
-      <div className="border-t border-cyan-100 p-3">
+      <div className="border-t border-emerald-100 p-3">
         {hasContext && (
-          <div className="mb-3 rounded-xl border border-cyan-100 bg-cyan-50/50 p-2">
-            <div className="mb-2 text-xs font-medium text-cyan-800">Attached in chat</div>
+          <div className="mb-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-2">
+            <div className="mb-2 text-xs font-medium text-emerald-800">Attached in chat</div>
             <div className="flex flex-wrap gap-2">
               {uploadedImages.map((img, idx) => (
                 <div
@@ -278,7 +278,7 @@ export default function AIChat() {
           />
           <label
             htmlFor="file-upload"
-            className="cursor-pointer rounded-xl border border-cyan-200 bg-white/90 px-3 py-2 text-sm text-cyan-700 hover:bg-cyan-50 transition-colors"
+            className="cursor-pointer rounded-xl border border-emerald-200 bg-white/90 px-3 py-2 text-sm text-emerald-700 hover:bg-emerald-50 transition-colors"
           >
             📎 Attach Image/Doc
           </label>
@@ -286,7 +286,7 @@ export default function AIChat() {
 
         <div className="flex gap-2">
           <input
-            className="flex-1 rounded-xl border border-cyan-200/70 bg-white/90 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 text-sm"
+            className="flex-1 rounded-xl border border-emerald-200/70 bg-white/90 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-300/70 text-sm"
             placeholder="Ask your question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -295,7 +295,7 @@ export default function AIChat() {
           <button
             onClick={send}
             disabled={busy || !input.trim()}
-            className="rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-4 py-2.5 text-white font-medium disabled:opacity-60 hover:opacity-90 transition-opacity"
+            className="rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-white font-medium disabled:opacity-60 hover:opacity-90 transition-opacity"
           >
             Send
           </button>

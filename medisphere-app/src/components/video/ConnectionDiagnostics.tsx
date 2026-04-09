@@ -52,7 +52,7 @@ export default function ConnectionDiagnostics({ socket, roomId, peersRef }: Diag
     return (
       <button
         onClick={() => setShowDiagnostics(true)}
-        className="fixed bottom-4 left-4 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg hover:bg-gray-700 transition z-50"
+        className="fixed bottom-4 left-4 px-3 py-2 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 transition z-50"
       >
         🔧 Diagnostics
       </button>
@@ -137,7 +137,7 @@ export default function ConnectionDiagnostics({ socket, roomId, peersRef }: Diag
               console.log("Peers:", Array.from(peersRef.current.entries()));
               alert("Check browser console for detailed diagnostics");
             }}
-            className="w-full py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition text-xs"
+            className="w-full py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-xs"
           >
             Log to Console
           </button>

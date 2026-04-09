@@ -12,7 +12,7 @@ type MedicationItem = {
 };
 
 async function fetchMeds(): Promise<MedicationItem[]> {
-  const res = await fetch("http://localhost:3000/api/medicines", { cache: "no-store" });
+  const res = await fetch("/api/medicines", { cache: "no-store" });
   if (!res.ok) return [];
   return res.json();
 }
@@ -21,11 +21,11 @@ export default async function MedicinesPage() {
   const meds = await fetchMeds();
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 md:p-8">
+    <div className="w-full min-h-screen bg-gradient-to-br from-stone-50 via-amber-50 to-emerald-50 p-6 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">Medications</h1>
-          <p className="text-gray-300">Manage and track your medications</p>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-700 via-amber-600 to-emerald-700 bg-clip-text text-transparent mb-2">Medications</h1>
+          <p className="text-stone-600">Manage and track your medications</p>
         </div>
         
         {meds.length > 0 ? (
@@ -35,8 +35,8 @@ export default async function MedicinesPage() {
             ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 text-center">
-            <p className="text-gray-400">No medications recorded yet. Start by searching medicines below.</p>
+          <div className="rounded-xl border border-amber-200/50 bg-white/50 backdrop-blur-sm p-8 text-center">
+            <p className="text-stone-600">No medications recorded yet. Start by searching medicines below.</p>
           </div>
         )}
       </div>

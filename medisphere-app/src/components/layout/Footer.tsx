@@ -28,7 +28,7 @@ const footerLinks = {
 export default function Footer() {
   return (
     <motion.footer
-      className="relative mt-auto w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-white/10 shadow-[0_-10px_28px_-20px_rgba(0,0,0,0.8)] backdrop-blur-sm overflow-hidden"
+      className="relative mt-auto w-full bg-gradient-to-br from-white/60 via-stone-50/60 to-white/60 border-t border-amber-200/40 shadow-[0_-10px_28px_-20px_rgba(0,0,0,0.06)] backdrop-blur-sm overflow-hidden"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
@@ -83,7 +83,7 @@ export default function Footer() {
                   />
                 </div>
               </motion.div>
-              <p className="text-gray-300 text-sm leading-relaxed mb-6">
+              <p className="text-stone-600 text-sm leading-relaxed mb-6">
                 Revolutionizing Ayurvedic healthcare through modern technology. 
                 Connect with certified practitioners and embark on your wellness journey.
               </p>
@@ -98,7 +98,7 @@ export default function Footer() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ delay: 0.12 + (categoryIndex * 0.05), duration: 0.3 }}
               >
-                <h4 className="font-semibold text-gray-700 mb-4 capitalize">
+                <h4 className="font-semibold text-stone-800 mb-4 capitalize">
                   {category}
                 </h4>
                 <ul className="space-y-3">
@@ -112,15 +112,15 @@ export default function Footer() {
                     >
                       <Link
                         href={link.href}
-                        className="block text-sm text-gray-600 hover:text-teal-600 transition-colors duration-300 relative group"
+                        className="block text-sm text-stone-600 hover:text-emerald-700 transition-colors duration-300 relative group"
                       >
                         <span className="font-medium">{link.label}</span>
                         {"description" in link && link.description ? (
-                          <span className="mt-1 block text-xs leading-relaxed text-gray-500 group-hover:text-teal-600/80">
+                          <span className="mt-1 block text-xs leading-relaxed text-stone-500 group-hover:text-emerald-700/80">
                             {link.description}
                           </span>
                         ) : null}
-                        <span className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 w-0 group-hover:w-full transition-all duration-300 ease-out" />
+                        <span className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-emerald-400 to-amber-400 w-0 group-hover:w-full transition-all duration-300 ease-out" />
                       </Link>
                     </motion.li>
                   ))}
@@ -131,24 +131,24 @@ export default function Footer() {
 
           {/* Newsletter Section */}
           <motion.div
-            className="border-t border-gray-200/50 pt-8 mb-8"
+            className="border-t border-amber-200/40 pt-8 mb-8"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ delay: 0.12, duration: 0.3 }}
           >
             <div className="max-w-md mx-auto text-center">
-              <h4 className="font-semibold text-gray-700 mb-3">
+              <h4 className="font-semibold text-stone-800 mb-3">
                 Stay Updated with Wellness Tips
               </h4>
-              <div className="flex rounded-lg overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-200/50 shadow-sm">
+              <div className="flex rounded-lg overflow-hidden bg-white/70 backdrop-blur-sm border border-amber-200/40 shadow-sm">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 bg-transparent text-sm text-gray-700 placeholder-gray-500 outline-none"
+                  className="flex-1 px-4 py-3 bg-transparent text-sm text-stone-700 placeholder-stone-400 outline-none"
                 />
                 <motion.button
-                  className="px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium text-sm hover:from-teal-600 hover:to-cyan-600 transition-all duration-300"
+                  className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-medium text-sm hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -160,40 +160,40 @@ export default function Footer() {
 
           {/* Bottom Section */}
           <motion.div
-            className="border-t border-gray-200/50 pt-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
+            className="border-t border-amber-200/40 pt-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ delay: 0.16, duration: 0.3 }}
           >
             <div className="text-center md:text-left">
-              <div className="text-gray-600 text-sm">
+              <div className="text-stone-700 text-sm">
                 © {new Date().getFullYear()} MediSphere Telemedicine —{" "}
                 <motion.span
-                  className="text-teal-700 font-semibold relative inline-block"
+                  className="text-emerald-700 font-semibold relative inline-block"
                   whileHover={{ scale: 1.02 }}
                 >
                   Your Health, Your Way
-                  <span className="absolute inset-0 bg-gradient-to-r from-teal-200/20 to-cyan-200/20 blur-sm -z-10 rounded opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                  <span className="absolute inset-0 bg-gradient-to-r from-emerald-200/20 to-amber-200/20 blur-sm -z-10 rounded opacity-0 hover:opacity-100 transition-opacity duration-300" />
                 </motion.span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-stone-500 mt-1">
                 Certified Ayurvedic practitioners • Secure consultations • AI-powered insights
               </p>
             </div>
 
             {/* Trust Badges */}
-            <div className="flex items-center space-x-4 text-xs text-gray-500">
+            <div className="flex items-center space-x-4 text-xs text-stone-600">
               <motion.div
-                className="flex items-center space-x-1 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-200/50"
+                className="flex items-center space-x-1 bg-white/70 backdrop-blur-sm px-3 py-1 rounded-full border border-amber-200/40"
                 whileHover={{ scale: 1.02, y: -1 }}
               >
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                 <span>Secure & Private</span>
               </motion.div>
               
               <motion.div
-                className="flex items-center space-x-1 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-200/50"
+                className="flex items-center space-x-1 bg-white/70 backdrop-blur-sm px-3 py-1 rounded-full border border-amber-200/40"
                 whileHover={{ scale: 1.02, y: -1 }}
               >
                 <span>🏆</span>

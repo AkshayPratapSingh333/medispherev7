@@ -16,7 +16,7 @@ export default function RescheduleModal({
   const [form, setForm] = useState({ date: "", time: "", reason: "" });
 
   const input =
-    "border border-cyan-200/70 bg-white/90 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 placeholder:text-cyan-600/50";
+    "border border-emerald-200/70 bg-white/90 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-300/70 placeholder:text-emerald-600/50";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,14 +59,14 @@ export default function RescheduleModal({
             aria-hidden
           />
           {/* Dialog */}
-          <div className="relative w-full max-w-md rounded-2xl border border-cyan-100 bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-cyan-900">Reschedule Appointment</h3>
-            <p className="text-sm text-cyan-800/70">Pick a new date & time and add an optional reason.</p>
+          <div className="relative w-full max-w-md rounded-2xl border border-emerald-100 bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-emerald-900">Reschedule Appointment</h3>
+            <p className="text-sm text-emerald-800/70">Pick a new date & time and add an optional reason.</p>
 
             <form onSubmit={submit} className="mt-4 space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm text-cyan-700/70 mb-1">Date</label>
+                  <label className="block text-sm text-emerald-700/70 mb-1">Date</label>
                   <input
                     type="date"
                     className={input + " w-full"}
@@ -75,7 +75,7 @@ export default function RescheduleModal({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-cyan-700/70 mb-1">Time</label>
+                  <label className="block text-sm text-emerald-700/70 mb-1">Time</label>
                   <input
                     type="time"
                     className={input + " w-full"}
@@ -86,7 +86,7 @@ export default function RescheduleModal({
               </div>
 
               <div>
-                <label className="block text-sm text-cyan-700/70 mb-1">Reason (optional)</label>
+                <label className="block text-sm text-emerald-700/70 mb-1">Reason (optional)</label>
                 <textarea
                   className={input + " w-full"}
                   rows={3}
@@ -100,14 +100,14 @@ export default function RescheduleModal({
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="rounded-lg border border-cyan-200 px-3 py-2 text-sm text-cyan-800 hover:bg-cyan-50"
+                  className="rounded-lg border border-emerald-200 px-3 py-2 text-sm text-emerald-800 hover:bg-emerald-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-70"
+                  className="rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-70"
                 >
                   {saving ? "Saving…" : "Confirm"}
                 </button>

@@ -8,14 +8,14 @@ const steps = [
     title: "Sign Up",
     desc: "Create your free account and join the wellness community.",
     icon: "👤",
-    color: "from-blue-400 to-cyan-500",
+    color: "from-emerald-400 to-emerald-500",
   },
   {
     step: "2",
     title: "Find a Doctor",
     desc: "Browse certified practitioners and apply smart filters.",
     icon: "🔍",
-    color: "from-teal-400 to-emerald-500",
+    color: "from-emerald-400 to-emerald-500",
   },
   {
     step: "3",
@@ -29,13 +29,13 @@ const steps = [
     title: "Video Call",
     desc: "Connect live with your doctor for personalized care.",
     icon: "📹",
-    color: "from-cyan-400 to-blue-500",
+    color: "from-emerald-400 to-emerald-500",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-cyan-50 to-emerald-50 overflow-hidden">
+    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 via-emerald-50 to-amber-50 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(circle_at_12%_25%,rgba(20,184,166,0.16),transparent_35%),radial-gradient(circle_at_88%_72%,rgba(59,130,246,0.16),transparent_40%)]" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -46,7 +46,7 @@ export default function HowItWorks() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.35 }}
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2 sm:mb-4 px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 bg-clip-text text-transparent mb-2 sm:mb-4 px-4">
             How It Works
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
@@ -89,20 +89,6 @@ export default function HowItWorks() {
                 </div>
               </div>
 
-              {i < steps.length - 1 && (
-                <div className="hidden sm:hidden md:block lg:block absolute top-1/3 -right-4 z-20 transform -translate-y-1/2">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M9 18l6-6-6-6"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-teal-500"
-                    />
-                  </svg>
-                </div>
-              )}
             </motion.div>
           ))}
         </div>
@@ -115,7 +101,7 @@ export default function HowItWorks() {
           transition={{ delay: 0.12, duration: 0.35 }}
         >
           <motion.div
-            className="inline-flex items-center justify-center space-x-2 px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 text-sm sm:text-base"
+            className="inline-flex items-center justify-center space-x-2 px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 text-sm sm:text-base"
             whileHover={{ scale: 1.03, y: -1 }}
             whileTap={{ scale: 0.97 }}
           >

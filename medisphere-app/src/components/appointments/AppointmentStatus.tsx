@@ -28,9 +28,9 @@ export default function AppointmentStatus({ id, current }: { id: string; current
   }
 
   return (
-    <div className="mt-4 rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
-      <div className="text-sm text-cyan-700/70">Current status</div>
-      <div className="mt-1 font-semibold text-cyan-900">{status}</div>
+    <div className="mt-4 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+      <div className="text-sm text-emerald-700/70">Current status</div>
+      <div className="mt-1 font-semibold text-emerald-900">{status}</div>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {ACTIONS.map((a) => (
@@ -38,7 +38,7 @@ export default function AppointmentStatus({ id, current }: { id: string; current
             key={a.key}
             disabled={busy === a.key}
             onClick={() => updateStatus(a.key)}
-            className="inline-flex items-center rounded-lg bg-cyan-600/10 px-3 py-2 text-sm font-medium text-cyan-800 ring-1 ring-cyan-200 hover:bg-cyan-600/15 disabled:opacity-60"
+            className="inline-flex items-center rounded-lg bg-emerald-600/10 px-3 py-2 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200 hover:bg-emerald-600/15 disabled:opacity-60"
           >
             {busy === a.key ? "…" : a.label}
           </button>

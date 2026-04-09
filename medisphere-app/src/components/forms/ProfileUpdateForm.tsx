@@ -55,13 +55,13 @@ export default function ProfileUpdateForm({ patient }: { patient: Patient }) {
   }
 
   const input =
-    "border border-cyan-200/70 bg-white/90 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 placeholder:text-cyan-600/50 shadow-sm";
+    "border border-emerald-200/70 bg-white/90 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-300/70 placeholder:text-emerald-600/50 shadow-sm";
 
   return (
     <form onSubmit={submit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-cyan-700/70 mb-1">Date of Birth</label>
+          <label className="block text-sm text-emerald-700/70 mb-1">Date of Birth</label>
           <input
             className={input + " w-full"}
             type="date"
@@ -71,7 +71,7 @@ export default function ProfileUpdateForm({ patient }: { patient: Patient }) {
         </div>
 
         <div>
-          <label className="block text-sm text-cyan-700/70 mb-1">Gender</label>
+          <label className="block text-sm text-emerald-700/70 mb-1">Gender</label>
           <input
             className={input + " w-full"}
             placeholder="Gender"
@@ -81,7 +81,7 @@ export default function ProfileUpdateForm({ patient }: { patient: Patient }) {
         </div>
 
         <div>
-          <label className="block text-sm text-cyan-700/70 mb-1">Phone Number</label>
+          <label className="block text-sm text-emerald-700/70 mb-1">Phone Number</label>
           <input
             className={input + " w-full"}
             placeholder="Phone Number"
@@ -91,7 +91,7 @@ export default function ProfileUpdateForm({ patient }: { patient: Patient }) {
         </div>
 
         <div>
-          <label className="block text-sm text-cyan-700/70 mb-1">Emergency Contact</label>
+          <label className="block text-sm text-emerald-700/70 mb-1">Emergency Contact</label>
           <input
             className={input + " w-full"}
             placeholder="Emergency Contact"
@@ -102,7 +102,7 @@ export default function ProfileUpdateForm({ patient }: { patient: Patient }) {
       </div>
 
       <div>
-        <label className="block text-sm text-cyan-700/70 mb-1">Medical History</label>
+        <label className="block text-sm text-emerald-700/70 mb-1">Medical History</label>
         <textarea
           className={input + " w-full"}
           rows={4}
@@ -113,7 +113,7 @@ export default function ProfileUpdateForm({ patient }: { patient: Patient }) {
       </div>
 
       <div>
-        <label className="block text-sm text-cyan-700/70 mb-1">Allergies</label>
+        <label className="block text-sm text-emerald-700/70 mb-1">Allergies</label>
         <textarea
           className={input + " w-full"}
           rows={3}
@@ -126,7 +126,7 @@ export default function ProfileUpdateForm({ patient }: { patient: Patient }) {
       <button
         type="submit"
         disabled={saving}
-        className="w-full py-3 rounded-xl font-semibold text-white shadow-md bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 disabled:opacity-70"
+        className="w-full py-3 rounded-xl font-semibold text-white shadow-md bg-gradient-to-r from-emerald-600 to-emerald-700 disabled:opacity-70"
       >
         {saving ? "Saving…" : "Save"}
       </button>

@@ -54,9 +54,9 @@ export default function VoiceAssistant() {
   }
 
   return (
-    <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
-      <div className="text-lg font-semibold text-cyan-900">Voice Assistant</div>
-      <p className="text-sm text-cyan-800/70">
+    <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+      <div className="text-lg font-semibold text-emerald-900">Voice Assistant</div>
+      <p className="text-sm text-emerald-800/70">
         Record your question. We’ll transcribe it and read it back (demo).
       </p>
 
@@ -64,7 +64,7 @@ export default function VoiceAssistant() {
         <button
           onClick={toggleRecord}
           className={`rounded-xl px-4 py-2 text-white font-medium shadow ${
-            recording ? "bg-rose-500" : "bg-gradient-to-r from-cyan-500 to-emerald-500"
+            recording ? "bg-rose-500" : "bg-gradient-to-r from-emerald-600 to-emerald-700"
           }`}
         >
           {recording ? "Stop Recording" : "Record Voice"}
@@ -72,14 +72,14 @@ export default function VoiceAssistant() {
       </div>
 
       {transcript && (
-        <div className="mt-3 rounded-xl bg-gradient-to-br from-sky-50 to-emerald-50 p-3 ring-1 ring-cyan-100 text-cyan-900">
-          <div className="text-sm text-cyan-700/70">Transcription</div>
+        <div className="mt-3 rounded-xl bg-gradient-to-br from-stone-50 to-emerald-50 p-3 ring-1 ring-emerald-100 text-emerald-900">
+          <div className="text-sm text-emerald-700/70">Transcription</div>
           <div className="font-medium">{transcript}</div>
         </div>
       )}
 
       {reply && (
-        <div className="mt-2 text-xs text-cyan-800/70">
+        <div className="mt-2 text-xs text-emerald-800/70">
           (The same text was synthesized via TTS for demo.)
         </div>
       )}

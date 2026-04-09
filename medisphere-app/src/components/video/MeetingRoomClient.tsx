@@ -39,16 +39,16 @@ export default function MeetingRoomClient({ roomId, leavePath = "/appointments" 
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-900">
-        <div className="text-xl text-white">Connecting to meeting...</div>
+      <div className="flex h-screen items-center justify-center bg-stone-50">
+        <div className="text-xl text-stone-900">Connecting to meeting...</div>
       </div>
     );
   }
 
   if (!roomId) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-900">
-        <div className="text-xl text-white">Invalid meeting ID</div>
+      <div className="flex h-screen items-center justify-center bg-stone-50">
+        <div className="text-xl text-stone-900">Invalid meeting ID</div>
       </div>
     );
   }

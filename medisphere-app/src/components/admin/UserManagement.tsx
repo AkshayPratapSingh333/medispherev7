@@ -119,7 +119,7 @@ export default function UserManagement() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl font-semibold text-slate-900">User Management</h2>
-        <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-medium text-cyan-700">Total: {total}</span>
+        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">Total: {total}</span>
       </div>
 
       <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
@@ -130,7 +130,7 @@ export default function UserManagement() {
             setPage(1);
           }}
           placeholder="Search by name or email"
-          className="rounded-lg border border-cyan-200 px-3 py-2 text-sm outline-none focus:border-cyan-400 md:col-span-3"
+          className="rounded-lg border border-emerald-200 px-3 py-2 text-sm outline-none focus:border-emerald-400 md:col-span-3"
         />
         <select
           value={role}
@@ -138,7 +138,7 @@ export default function UserManagement() {
             setRole(e.target.value as "ALL" | UserRole);
             setPage(1);
           }}
-          className="rounded-lg border border-cyan-200 px-3 py-2 text-sm outline-none focus:border-cyan-400"
+          className="rounded-lg border border-emerald-200 px-3 py-2 text-sm outline-none focus:border-emerald-400"
         >
           <option value="ALL">All Roles</option>
           <option value="ADMIN">ADMIN</option>
@@ -147,7 +147,7 @@ export default function UserManagement() {
         </select>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-cyan-100 bg-white">
+      <div className="overflow-x-auto rounded-xl border border-emerald-100 bg-white">
         <table className="min-w-full text-left text-sm">
           <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-600">
@@ -189,7 +189,7 @@ export default function UserManagement() {
                     <div className="flex items-center gap-2">
                       <select
                         defaultValue={u.role}
-                        className="rounded border border-cyan-200 px-2 py-1 text-xs"
+                        className="rounded border border-emerald-200 px-2 py-1 text-xs"
                         onChange={(e) => updateRole(u.id, e.target.value as UserRole)}
                         disabled={savingUserId === u.id}
                       >

@@ -183,9 +183,9 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
   }
 
   return (
-    <div className="flex flex-col border border-cyan-100 rounded-2xl h-full bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-cyan-100 px-4 py-3">
-        <div className="font-semibold text-cyan-900">Appointment Chat</div>
+    <div className="flex flex-col border border-emerald-200 rounded-2xl h-full bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-emerald-200 px-4 py-3">
+        <div className="font-semibold text-emerald-900">Appointment Chat</div>
         {isDoctor ? (
           // Doctor: Show call initiation button
           <DoctorCallInitiator appointmentId={appointmentId} />
@@ -193,7 +193,7 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
           // Patient: Show manual call button
           <button
             onClick={() => setInCall(true)}
-            className="rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 px-3 py-1.5 text-white text-sm font-medium"
+            className="rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-3 py-1.5 text-white text-sm font-medium"
           >
             📞 Video Call
           </button>
@@ -201,7 +201,7 @@ export default function ChatWindow({ appointmentId }: { appointmentId: string })
       </div>
 
       {inCall && (
-        <div className="p-3 border-b border-cyan-100">
+        <div className="p-3 border-b border-emerald-200">
           <VideoCallPanel
             appointmentId={appointmentId}
             onClose={() => setInCall(false)}

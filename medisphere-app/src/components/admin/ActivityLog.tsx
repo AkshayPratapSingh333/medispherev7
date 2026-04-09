@@ -26,7 +26,7 @@ export default function AuditLog() {
   });
 
   return (
-    <section className="rounded-xl border border-cyan-100 bg-white p-4 shadow-sm">
+    <section className="rounded-xl border border-emerald-100 bg-white p-4 shadow-sm">
       <h2 className="mb-3 text-xl font-semibold text-slate-900">Recent Activity</h2>
 
       {error ? <p className="text-sm text-rose-700">{error.message}</p> : null}

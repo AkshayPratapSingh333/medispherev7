@@ -38,12 +38,12 @@ export default function ReportUpload({ endpoint = "/api/reports/upload" }: { end
     }
   }
 
-  const input = "w-full rounded-lg border border-cyan-200/70 bg-white/90 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-300/70";
+  const input = "w-full rounded-lg border border-emerald-200/70 bg-white/90 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-300/70";
 
   return (
-    <form onSubmit={submit} className="space-y-4 bg-white rounded-2xl border border-cyan-100 p-6 shadow-sm">
+    <form onSubmit={submit} className="space-y-4 bg-white rounded-2xl border border-emerald-100 p-6 shadow-sm">
       <div>
-        <label className="block text-sm text-cyan-700/70 mb-1">File</label>
+        <label className="block text-sm text-emerald-700/70 mb-1">File</label>
         <input
           type="file"
           accept="application/pdf,image/png,image/jpeg,image/webp"
@@ -53,7 +53,7 @@ export default function ReportUpload({ endpoint = "/api/reports/upload" }: { end
       </div>
 
       <div>
-        <label className="block text-sm text-cyan-700/70 mb-1">Display name (optional)</label>
+        <label className="block text-sm text-emerald-700/70 mb-1">Display name (optional)</label>
         <input
           value={fileName}
           onChange={(e) => setFileName(e.target.value)}
@@ -63,7 +63,7 @@ export default function ReportUpload({ endpoint = "/api/reports/upload" }: { end
       </div>
 
       <div>
-        <label className="block text-sm text-cyan-700/70 mb-1">Description (optional)</label>
+        <label className="block text-sm text-emerald-700/70 mb-1">Description (optional)</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -82,7 +82,7 @@ export default function ReportUpload({ endpoint = "/api/reports/upload" }: { end
       <button
         type="submit"
         disabled={busy}
-        className="w-full py-3 rounded-xl font-semibold text-white shadow-md bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 disabled:opacity-70"
+        className="w-full py-3 rounded-xl font-semibold text-white shadow-md bg-gradient-to-r from-emerald-600 to-emerald-700 disabled:opacity-70"
       >
         {busy ? "Uploading…" : "Upload"}
       </button>

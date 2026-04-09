@@ -96,15 +96,15 @@ export default function VideoCall({ appointmentId, doctorId, patientId }: VideoC
   };
 
   return (
-    <div className="w-full h-screen bg-gray-900 flex flex-col">
+    <div className="w-full h-screen bg-stone-50 flex flex-col">
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 p-4">
+      <div className="bg-stone-50 border-b border-amber-200/40 p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-white text-lg font-semibold">
+          <h1 className="text-stone-900 text-lg font-semibold">
             {isDoctor ? 'Patient Consultation' : 'Doctor Consultation'}
           </h1>
-          <div className="text-white text-sm">
-            Status: <span className={isConnected ? 'text-green-400' : 'text-yellow-400'}>{callStatus}</span>
+          <div className="text-stone-700 text-sm">
+            Status: <span className={isConnected ? 'text-green-600' : 'text-amber-600'}>{callStatus}</span>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function VideoCall({ appointmentId, doctorId, patientId }: VideoC
       {/* Video Grid */}
       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 overflow-hidden">
         {/* Local Video */}
-        <div className="relative bg-gray-950 rounded-lg overflow-hidden flex items-center justify-center">
+        <div className="relative bg-stone-200 rounded-lg overflow-hidden flex items-center justify-center">
           <video
             ref={localVideoRef}
             autoPlay
@@ -122,22 +122,22 @@ export default function VideoCall({ appointmentId, doctorId, patientId }: VideoC
           />
           <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur px-3 py-2 rounded-lg">
             <p className="text-white text-sm font-medium">{isDoctor ? 'Doctor (You)' : 'Patient (You)'}</p>
-            <p className="text-gray-300 text-xs">{session?.user?.name}</p>
+            <p className="text-stone-300 text-xs">{session?.user?.name}</p>
           </div>
 
           {/* Video Off Overlay */}
           {isVideoOff && (
-            <div className="absolute inset-0 bg-gray-950 flex items-center justify-center">
+            <div className="absolute inset-0 bg-stone-300 flex items-center justify-center">
               <div className="text-center">
-                <VideoOff className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                <span className="text-gray-400">Camera is off</span>
+                <VideoOff className="w-12 h-12 text-stone-600 mx-auto mb-2" />
+                <span className="text-stone-700">Camera is off</span>
               </div>
             </div>
           )}
         </div>
 
         {/* Remote Video */}
-        <div className="relative bg-gray-950 rounded-lg overflow-hidden flex items-center justify-center">
+        <div className="relative bg-stone-200 rounded-lg overflow-hidden flex items-center justify-center">
           <video
             ref={remoteVideoRef}
             autoPlay
@@ -146,17 +146,17 @@ export default function VideoCall({ appointmentId, doctorId, patientId }: VideoC
           />
           <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur px-3 py-2 rounded-lg">
             <p className="text-white text-sm font-medium">{isDoctor ? 'Patient' : 'Doctor'}</p>
-            <p className="text-gray-300 text-xs">
+            <p className="text-stone-300 text-xs">
               {otherParticipantInfo?.name || (isDoctor ? `Patient (${patientId.slice(0, 6)}...)` : 'Doctor')}
             </p>
           </div>
 
           {/* Connection Status */}
           {!isConnected && (
-            <div className="absolute inset-0 bg-gray-950/80 backdrop-blur flex items-center justify-center">
+            <div className="absolute inset-0 bg-stone-300/80 backdrop-blur flex items-center justify-center">
               <div className="text-center">
-                <div className="w-12 h-12 border-4 border-gray-700 border-t-blue-400 rounded-full animate-spin mx-auto mb-4" />
-                <span className="text-gray-300">Connecting...</span>
+                <div className="w-12 h-12 border-4 border-stone-300 border-t-emerald-600 rounded-full animate-spin mx-auto mb-4" />
+                <span className="text-stone-700">Connecting...</span>
               </div>
             </div>
           )}
@@ -164,7 +164,7 @@ export default function VideoCall({ appointmentId, doctorId, patientId }: VideoC
       </div>
 
       {/* Controls */}
-      <div className="bg-gray-800 border-t border-gray-700 p-4">
+      <div className="bg-stone-50 border-t border-amber-200/40 p-4">
         <div className="max-w-7xl mx-auto flex justify-center items-center gap-3">
           <Button
             variant={isMuted ? 'destructive' : 'secondary'}
@@ -186,7 +186,7 @@ export default function VideoCall({ appointmentId, doctorId, patientId }: VideoC
             {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
           </Button>
 
-          <div className="w-px h-8 bg-gray-600" />
+          <div className="w-px h-8 bg-stone-300" />
 
           <Button
             variant="destructive"

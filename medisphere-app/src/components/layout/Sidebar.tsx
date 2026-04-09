@@ -20,7 +20,7 @@ const NAV = [
   { href: "/ai", label: "AI Assistant" },
 ];
 
-const Dot = () => <span className="text-cyan-700/80">•</span>;
+const Dot = () => <span className="text-emerald-700/80">•</span>;
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -97,8 +97,8 @@ export default function Sidebar() {
     "relative group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition duration-200";
   const linkClass = (active: boolean) =>
     active
-      ? "bg-gradient-to-r from-cyan-500/20 to-emerald-500/15 text-white ring-1 ring-cyan-400/50 shadow-lg shadow-cyan-500/10"
-      : "text-gray-300 hover:text-white hover:bg-white/10";
+      ? "bg-gradient-to-r from-emerald-500/20 to-emerald-400/15 text-stone-900 ring-1 ring-emerald-400/50 shadow-lg shadow-emerald-500/10"
+      : "text-stone-600 hover:text-stone-900 hover:bg-amber-100/30";
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
@@ -132,7 +132,7 @@ export default function Sidebar() {
           )}
 
           {active && (
-            <span className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400" />
+            <span className="ml-auto h-2 w-2 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
           )}
         </Link>
       </li>
@@ -156,8 +156,8 @@ export default function Sidebar() {
           "fixed left-0",
           // lies BELOW header; header should have z-30, we go z-20
           "z-20",
-          "bg-gradient-to-b from-gray-900/95 via-gray-800/90 to-gray-900/95",
-          "border-r border-white/10 shadow-[0_18px_45px_-28px_rgba(0,0,0,0.8)]",
+          "bg-gradient-to-b from-white/80 via-stone-50/75 to-white/80",
+          "border-r border-amber-200/40 shadow-[0_18px_45px_-28px_rgba(0,0,0,0.05)]",
           "backdrop-blur-sm",
         ].join(" ")}
       >
@@ -165,7 +165,7 @@ export default function Sidebar() {
         <div className="flex items-center justify-between px-3 py-3">
           <div className="flex items-center gap-2">
             {mounted && !collapsed && (
-              <span className="text-base font-semibold tracking-wide bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-base font-semibold tracking-wide bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 bg-clip-text text-transparent">
                 MediSphere
               </span>
             )}
@@ -175,14 +175,14 @@ export default function Sidebar() {
           <button
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             onClick={() => setCollapsed((v) => !v)}
-            className="inline-flex items-center justify-center size-8 rounded-md ring-1 ring-white/20 text-white bg-white/10 hover:bg-white/20 transition-all duration-200"
+            className="inline-flex items-center justify-center size-8 rounded-md ring-1 ring-amber-200/60 text-stone-700 bg-amber-100/40 hover:bg-amber-100/60 transition-all duration-200"
             title={collapsed ? "Expand" : "Collapse"}
           >
             <span className="text-xl leading-none select-none">{collapsed ? "»" : "«"}</span>
           </button>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
 
         <ul className="px-3 py-3 space-y-2 overflow-y-auto h-[calc(100%-64px-1px)]">
           {NAV.map((it) => (
@@ -191,7 +191,7 @@ export default function Sidebar() {
         </ul>
 
         {/* Right glow divider */}
-        <div className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan-400/50 to-transparent" />
+        <div className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-amber-400/40 to-transparent" />
       </motion.aside>
 
       {/* MOBILE DRAWER: opens under header */}
@@ -200,7 +200,7 @@ export default function Sidebar() {
           <>
             <motion.div
               key="overlay"
-              className="md:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+              className="md:hidden fixed inset-0 bg-black/20 z-40 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -208,7 +208,7 @@ export default function Sidebar() {
             />
             <motion.aside
               key="drawer"
-              className="md:hidden fixed left-0 w-64 z-50 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-white/10 shadow-2xl backdrop-blur-sm"
+              className="md:hidden fixed left-0 w-64 z-50 bg-gradient-to-b from-white/90 via-stone-50/85 to-white/90 border-r border-amber-200/40 shadow-2xl backdrop-blur-sm"
               style={{
                 top: "var(--header-h, 56px)",
                 height: "calc(100vh - var(--header-h, 56px))",
@@ -228,7 +228,7 @@ export default function Sidebar() {
                       )}`}
                       onClick={() => setMobileOpen(false)}
                     >
-                      <span className="inline-flex size-8 items-center justify-center rounded-md bg-cyan-600/20 ring-1 ring-cyan-400/50 text-cyan-400">
+                      <span className="inline-flex size-8 items-center justify-center rounded-md bg-emerald-600/20 ring-1 ring-emerald-400/50 text-emerald-600">
                         <Dot />
                       </span>
                       <span>{it.label}</span>
@@ -241,14 +241,13 @@ export default function Sidebar() {
         )}
       </AnimatePresence>
 
-      {/* MOBILE TRIGGER BUTTON (since header is separate) */}
+      {/* Export control via data attribute for Header to hook into */}
       <button
-        className="md:hidden fixed left-3 top-[calc(var(--header-h,56px)+0.5rem)] z-30 inline-flex items-center justify-center size-10 rounded-lg ring-1 ring-white/20 bg-white/10 text-white shadow-lg"
-        aria-label="Open sidebar"
-        onClick={() => setMobileOpen(true)}
-      >
-        ☰
-      </button>
+        id="sidebar-mobile-toggle"
+        className="hidden"
+        onClick={() => setMobileOpen(!mobileOpen)}
+        aria-hidden="true"
+      />
     </>
   );
 }

@@ -87,10 +87,10 @@ export function SimpleVideoCall({ appointmentId }: { appointmentId: string }) {
   };
 
   return (
-    <div className="w-full h-screen bg-black flex flex-col">
+    <div className="w-full h-screen bg-stone-100 flex flex-col">
       {/* Debug Info */}
       {error && (
-        <div className="bg-red-900 text-red-100 p-4 text-sm">
+        <div className="bg-red-100 text-red-900 p-4 text-sm">
           <div className="font-bold">Error:</div>
           <div>{error}</div>
         </div>
@@ -99,7 +99,7 @@ export function SimpleVideoCall({ appointmentId }: { appointmentId: string }) {
       {/* Video Grid */}
       <div className="flex-1 grid grid-cols-2 gap-4 p-4">
         {/* Local Video */}
-        <div className="relative bg-gray-900 rounded-lg overflow-hidden">
+        <div className="relative bg-stone-200 rounded-lg overflow-hidden">
           <video
             ref={localVideoRef}
             autoPlay
@@ -111,19 +111,19 @@ export function SimpleVideoCall({ appointmentId }: { appointmentId: string }) {
             {isDoctor ? "Doctor (You)" : "Patient (You)"}
           </div>
           {isVideoOff && (
-            <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
-              <span className="text-white text-lg">📹 Camera is off</span>
+            <div className="absolute inset-0 bg-stone-300 flex items-center justify-center">
+              <span className="text-stone-900 text-lg">📹 Camera is off</span>
             </div>
           )}
           {!localStream && (
-            <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
-              <span className="text-white text-lg">⏳ Loading camera...</span>
+            <div className="absolute inset-0 bg-stone-300 flex items-center justify-center">
+              <span className="text-stone-900 text-lg">⏳ Loading camera...</span>
             </div>
           )}
         </div>
 
         {/* Remote Video */}
-        <div className="relative bg-gray-900 rounded-lg overflow-hidden">
+        <div className="relative bg-stone-200 rounded-lg overflow-hidden">
           <video
             ref={remoteVideoRef}
             autoPlay
@@ -134,10 +134,10 @@ export function SimpleVideoCall({ appointmentId }: { appointmentId: string }) {
             {isDoctor ? "Patient" : "Doctor"}
           </div>
           {!isConnected && (
-            <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+            <div className="absolute inset-0 bg-stone-300 flex items-center justify-center">
               <div className="text-center">
-                <span className="text-white text-lg block mb-2">⏳ Connecting...</span>
-                <span className="text-gray-400 text-sm whitespace-pre-wrap">{debugInfo}</span>
+                <span className="text-stone-900 text-lg block mb-2">⏳ Connecting...</span>
+                <span className="text-stone-500 text-sm whitespace-pre-wrap">{debugInfo}</span>
               </div>
             </div>
           )}
@@ -145,7 +145,7 @@ export function SimpleVideoCall({ appointmentId }: { appointmentId: string }) {
       </div>
 
       {/* Controls */}
-      <div className="bg-gray-900 border-t border-gray-700 p-6 flex justify-center gap-6">
+      <div className="bg-stone-50 border-t border-amber-200/40 p-6 flex justify-center gap-6">
         <Button
           variant={isMuted ? "destructive" : "secondary"}
           onClick={handleToggleMute}

@@ -5,11 +5,11 @@ import Link from "next/link";
 
 export default function CTASection() {
   return (
-    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-teal-500 via-cyan-600 to-blue-600 text-white text-center overflow-hidden">
+    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-amber-500 via-emerald-600 to-emerald-700 text-white text-center overflow-hidden">
       {/* Static layered gradients for depth without runtime loops */}
       <div className="absolute inset-0">
-        <div className="absolute -top-32 -left-32 w-64 h-64 sm:w-80 sm:h-80 bg-gradient-to-br from-white/10 to-cyan-300/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-tl from-white/10 to-teal-300/20 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -left-32 w-64 h-64 sm:w-80 sm:h-80 bg-gradient-to-br from-white/10 to-emerald-300/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-tl from-white/10 to-amber-300/20 rounded-full blur-3xl" />
       </div>
 
       <div className="absolute bottom-0 left-0 right-0">
@@ -24,7 +24,7 @@ export default function CTASection() {
       {/* Main Content */}
       <div className="relative z-10">
         <motion.h2
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white via-cyan-100 to-white bg-clip-text text-transparent drop-shadow-lg px-4"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white via-emerald-100 to-white bg-clip-text text-transparent drop-shadow-lg px-4"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
@@ -44,7 +44,7 @@ export default function CTASection() {
         </motion.h2>
 
         <motion.p
-          className="mb-8 sm:mb-12 text-sm sm:text-base md:text-lg lg:text-xl text-cyan-50 max-w-2xl mx-auto leading-relaxed px-4"
+          className="mb-8 sm:mb-12 text-sm sm:text-base md:text-lg lg:text-xl text-emerald-50 max-w-2xl mx-auto leading-relaxed px-4"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -68,7 +68,7 @@ export default function CTASection() {
           >
             <Link
               href="/auth/signup"
-              className="relative block px-6 sm:px-10 py-3 sm:py-4 bg-white text-teal-700 font-bold text-sm sm:text-base md:text-lg rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 hover:shadow-white/20"
+              className="relative block px-6 sm:px-10 py-3 sm:py-4 bg-white text-emerald-700 font-bold text-sm sm:text-base md:text-lg rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 hover:shadow-white/20"
             >
               <span className="relative z-10">Get Started Now</span>
 
@@ -77,7 +77,7 @@ export default function CTASection() {
             </Link>
           </motion.div>
 
-          <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-white/10 to-cyan-200/10 blur-xl -z-10" />
+          <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-white/10 to-emerald-200/10 blur-xl -z-10" />
         </motion.div>
       </div>
 

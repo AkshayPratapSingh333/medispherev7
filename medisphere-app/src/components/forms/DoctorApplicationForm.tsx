@@ -45,15 +45,15 @@ export default function DoctorApplicationForm() {
   }
 
   const inputClass =
-    "border border-cyan-200 bg-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-400";
+    "border border-emerald-200 bg-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-400";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-cyan-50 to-emerald-50 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-stone-50 via-emerald-50 to-emerald-50 p-6">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-2xl bg-white rounded-2xl shadow-lg border border-gray-100 p-8 space-y-6"
       >
-        <h1 className="text-2xl font-bold text-center text-cyan-700">
+        <h1 className="text-2xl font-bold text-center text-emerald-700">
           Doctor Application Form
         </h1>
 
@@ -161,7 +161,7 @@ export default function DoctorApplicationForm() {
 
         <button
           type="submit"
-          className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-cyan-500 to-emerald-500"
+          className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700"
         >
           Submit Application
         </button>

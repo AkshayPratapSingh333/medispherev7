@@ -11,7 +11,7 @@ const testimonials = [
     avatar: "👨",
     rating: 5,
     location: "Mumbai, India",
-    gradient: "from-blue-400 to-cyan-500"
+    gradient: "from-emerald-400 to-emerald-500"
   },
   {
     name: "Dr. Meera Sharma",
@@ -20,7 +20,7 @@ const testimonials = [
     avatar: "👩‍⚕️",
     rating: 5,
     location: "Delhi, India",
-    gradient: "from-emerald-400 to-teal-500"
+    gradient: "from-emerald-400 to-emerald-500"
   },
   {
     name: "Priya Nair",
@@ -70,7 +70,7 @@ export default function Testimonials() {
   );
 
   return (
-    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 overflow-hidden">
+    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-stone-50 via-emerald-50 to-amber-50 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(circle_at_10%_20%,rgba(45,212,191,0.18),transparent_35%),radial-gradient(circle_at_90%_70%,rgba(59,130,246,0.18),transparent_40%)]" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -83,7 +83,7 @@ export default function Testimonials() {
           transition={{ duration: 0.35 }}
         >
           <h2
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2 sm:mb-4 px-4"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 bg-clip-text text-transparent mb-2 sm:mb-4 px-4"
           >
             What Our Users Say
           </h2>

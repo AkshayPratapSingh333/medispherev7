@@ -44,7 +44,7 @@ export default function SystemHealth() {
   });
 
   return (
-    <section className="rounded-xl border border-cyan-100 bg-white p-4 shadow-sm">
+    <section className="rounded-xl border border-emerald-100 bg-white p-4 shadow-sm">
       <h2 className="mb-3 text-xl font-semibold text-slate-900">System Health</h2>
 
       {statsError ? <p className="mb-2 text-sm text-rose-700">{statsError.message}</p> : null}
@@ -94,7 +94,7 @@ export default function SystemHealth() {
                   ? "bg-rose-50 text-rose-700"
                   : a.level === "warning"
                   ? "bg-amber-50 text-amber-700"
-                  : "bg-cyan-50 text-cyan-700"
+                  : "bg-emerald-50 text-emerald-700"
               }`}
             >
               {a.message}

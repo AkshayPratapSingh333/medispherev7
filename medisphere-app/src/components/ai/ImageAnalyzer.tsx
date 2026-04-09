@@ -41,10 +41,10 @@ export default function ImageAnalyzer() {
   }
 
   return (
-    <div className="rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
       <div className="mb-3">
-        <div className="text-lg font-semibold text-cyan-900">Image Analyzer</div>
-        <div className="text-sm text-cyan-800/70">
+        <div className="text-lg font-semibold text-emerald-900">Image Analyzer</div>
+        <div className="text-sm text-emerald-800/70">
           Upload a medical image (X-ray, scan, report photo).
         </div>
       </div>
@@ -53,7 +53,7 @@ export default function ImageAnalyzer() {
         type="file"
         accept="image/png,image/jpeg,image/webp"
         onChange={handleFile}
-        className="w-full rounded-lg border border-cyan-200/70 bg-white/90 px-3 py-2"
+        className="w-full rounded-lg border border-emerald-200/70 bg-white/90 px-3 py-2"
       />
 
       {preview && (
@@ -61,11 +61,11 @@ export default function ImageAnalyzer() {
         <img
           src={preview}
           alt="preview"
-          className="mt-3 max-h-64 rounded-xl border border-cyan-100"
+          className="mt-3 max-h-64 rounded-xl border border-emerald-100"
         />
       )}
 
-      {busy && <div className="mt-3 text-sm text-cyan-800/90">Analyzing…</div>}
+      {busy && <div className="mt-3 text-sm text-emerald-800/90">Analyzing…</div>}
 
       {msg && (
         <div className="mt-3 rounded-md bg-rose-50 border border-rose-100 px-3 py-2 text-rose-700 text-sm">
@@ -74,8 +74,8 @@ export default function ImageAnalyzer() {
       )}
 
       {analysis && (
-        <div className="mt-3 rounded-xl bg-gradient-to-br from-sky-50 to-emerald-50 p-4 ring-1 ring-cyan-100 text-cyan-900">
-          <article className="prose prose-sm max-w-none prose-headings:text-cyan-900 prose-strong:text-cyan-900 prose-li:marker:text-cyan-700">
+        <div className="mt-3 rounded-xl bg-gradient-to-br from-stone-50 to-emerald-50 p-4 ring-1 ring-emerald-100 text-emerald-900">
+          <article className="prose prose-sm max-w-none prose-headings:text-emerald-900 prose-strong:text-emerald-900 prose-li:marker:text-emerald-700">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
           </article>
         </div>

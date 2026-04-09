@@ -100,7 +100,7 @@ export default function IncomingCallModal() {
       <div className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl">
         {/* Ringing animation */}
         {isRinging && (
-          <div className="absolute inset-0 animate-pulse rounded-2xl bg-cyan-500/20" />
+          <div className="absolute inset-0 animate-pulse rounded-2xl bg-emerald-500/20" />
         )}
 
         <div className="relative px-8 py-12 text-center">
@@ -108,8 +108,8 @@ export default function IncomingCallModal() {
           {isRinging && (
             <div className="mb-6 flex justify-center">
               <div className="relative h-20 w-20">
-                <div className="absolute inset-0 animate-ping rounded-full bg-cyan-500/50" />
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-cyan-500">
+                <div className="absolute inset-0 animate-ping rounded-full bg-emerald-500/50" />
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-emerald-600">
                   <span className="text-3xl">📞</span>
                 </div>
               </div>
@@ -117,15 +117,15 @@ export default function IncomingCallModal() {
           )}
 
           {/* Doctor name */}
-          <h2 className="mb-2 text-2xl font-bold text-cyan-900">{incomingCall.doctorName}</h2>
-          <p className="mb-6 text-cyan-700/70">is calling you</p>
+          <h2 className="mb-2 text-2xl font-bold text-emerald-900">{incomingCall.doctorName}</h2>
+          <p className="mb-6 text-emerald-700/70">is calling you</p>
 
           {/* Appointment ID (small) */}
-          <p className="mb-8 text-sm text-cyan-600/60">Appointment ID: {incomingCall.appointmentId.slice(0, 8)}</p>
+          <p className="mb-8 text-sm text-emerald-600/60">Appointment ID: {incomingCall.appointmentId.slice(0, 8)}</p>
 
           {/* Call status */}
           {isRinging && (
-            <p className="mb-8 animate-pulse text-sm font-medium text-cyan-600">
+            <p className="mb-8 animate-pulse text-sm font-medium text-emerald-600">
               Incoming call...
             </p>
           )}

@@ -55,9 +55,9 @@ export default function QuickMeeting({
   };
 
   return (
-    <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-6 border border-cyan-100">
+    <div className="bg-gradient-to-r from-emerald-50 to-emerald-50 rounded-xl p-6 border border-emerald-100">
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-3 bg-cyan-500 rounded-lg">
+        <div className="p-3 bg-emerald-500 rounded-lg">
           <Video className="w-6 h-6 text-white" />
         </div>
         <div>
@@ -74,7 +74,7 @@ export default function QuickMeeting({
         <div className="flex gap-2">
           <button
             onClick={joinMeeting}
-            className="flex-1 py-3 px-4 bg-gradient-to-r from-cyan-500 to-emerald-500 text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
+            className="flex-1 py-3 px-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
           >
             <Video className="w-5 h-5" />
             Join Meeting
@@ -83,14 +83,14 @@ export default function QuickMeeting({
           <button
             onClick={generateLink}
             disabled={isGenerating}
-            className="px-4 py-3 bg-white border border-cyan-200 text-cyan-700 rounded-lg font-semibold hover:bg-cyan-50 transition disabled:opacity-50"
+            className="px-4 py-3 bg-white border border-emerald-200 text-emerald-700 rounded-lg font-semibold hover:bg-emerald-50 transition disabled:opacity-50"
           >
             {isGenerating ? "..." : <ExternalLink className="w-5 h-5" />}
           </button>
         </div>
 
         {meetingLink && roomId && (
-          <div className="bg-white rounded-lg p-3 border border-cyan-200">
+          <div className="bg-white rounded-lg p-3 border border-emerald-200">
             <label className="text-xs text-gray-600 mb-1 block">
               Shareable Link - Copy and share:
             </label>
@@ -103,7 +103,7 @@ export default function QuickMeeting({
               />
               <button
                 onClick={copyLink}
-                className="p-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 transition"
+                className="p-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
                 title="Copy link to clipboard"
               >
                 {copied ? (
@@ -120,7 +120,7 @@ export default function QuickMeeting({
         )}
       </div>
 
-      <div className="mt-4 pt-4 border-t border-cyan-200">
+      <div className="mt-4 pt-4 border-t border-emerald-200">
         <p className="text-xs text-gray-600">
           ✓ HD video & audio &nbsp; • &nbsp; ✓ Screen sharing &nbsp; • &nbsp; ✓
           Chat

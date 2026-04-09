@@ -525,7 +525,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
   const gridCols = totalParticipants === 1 ? 1 : totalParticipants === 2 ? 2 : totalParticipants <= 4 ? 2 : 3;
 
   return (
-    <div className="flex h-screen bg-gray-900">
+    <div className="flex h-screen bg-gradient-to-br from-stone-50 via-amber-50 to-emerald-50">
       {/* Main video area */}
       <div className="flex-1 flex flex-col">
         {/* Video grid */}
@@ -537,7 +537,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             }}
           >
             {/* Local video */}
-            <div className="relative bg-gray-800 rounded-lg overflow-hidden">
+            <div className="relative bg-stone-100 rounded-lg overflow-hidden">
               <video
                 ref={localVideoRef}
                 autoPlay
@@ -550,8 +550,8 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                 {isMuted && <MicOff className="w-4 h-4 text-red-400" />}
               </div>
               {isVideoOff && (
-                <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
-                  <div className="w-20 h-20 rounded-full bg-cyan-500 flex items-center justify-center text-white text-2xl font-bold">
+                <div className="absolute inset-0 bg-stone-200 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-emerald-600 flex items-center justify-center text-white text-2xl font-bold">
                     {(myInfo?.name || "You").charAt(0).toUpperCase()}
                   </div>
                 </div>
@@ -566,9 +566,9 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
         </div>
 
         {/* Controls bar */}
-        <div className="bg-gray-800 p-4 flex items-center justify-between">
+        <div className="bg-stone-50 p-4 flex items-center justify-between border-t border-amber-200/40">
           <div className="flex items-center gap-2">
-            <span className="text-white text-sm">
+            <span className="text-stone-900 text-sm">
               {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </span>
           </div>
@@ -578,8 +578,8 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             <button
               onClick={toggleAudio}
               className={`p-4 rounded-full ${
-                isMuted ? "bg-red-500" : "bg-gray-700 hover:bg-gray-600"
-              } text-white transition`}
+                isMuted ? "bg-red-500" : "bg-stone-200 hover:bg-stone-300"
+              } text-stone-900 transition`}
               title={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
@@ -588,8 +588,8 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             <button
               onClick={toggleVideo}
               className={`p-4 rounded-full ${
-                isVideoOff ? "bg-red-500" : "bg-gray-700 hover:bg-gray-600"
-              } text-white transition`}
+                isVideoOff ? "bg-red-500" : "bg-stone-200 hover:bg-stone-300"
+              } text-stone-900 transition`}
               title={isVideoOff ? "Turn on camera" : "Turn off camera"}
             >
               {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
@@ -598,8 +598,8 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             <button
               onClick={toggleScreenShare}
               className={`p-4 rounded-full ${
-                isScreenSharing ? "bg-blue-500" : "bg-gray-700 hover:bg-gray-600"
-              } text-white transition`}
+                isScreenSharing ? "bg-blue-500" : "bg-stone-200 hover:bg-stone-300"
+              } text-stone-900 transition`}
               title={isScreenSharing ? "Stop sharing" : "Share screen"}
             >
               {isScreenSharing ? <MonitorOff className="w-6 h-6" /> : <Monitor className="w-6 h-6" />}
@@ -615,7 +615,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
             <button
               onClick={toggleHandRaise}
-              className={`p-4 rounded-full ${handRaised ? "bg-yellow-500" : "bg-gray-700 hover:bg-gray-600"} text-white transition`}
+              className={`p-4 rounded-full ${handRaised ? "bg-yellow-500" : "bg-stone-200 hover:bg-stone-300"} text-stone-900 transition`}
               title="Raise hand"
             >
               <Hand className="w-6 h-6" />
@@ -623,20 +623,20 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
             <button
               onClick={() => setShowEmojiPicker((prev) => !prev)}
-              className="p-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
+              className="p-4 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-900 transition"
               title="Send reaction"
             >
               <Smile className="w-6 h-6" />
             </button>
 
             {showEmojiPicker && (
-              <div className="absolute -top-16 left-1/2 z-30 -translate-x-1/2 rounded-xl border border-gray-600 bg-gray-900/95 px-2 py-2 shadow-2xl">
+              <div className="absolute -top-16 left-1/2 z-30 -translate-x-1/2 rounded-xl border border-amber-200/50 bg-white/80 px-2 py-2 shadow-2xl">
                 <div className="flex items-center gap-1">
                   {emojiOptions.map((emoji) => (
                     <button
                       key={emoji}
                       onClick={() => sendReaction(emoji)}
-                      className="rounded-md px-2 py-1 text-xl hover:bg-gray-700"
+                      className="rounded-md px-2 py-1 text-xl hover:bg-stone-100"
                       title={`Send ${emoji}`}
                     >
                       {emoji}
@@ -649,7 +649,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             <button
               onClick={toggleRecording}
               disabled={!isHost}
-              className={`p-4 rounded-full ${meetingState.recordingActive ? "bg-red-500" : "bg-gray-700 hover:bg-gray-600"} text-white transition disabled:opacity-50`}
+              className={`p-4 rounded-full ${meetingState.recordingActive ? "bg-red-500" : "bg-stone-200 hover:bg-stone-300"} text-stone-900 transition disabled:opacity-50`}
               title="Recording"
             >
               <Radio className="w-6 h-6" />
@@ -660,7 +660,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
           <div className="flex items-center gap-3">
             <button
               onClick={copyMeetingLink}
-              className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
+              className="p-3 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-900 transition"
               title="Copy meeting link"
             >
               {linkCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
@@ -668,18 +668,18 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
             <button
               onClick={() => togglePanel("participants")}
-              className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition relative"
+              className="p-3 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-900 transition relative"
               title="Participants"
             >
               <Users className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {totalParticipants}
               </span>
             </button>
 
             <button
               onClick={() => togglePanel("chat")}
-              className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
+              className="p-3 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-900 transition"
               title="Chat"
             >
               <MessageSquare className="w-5 h-5" />
@@ -687,7 +687,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
             <button
               onClick={() => togglePanel("collab")}
-              className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
+              className="p-3 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-900 transition"
               title="Collaboration"
             >
               <Shield className="w-5 h-5" />
@@ -695,7 +695,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
             <button
               onClick={() => togglePanel("hostControls")}
-              className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
+              className="p-3 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-900 transition"
               title="Host controls"
             >
               {meetingState.locked ? <Lock className="w-5 h-5" /> : <Unlock className="w-5 h-5" />}
@@ -709,7 +709,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
           {reactionBurst.map((reaction) => (
             <div
               key={reaction.id}
-              className="animate-bounce rounded-full bg-gradient-to-r from-cyan-500/90 to-teal-500/90 backdrop-blur-md px-4 py-3 text-sm text-white shadow-lg border border-white/20"
+              className="animate-bounce rounded-full bg-gradient-to-r from-emerald-500/90 to-amber-500/90 backdrop-blur-md px-4 py-3 text-sm text-white shadow-lg border border-amber-200/50"
             >
               <span className="text-2xl mr-2">{reaction.emoji}</span>
               <span className="font-medium">{reaction.senderLabel}</span>
@@ -720,15 +720,15 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
       {/* Chat sidebar */}
       {activePanel === "chat" && (
-        <div className="w-96 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 flex flex-col shadow-2xl shadow-cyan-500/10">
-          <div className="p-5 border-b border-white/10 flex items-center justify-between backdrop-blur-sm bg-white/5">
-            <h3 className="font-bold text-white text-lg flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-cyan-400" />
+        <div className="w-96 bg-white/70 border-l border-amber-200/40 flex flex-col shadow-2xl shadow-amber-500/10">
+          <div className="p-5 border-b border-amber-200/40 flex items-center justify-between backdrop-blur-sm bg-white/60">
+            <h3 className="font-bold text-stone-900 text-lg flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-emerald-600" />
               Chat
             </h3>
             <button 
               onClick={() => togglePanel("chat")} 
-              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
+              className="text-stone-500 hover:text-stone-800 hover:bg-amber-100/40 rounded-lg p-1 transition"
             >
               ✕
             </button>
@@ -736,26 +736,26 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
           
           <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
             {chatMessages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500 text-sm">
+              <div className="flex flex-col items-center justify-center h-full text-stone-400 text-sm">
                 <MessageSquare className="w-8 h-8 mb-2 opacity-50" />
                 <p>No messages yet</p>
               </div>
             ) : (
               chatMessages.map((msg, idx) => (
-                <div key={idx} className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-3 hover:bg-white/15 transition">
+                <div key={idx} className="rounded-lg bg-white/50 backdrop-blur-sm border border-amber-200/40 p-3 hover:bg-white/70 transition">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-semibold text-white text-sm">{msg.senderName}</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="font-semibold text-stone-900 text-sm">{msg.senderName}</div>
+                    <div className="text-xs text-stone-500">
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </div>
                   </div>
-                  <div className="text-gray-200 text-sm break-words">{msg.content}</div>
+                  <div className="text-stone-700 text-sm break-words">{msg.content}</div>
                 </div>
               ))
             )}
           </div>
           
-          <div className="p-4 border-t border-white/10 backdrop-blur-sm bg-white/5">
+          <div className="p-4 border-t border-amber-200/40 backdrop-blur-sm bg-white/60">
             <div className="flex gap-3">
               <input
                 type="text"
@@ -763,11 +763,11 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                 onChange={(e) => setMessageInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 placeholder="Type a message..."
-                className="flex-1 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition"
+                className="flex-1 px-4 py-2 bg-white/60 backdrop-blur-md border border-amber-200/40 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition"
               />
               <button
                 onClick={sendMessage}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:from-cyan-700 hover:to-teal-700 font-medium transition"
+                className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-amber-600 text-white rounded-lg hover:from-emerald-700 hover:to-amber-700 font-medium transition"
               >
                 Send
               </button>
@@ -778,15 +778,15 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
       {/* Participants sidebar */}
       {activePanel === "participants" && (
-        <div className="w-96 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 flex flex-col shadow-2xl shadow-cyan-500/10">
-          <div className="p-5 border-b border-white/10 flex items-center justify-between backdrop-blur-sm bg-white/5">
-            <h3 className="font-bold text-white text-lg flex items-center gap-2">
-              <Users className="w-5 h-5 text-cyan-400" />
+        <div className="w-96 bg-white/70 border-l border-amber-200/40 flex flex-col shadow-2xl shadow-amber-500/10">
+          <div className="p-5 border-b border-amber-200/40 flex items-center justify-between backdrop-blur-sm bg-white/60">
+            <h3 className="font-bold text-stone-900 text-lg flex items-center gap-2">
+              <Users className="w-5 h-5 text-emerald-600" />
               Participants ({totalParticipants})
             </h3>
             <button
               onClick={() => togglePanel("participants")}
-              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
+              className="text-stone-500 hover:text-stone-800 hover:bg-amber-100/40 rounded-lg p-1 transition"
             >
               ✕
             </button>
@@ -794,30 +794,30 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
           
           <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
             {/* Local user */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/50 backdrop-blur-sm border border-amber-200/40 hover:bg-white/70 transition">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-white font-bold text-sm">
                 {(myInfo?.name || "You").charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-white text-sm truncate">{myInfo?.name || "You"}</div>
-                <div className="text-xs text-cyan-400">You (Host)</div>
+                <div className="font-semibold text-stone-900 text-sm truncate">{myInfo?.name || "You"}</div>
+                <div className="text-xs text-emerald-700">You (Host)</div>
               </div>
-              {isMuted && <MicOff className="w-4 h-4 text-red-400 flex-shrink-0" />}
+              {isMuted && <MicOff className="w-4 h-4 text-orange-500 flex-shrink-0" />}
             </div>
 
             {/* Remote participants */}
             {participants.map((p: Participant) => (
-              <div key={p.socketId} className="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition group">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <div key={p.socketId} className="flex items-center gap-3 p-3 rounded-lg bg-white/50 backdrop-blur-sm border border-amber-200/40 hover:bg-white/70 transition group">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   {p.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-white text-sm truncate">{p.name}</div>
-                  <div className="text-xs text-gray-400">Participant</div>
+                  <div className="font-semibold text-stone-900 text-sm truncate">{p.name}</div>
+                  <div className="text-xs text-stone-500">Participant</div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {p.isMuted && <MicOff className="w-4 h-4 text-red-400" />}
-                  {p.handRaised && <Hand className="w-4 h-4 text-yellow-400" />}
+                  {p.isMuted && <MicOff className="w-4 h-4 text-orange-500" />}
+                  {p.handRaised && <Hand className="w-4 h-4 text-amber-500" />}
                   {isHost && (
                     <button
                       onClick={() => {
@@ -825,7 +825,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                           removeParticipant(p.socketId);
                         }
                       }}
-                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/30 rounded text-red-400 hover:text-red-300 transition text-xs"
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-orange-100 rounded text-orange-600 hover:text-orange-700 transition text-xs"
                       title="Remove participant"
                     >
                       ✕
@@ -839,15 +839,15 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
       )}
 
       {activePanel === "hostControls" && (
-        <div className="w-96 overflow-y-auto bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 shadow-2xl shadow-cyan-500/10">
-          <div className="p-5 border-b border-white/10 backdrop-blur-sm bg-white/5 flex items-center justify-between sticky top-0">
-            <h3 className="font-bold text-white text-lg flex items-center gap-2">
-              <Lock className="w-5 h-5 text-cyan-400" />
+        <div className="w-96 overflow-y-auto bg-white/70 border-l border-amber-200/40 shadow-2xl shadow-amber-500/10">
+          <div className="p-5 border-b border-amber-200/40 backdrop-blur-sm bg-white/60 flex items-center justify-between sticky top-0">
+            <h3 className="font-bold text-stone-900 text-lg flex items-center gap-2">
+              <Lock className="w-5 h-5 text-emerald-600" />
               Host Controls
             </h3>
             <button 
               onClick={() => togglePanel("hostControls")} 
-              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
+              className="text-stone-500 hover:text-stone-800 hover:bg-amber-100/40 rounded-lg p-1 transition"
             >
               ✕
             </button>
@@ -855,7 +855,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
 
           <div className="p-5 space-y-4">
             {!isHost && (
-              <div className="rounded-lg bg-yellow-500/20 border border-yellow-500/30 p-3 text-xs text-yellow-200">
+              <div className="rounded-lg bg-yellow-100 border border-yellow-300 p-3 text-xs text-yellow-900">
                 ⚠️ Host-only features are disabled for participants.
               </div>
             )}
@@ -863,25 +863,25 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             <button
               disabled={!isHost}
               onClick={toggleLockMeeting}
-              className="w-full rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="w-full rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {meetingState.locked ? "🔓 Unlock Meeting" : "🔒 Lock Meeting"}
             </button>
 
-            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
-              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">Meeting Password</label>
+            <div className="rounded-lg bg-white/60 backdrop-blur-sm border border-amber-200/40 p-4">
+              <label className="text-xs font-bold text-stone-600 uppercase tracking-wide">Meeting Password</label>
               <div className="mt-3 flex gap-2">
                 <input
                   type="text"
                   value={meetingPassword}
                   onChange={(e) => setMeetingPassword(e.target.value)}
                   placeholder="Set or clear password"
-                  className="flex-1 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                  className="flex-1 rounded-lg bg-white/60 backdrop-blur-md border border-amber-200/40 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 />
                 <button
                   disabled={!isHost}
                   onClick={updateMeetingPassword}
-                  className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 transition"
+                  className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 transition"
                 >
                   Save
                 </button>
@@ -904,28 +904,28 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
               🔇 Mute All Participants
             </button>
 
-            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
-              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Participant Permissions</p>
+            <div className="rounded-lg bg-white/60 backdrop-blur-sm border border-amber-200/40 p-4">
+              <p className="mb-3 text-xs font-bold text-stone-600 uppercase tracking-wide">Participant Permissions</p>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-300">Screen Share</span>
+                  <span className="text-sm text-stone-600">Screen Share</span>
                   <select
                     disabled={!isHost}
                     value={meetingState.permissions.canShareScreen}
                     onChange={(e) => setPermission("canShareScreen", e.target.value as "all" | "host-only")}
-                    className="rounded-lg bg-white/10 border border-white/20 px-2 py-1 text-xs text-white disabled:opacity-50"
+                    className="rounded-lg bg-white/60 border border-amber-200/40 px-2 py-1 text-xs text-stone-900 disabled:opacity-50"
                   >
                     <option value="all">All</option>
                     <option value="host-only">Host Only</option>
                   </select>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-300">Unmute Self</span>
+                  <span className="text-sm text-stone-600">Unmute Self</span>
                   <select
                     disabled={!isHost}
                     value={meetingState.permissions.canUnmuteSelf}
                     onChange={(e) => setPermission("canUnmuteSelf", e.target.value as "all" | "host-only")}
-                    className="rounded-lg bg-white/10 border border-white/20 px-2 py-1 text-xs text-white disabled:opacity-50"
+                    className="rounded-lg bg-white/60 border border-amber-200/40 px-2 py-1 text-xs text-stone-900 disabled:opacity-50"
                   >
                     <option value="all">All</option>
                     <option value="host-only">Host Only</option>
@@ -935,15 +935,15 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             </div>
 
             {meetingState.waitingRoomEnabled && (
-              <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
-                <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Waiting Room</p>
+              <div className="rounded-lg bg-white/60 backdrop-blur-sm border border-amber-200/40 p-4">
+                <p className="mb-3 text-xs font-bold text-stone-600 uppercase tracking-wide">Waiting Room</p>
                 {meetingState.waitingRoom.length === 0 ? (
-                  <p className="text-xs text-gray-400">No one waiting.</p>
+                  <p className="text-xs text-stone-400">No one waiting.</p>
                 ) : (
                   <div className="space-y-2">
                     {meetingState.waitingRoom.map((person) => (
-                      <div key={person.socketId} className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 border border-white/10">
-                        <span className="truncate text-xs text-gray-300">{person.name}</span>
+                      <div key={person.socketId} className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/40 border border-amber-200/40">
+                        <span className="truncate text-xs text-stone-600">{person.name}</span>
                         <div className="flex gap-1 flex-shrink-0">
                           <button
                             disabled={!isHost}
@@ -967,15 +967,15 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
               </div>
             )}
 
-            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
-              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Remove Participant</p>
+            <div className="rounded-lg bg-white/60 backdrop-blur-sm border border-amber-200/40 p-4">
+              <p className="mb-3 text-xs font-bold text-stone-600 uppercase tracking-wide">Remove Participant</p>
               {participants.length === 0 ? (
-                <p className="text-xs text-gray-400">No participants.</p>
+                <p className="text-xs text-stone-400">No participants.</p>
               ) : (
                 <div className="space-y-2">
                   {participants.map((p: Participant) => (
-                    <div key={p.socketId} className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition">
-                      <span className="truncate text-xs text-gray-300">{p.name}</span>
+                    <div key={p.socketId} className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/40 border border-amber-200/40 hover:bg-white/60 transition">
+                      <span className="truncate text-xs text-stone-600">{p.name}</span>
                       <button
                         disabled={!isHost}
                         onClick={() => {
@@ -997,46 +997,46 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
       )}
 
       {activePanel === "collab" && (
-        <div className="w-96 overflow-y-auto bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 shadow-2xl shadow-cyan-500/10">
-          <div className="p-5 border-b border-white/10 backdrop-blur-sm bg-white/5 flex items-center justify-between sticky top-0">
-            <h3 className="font-bold text-white text-lg flex items-center gap-2">
-              <Shield className="w-5 h-5 text-cyan-400" />
+        <div className="w-96 overflow-y-auto bg-white/70 border-l border-amber-200/40 shadow-2xl shadow-amber-500/10">
+          <div className="p-5 border-b border-amber-200/40 backdrop-blur-sm bg-white/60 flex items-center justify-between sticky top-0">
+            <h3 className="font-bold text-stone-900 text-lg flex items-center gap-2">
+              <Shield className="w-5 h-5 text-emerald-600" />
               Collaboration
             </h3>
             <button 
               onClick={() => togglePanel("collab")} 
-              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
+              className="text-stone-500 hover:text-stone-800 hover:bg-amber-100/40 rounded-lg p-1 transition"
             >
               ✕
             </button>
           </div>
 
           <div className="p-5 space-y-4 custom-scrollbar">
-            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
-              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Whiteboard</p>
+            <div className="rounded-lg bg-white/60 backdrop-blur-sm border border-amber-200/40 p-4">
+              <p className="mb-3 text-xs font-bold text-stone-600 uppercase tracking-wide">Whiteboard</p>
               <CollaborativeWhiteboard socket={socket} roomId={roomId} />
             </div>
 
-            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
-              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Polls</p>
+            <div className="rounded-lg bg-white/60 backdrop-blur-sm border border-amber-200/40 p-4">
+              <p className="mb-3 text-xs font-bold text-stone-600 uppercase tracking-wide">Polls</p>
               <div className="space-y-2">
                 <input
                   type="text"
                   value={pollQuestion}
                   onChange={(e) => setPollQuestion(e.target.value)}
                   placeholder="Poll question"
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                  className="w-full rounded-lg bg-white/60 border border-amber-200/40 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 />
                 <textarea
                   value={pollOptionsText}
                   onChange={(e) => setPollOptionsText(e.target.value)}
                   placeholder="One option per line"
-                  className="h-16 w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                  className="h-16 w-full rounded-lg bg-white/60 border border-amber-200/40 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 />
                 <button
                   disabled={!isHost}
                   onClick={createPoll}
-                  className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 transition w-full"
+                  className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 transition w-full"
                 >
                   Create Poll
                 </button>
@@ -1054,7 +1054,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                           className="w-full flex items-center justify-between rounded-lg bg-white/10 hover:bg-white/20 px-3 py-2 text-xs text-gray-200 transition"
                         >
                           <span>{option.text}</span>
-                          <span className="font-semibold text-cyan-400">{option.votes}</span>
+                          <span className="font-semibold text-emerald-400">{option.votes}</span>
                         </button>
                       ))}
                     </div>
@@ -1098,7 +1098,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                           />
                           <button
                             onClick={() => answerQuestion(item.id)}
-                            className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-2 py-1 text-[11px] font-semibold text-white transition"
+                            className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-2 py-1 text-[11px] font-semibold text-white transition"
                           >
                             Reply
                           </button>
@@ -1117,7 +1117,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                 onChange={(e) => setSharedNotesDraft(e.target.value)}
                 onBlur={pushNotes}
                 placeholder="Collaborative notes for this meeting"
-                className="h-24 w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                className="h-24 w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
               />
               <button 
                 onClick={pushNotes} 
@@ -1149,14 +1149,14 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                 />
                 <button 
                   onClick={sendCaption} 
-                  className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-3 py-2 text-xs font-semibold text-white transition"
+                  className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-3 py-2 text-xs font-semibold text-white transition"
                 >
                   Send
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="h-20 overflow-y-auto rounded-lg bg-white/5 border border-white/10 p-2 custom-scrollbar">
-                  <p className="mb-1 text-xs font-semibold text-cyan-300">Captions</p>
+                  <p className="mb-1 text-xs font-semibold text-emerald-300">Captions</p>
                   {captionFeed.map((line, idx) => (
                     <p key={`c-${idx}`} className="text-[11px] text-gray-300">{line}</p>
                   ))}

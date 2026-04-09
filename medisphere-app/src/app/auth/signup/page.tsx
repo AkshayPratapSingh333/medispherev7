@@ -42,12 +42,12 @@ export default function SignUpPage() {
   const signInWithGoogle = () => signIn("google", { callbackUrl: "/" });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl shadow-cyan-500/10 p-8 border border-white/10">
-        <h1 className="text-2xl font-bold text-white text-center mb-2">Create account</h1>
-        <p className="text-gray-400 text-center text-sm mb-6">Join MediSphere to start your wellness journey</p>
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50 to-emerald-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-gradient-to-br from-white/70 to-stone-50/60 backdrop-blur-lg rounded-2xl shadow-2xl shadow-emerald-500/10 p-8 border border-amber-200/50">
+        <h1 className="text-2xl font-bold text-stone-900 text-center mb-2">Create account</h1>
+        <p className="text-stone-600 text-center text-sm mb-6">Join MediSphere to start your wellness journey</p>
 
-        <Button variant="outline" className="w-full mt-6 bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={signInWithGoogle}>
+        <Button variant="outline" className="w-full mt-6 bg-emerald-100/60 border-emerald-200/60 text-stone-800 hover:bg-emerald-100 font-medium" onClick={signInWithGoogle}>
           <span className="mr-3">
             {/* Google Icon */}
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -62,39 +62,39 @@ export default function SignUpPage() {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10" />
+            <div className="w-full border-t border-amber-200/40" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-900 text-gray-400">Or sign up with email</span>
+            <span className="px-2 bg-white text-stone-600">Or sign up with email</span>
           </div>
         </div>
 
-        {err && <div className="bg-red-500/15 text-red-300 p-3 rounded-lg text-sm mb-4 border border-red-500/30">{err}</div>}
+        {err && <div className="bg-orange-100/40 text-orange-700 p-3 rounded-lg text-sm mb-4 border border-orange-200/50">{err}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input placeholder="Full name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
-          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
-          <Input type="password" autoComplete="new-password" placeholder="Password (min 6 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
+          <Input placeholder="Full name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required className="bg-white/60 border-amber-200/40 text-stone-900 placeholder-stone-400" />
+          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-white/60 border-amber-200/40 text-stone-900 placeholder-stone-400" />
+          <Input type="password" autoComplete="new-password" placeholder="Password (min 6 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-white/60 border-amber-200/40 text-stone-900 placeholder-stone-400" />
 
           <div className="flex items-center justify-between gap-3 text-sm">
-            <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white">
+            <label className="flex items-center gap-2 cursor-pointer text-stone-600 hover:text-stone-900">
               <input type="radio" checked={role === "PATIENT"} onChange={() => setRole("PATIENT")} className="cursor-pointer" />
               <span>Patient</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white">
+            <label className="flex items-center gap-2 cursor-pointer text-stone-600 hover:text-stone-900">
               <input type="radio" checked={role === "DOCTOR"} onChange={() => setRole("DOCTOR")} className="cursor-pointer" />
               <span>Doctor</span>
             </label>
           </div>
 
-          <Button type="submit" className="w-full bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white font-semibold" disabled={loading}>
+          <Button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold" disabled={loading}>
             {loading ? "Creating account..." : "Sign Up"}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-400">
+        <p className="mt-6 text-center text-sm text-stone-600">
           Already have an account?{" "}
-          <Link href="/auth/signin" className="text-white hover:text-cyan-300 font-medium transition">
+          <Link href="/auth/signin" className="text-emerald-700 hover:text-emerald-800 font-medium transition">
             Sign in
           </Link>
         </p>

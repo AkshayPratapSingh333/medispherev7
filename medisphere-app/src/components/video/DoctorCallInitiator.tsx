@@ -52,7 +52,7 @@ export default function DoctorCallInitiator({ appointmentId }: DoctorCallInitiat
     <Button
       onClick={handleInitiateCall}
       disabled={isInitiating}
-      className="gap-2 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 px-6 py-2"
+      className="gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 px-6 py-2"
       size="lg"
     >
       {isInitiating ? (

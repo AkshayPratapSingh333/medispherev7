@@ -11,8 +11,8 @@ function fmt(d: string | Date) {
 
 export default function AppointmentDetails({ appointment }: { appointment: any }) {
   return (
-    <div className="rounded-3xl border border-cyan-100 bg-white p-6 shadow-sm">
-      <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-700 to-emerald-700">
+    <div className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
+      <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-emerald-700">
         Appointment
       </h2>
       <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -22,9 +22,9 @@ export default function AppointmentDetails({ appointment }: { appointment: any }
         <Field label="Status" value={appointment.status} />
       </div>
 
-      <div className="mt-4 rounded-xl border border-cyan-100 p-4">
-        <div className="text-xs text-cyan-700/70">Notes</div>
-        <div className="mt-1 text-cyan-900">{appointment.notes || "—"}</div>
+      <div className="mt-4 rounded-xl border border-emerald-100 p-4">
+        <div className="text-xs text-emerald-700/70">Notes</div>
+        <div className="mt-1 text-emerald-900">{appointment.notes || "—"}</div>
       </div>
     </div>
   );
@@ -32,9 +32,9 @@ export default function AppointmentDetails({ appointment }: { appointment: any }
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-cyan-100 p-4 bg-white">
-      <div className="text-xs text-cyan-700/70">{label}</div>
-      <div className="mt-0.5 font-medium text-cyan-900">{value}</div>
+    <div className="rounded-xl border border-emerald-100 p-4 bg-white">
+      <div className="text-xs text-emerald-700/70">{label}</div>
+      <div className="mt-0.5 font-medium text-emerald-900">{value}</div>
     </div>
   );
 }

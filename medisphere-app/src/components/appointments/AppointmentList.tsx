@@ -12,9 +12,9 @@ const fetcher = (url: string) =>
 
 function Skeleton() {
   return (
-    <div className="animate-pulse rounded-2xl border border-cyan-100 bg-white p-5 shadow-sm">
-      <div className="h-4 w-1/3 bg-cyan-100 rounded" />
-      <div className="mt-2 h-3 w-1/2 bg-cyan-100 rounded" />
+    <div className="animate-pulse rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+      <div className="h-4 w-1/3 bg-emerald-100 rounded" />
+      <div className="mt-2 h-3 w-1/2 bg-emerald-100 rounded" />
     </div>
   );
 }
@@ -34,7 +34,7 @@ export default function AppointmentList({ endpoint = "/api/appointments" }: { en
 
   if (!Array.isArray(data) || data.length === 0)
     return (
-      <div className="rounded-2xl border border-cyan-100 bg-white p-8 text-center text-cyan-800">
+      <div className="rounded-2xl border border-emerald-100 bg-white p-8 text-center text-emerald-800">
         No appointments found.
       </div>
     );

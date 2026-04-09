@@ -180,14 +180,14 @@ export default function VideoCallPanel({
   }
 
   return (
-    <div className="rounded-xl border border-cyan-100 bg-white p-3">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="font-semibold text-cyan-900">{active ? "Call in progress" : "Video Call"}</div>
+    <div className="rounded-xl border border-emerald-200 bg-white p-3">
+      <div className="flex items-center justify-between">
+        <div className="font-semibold text-emerald-900">{active ? "Call in progress" : "Video Call"}</div>
         <div className="space-x-2">
           {!active ? (
             <button
               onClick={startCall}
-              className="rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 px-3 py-1.5 text-white"
+              className="rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-3 py-1.5 text-white"
             >
               Start
             </button>
@@ -199,7 +199,7 @@ export default function VideoCallPanel({
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <video ref={localRef} autoPlay playsInline muted className="w-full rounded-lg bg-cyan-50" />
+        <video ref={localRef} autoPlay playsInline muted className="w-full rounded-lg bg-stone-100" />
         <video ref={remoteRef} autoPlay playsInline className="w-full rounded-lg bg-emerald-50" />
       </div>
     </div>
