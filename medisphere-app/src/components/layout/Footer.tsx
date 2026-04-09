@@ -28,7 +28,7 @@ const footerLinks = {
 export default function Footer() {
   return (
     <motion.footer
-      className="relative mt-auto w-full bg-white/78 backdrop-blur-md border border-cyan-100/80 shadow-[0_10px_28px_-20px_rgba(14,116,144,0.5)] bg-gradient-to-br from-slate-50/95 via-blue-50/95 to-cyan-50/95 border-t overflow-hidden"
+      className="relative mt-auto w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-t border-white/10 shadow-[0_-10px_28px_-20px_rgba(0,0,0,0.8)] backdrop-blur-sm overflow-hidden"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
@@ -83,7 +83,7 @@ export default function Footer() {
                   />
                 </div>
               </motion.div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+              <p className="text-gray-300 text-sm leading-relaxed mb-6">
                 Revolutionizing Ayurvedic healthcare through modern technology. 
                 Connect with certified practitioners and embark on your wellness journey.
               </p>

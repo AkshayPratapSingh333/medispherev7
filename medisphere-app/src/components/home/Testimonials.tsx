@@ -70,25 +70,25 @@ export default function Testimonials() {
   );
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 overflow-hidden">
+    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(circle_at_10%_20%,rgba(45,212,191,0.18),transparent_35%),radial-gradient(circle_at_90%_70%,rgba(59,130,246,0.18),transparent_40%)]" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
+      <div className="relative z-10 max-w-7xl mx-auto">
         {/* Enhanced Heading */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
           initial={{ opacity: 0, y: -16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.35 }}
         >
           <h2
-            className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2 sm:mb-4 px-4"
           >
             What Our Users Say
           </h2>
           <motion.p
-            className="text-lg text-slate-600 max-w-2xl mx-auto"
+            className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}

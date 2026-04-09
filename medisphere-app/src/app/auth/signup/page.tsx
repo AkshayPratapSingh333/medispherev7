@@ -42,11 +42,12 @@ export default function SignUpPage() {
   const signInWithGoogle = () => signIn("google", { callbackUrl: "/" });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-slate-800 text-center">Create account</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl shadow-cyan-500/10 p-8 border border-white/10">
+        <h1 className="text-2xl font-bold text-white text-center mb-2">Create account</h1>
+        <p className="text-gray-400 text-center text-sm mb-6">Join MediSphere to start your wellness journey</p>
 
-        <Button variant="outline" className="w-full mt-6" onClick={signInWithGoogle}>
+        <Button variant="outline" className="w-full mt-6 bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={signInWithGoogle}>
           <span className="mr-3">
             {/* Google Icon */}
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -61,46 +62,46 @@ export default function SignUpPage() {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-300" />
+            <div className="w-full border-t border-white/10" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-slate-500">Or</span>
+            <span className="px-2 bg-gray-900 text-gray-400">Or sign up with email</span>
           </div>
         </div>
 
-        {err && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{err}</div>}
+        {err && <div className="bg-red-500/15 text-red-300 p-3 rounded-lg text-sm mb-4 border border-red-500/30">{err}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input placeholder="Full name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input type="password" autoComplete="new-password" placeholder="Password (min 6 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+          <Input placeholder="Full name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} required className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
+          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
+          <Input type="password" autoComplete="new-password" placeholder="Password (min 6 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
 
           <div className="flex items-center justify-between gap-3 text-sm">
-            <label className="flex items-center gap-2">
-              <input type="radio" checked={role === "PATIENT"} onChange={() => setRole("PATIENT")} />
-              Patient
+            <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white">
+              <input type="radio" checked={role === "PATIENT"} onChange={() => setRole("PATIENT")} className="cursor-pointer" />
+              <span>Patient</span>
             </label>
-            <label className="flex items-center gap-2">
-              <input type="radio" checked={role === "DOCTOR"} onChange={() => setRole("DOCTOR")} />
-              Doctor
+            <label className="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white">
+              <input type="radio" checked={role === "DOCTOR"} onChange={() => setRole("DOCTOR")} className="cursor-pointer" />
+              <span>Doctor</span>
             </label>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white font-semibold" disabled={loading}>
             {loading ? "Creating account..." : "Sign Up"}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-gray-400">
           Already have an account?{" "}
-          <Link href="/auth/signin" className="text-slate-800 hover:underline font-medium">
+          <Link href="/auth/signin" className="text-white hover:text-cyan-300 font-medium transition">
             Sign in
           </Link>
         </p>
 
-        <p className="mt-2 text-center text-xs">
+        <p className="mt-2 text-center text-xs text-gray-500">
           Admin?{" "}
-          <Link href="/auth/admin" className="text-blue-600 hover:underline">
+          <Link href="/auth/admin" className="text-cyan-300 hover:text-cyan-200 transition">
             Login here
           </Link>
         </p>

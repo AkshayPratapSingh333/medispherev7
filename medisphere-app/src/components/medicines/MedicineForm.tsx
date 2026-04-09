@@ -28,36 +28,36 @@ export default function MedicineForm() {
   return (
     <form onSubmit={submit} className="space-y-3">
       <input
-        className="border p-2 w-full"
+        className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition"
         placeholder="Medicine Name"
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
       <input
-        className="border p-2 w-full"
+        className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition"
         placeholder="Dosage"
         value={form.dosage}
         onChange={(e) => setForm({ ...form, dosage: e.target.value })}
       />
       <input
-        className="border p-2 w-full"
+        className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition"
         placeholder="Frequency"
         value={form.frequency}
         onChange={(e) => setForm({ ...form, frequency: e.target.value })}
       />
       <input
         type="date"
-        className="border p-2 w-full"
+        className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition"
         value={form.startDate}
         onChange={(e) => setForm({ ...form, startDate: e.target.value })}
       />
       <input
         type="date"
-        className="border p-2 w-full"
+        className="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition"
         value={form.endDate}
         onChange={(e) => setForm({ ...form, endDate: e.target.value })}
       />
-      <button className="bg-green-600 text-white px-4 py-2 rounded">Save</button>
+      <button className="w-full rounded-lg bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white font-semibold px-4 py-3 transition shadow-lg shadow-cyan-500/20\">Save Medicine</button>
     </form>
   );
 }

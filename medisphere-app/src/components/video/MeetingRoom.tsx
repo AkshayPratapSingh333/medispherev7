@@ -94,10 +94,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [showParticipants, setShowParticipants] = useState(false);
-  const [showCollab, setShowCollab] = useState(false);
-  const [showHostControls, setShowHostControls] = useState(false);
+  const [activePanel, setActivePanel] = useState<"chat" | "participants" | "collab" | "hostControls" | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const [linkCopied, setLinkCopied] = useState(false);
@@ -226,14 +223,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
       isHost?: boolean;
     }) => {
       const id = Date.now() + Math.random();
-      const roleLabel = senderIsHost
-        ? "Host"
-        : senderRole === "DOCTOR"
-        ? "Doctor"
-        : senderRole === "PATIENT"
-        ? "Patient"
-        : "Guest";
-      const senderLabel = `${senderName} (${roleLabel})`;
+      const senderLabel = `${senderName}`;
 
       setReactionBurst((prev) => [...prev, { id, emoji, senderLabel }]);
       setTimeout(() => {
@@ -441,6 +431,10 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
   };
 
   const removeParticipant = (targetSocketId: string) => {
+    if (!isHost) {
+      alert("Only the host can remove participants.");
+      return;
+    }
     socket?.emit("meeting:remove-participant", { roomId, targetSocketId });
   };
 
@@ -511,6 +505,11 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
     socket?.emit("captions:line", { roomId, text: captionInput.trim() });
     socket?.emit("transcription:line", { roomId, text: captionInput.trim() });
     setCaptionInput("");
+  };
+
+  // Helper to toggle panels exclusively
+  const togglePanel = (panel: "chat" | "participants" | "collab" | "hostControls") => {
+    setActivePanel(activePanel === panel ? null : panel);
   };
 
   // Copy meeting link
@@ -668,7 +667,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             </button>
 
             <button
-              onClick={() => setShowParticipants(!showParticipants)}
+              onClick={() => togglePanel("participants")}
               className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition relative"
               title="Participants"
             >
@@ -679,7 +678,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             </button>
 
             <button
-              onClick={() => setShowChat(!showChat)}
+              onClick={() => togglePanel("chat")}
               className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
               title="Chat"
             >
@@ -687,7 +686,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             </button>
 
             <button
-              onClick={() => setShowCollab(!showCollab)}
+              onClick={() => togglePanel("collab")}
               className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
               title="Collaboration"
             >
@@ -695,7 +694,7 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             </button>
 
             <button
-              onClick={() => setShowHostControls(!showHostControls)}
+              onClick={() => togglePanel("hostControls")}
               className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 text-white transition"
               title="Host controls"
             >
@@ -710,50 +709,65 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
           {reactionBurst.map((reaction) => (
             <div
               key={reaction.id}
-              className="animate-pulse rounded-full bg-black/70 px-3 py-2 text-sm text-white shadow"
+              className="animate-bounce rounded-full bg-gradient-to-r from-cyan-500/90 to-teal-500/90 backdrop-blur-md px-4 py-3 text-sm text-white shadow-lg border border-white/20"
             >
-              {reaction.emoji} {reaction.senderLabel}
+              <span className="text-2xl mr-2">{reaction.emoji}</span>
+              <span className="font-medium">{reaction.senderLabel}</span>
             </div>
           ))}
         </div>
       )}
 
       {/* Chat sidebar */}
-      {showChat && (
-        <div className="w-80 bg-white flex flex-col">
-          <div className="p-4 border-b flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">In-call messages</h3>
-            <button onClick={() => setShowChat(false)} className="text-gray-500 hover:text-gray-700">
+      {activePanel === "chat" && (
+        <div className="w-96 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 flex flex-col shadow-2xl shadow-cyan-500/10">
+          <div className="p-5 border-b border-white/10 flex items-center justify-between backdrop-blur-sm bg-white/5">
+            <h3 className="font-bold text-white text-lg flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-cyan-400" />
+              Chat
+            </h3>
+            <button 
+              onClick={() => togglePanel("chat")} 
+              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
+            >
               ✕
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {chatMessages.map((msg, idx) => (
-              <div key={idx} className="text-sm">
-                <div className="font-medium text-gray-900">{msg.senderName}</div>
-                <div className="text-gray-600">{msg.content}</div>
-                <div className="text-xs text-gray-400">
-                  {new Date(msg.timestamp).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
+          
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            {chatMessages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-gray-500 text-sm">
+                <MessageSquare className="w-8 h-8 mb-2 opacity-50" />
+                <p>No messages yet</p>
               </div>
-            ))}
+            ) : (
+              chatMessages.map((msg, idx) => (
+                <div key={idx} className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-3 hover:bg-white/15 transition">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-semibold text-white text-sm">{msg.senderName}</div>
+                    <div className="text-xs text-gray-400">
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                  </div>
+                  <div className="text-gray-200 text-sm break-words">{msg.content}</div>
+                </div>
+              ))
+            )}
           </div>
-          <div className="p-4 border-t">
-            <div className="flex gap-2">
+          
+          <div className="p-4 border-t border-white/10 backdrop-blur-sm bg-white/5">
+            <div className="flex gap-3">
               <input
                 type="text"
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                placeholder="Send a message..."
-                className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                placeholder="Type a message..."
+                className="flex-1 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition"
               />
               <button
                 onClick={sendMessage}
-                className="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600"
+                className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:from-cyan-700 hover:to-teal-700 font-medium transition"
               >
                 Send
               </button>
@@ -763,82 +777,111 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
       )}
 
       {/* Participants sidebar */}
-      {showParticipants && (
-        <div className="w-80 bg-white flex flex-col">
-          <div className="p-4 border-b flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">
+      {activePanel === "participants" && (
+        <div className="w-96 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 flex flex-col shadow-2xl shadow-cyan-500/10">
+          <div className="p-5 border-b border-white/10 flex items-center justify-between backdrop-blur-sm bg-white/5">
+            <h3 className="font-bold text-white text-lg flex items-center gap-2">
+              <Users className="w-5 h-5 text-cyan-400" />
               Participants ({totalParticipants})
             </h3>
             <button
-              onClick={() => setShowParticipants(false)}
-              className="text-gray-500 hover:text-gray-700"
+              onClick={() => togglePanel("participants")}
+              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
             >
               ✕
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
             {/* Local user */}
-            <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-              <div className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center text-white font-medium">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm">
                 {(myInfo?.name || "You").charAt(0).toUpperCase()}
               </div>
-              <div className="flex-1">
-                <div className="font-medium text-gray-900">{myInfo?.name || "You"} (me)</div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-white text-sm truncate">{myInfo?.name || "You"}</div>
+                <div className="text-xs text-cyan-400">You (Host)</div>
               </div>
-              {isMuted && <MicOff className="w-4 h-4 text-gray-400" />}
+              {isMuted && <MicOff className="w-4 h-4 text-red-400 flex-shrink-0" />}
             </div>
 
             {/* Remote participants */}
             {participants.map((p: Participant) => (
-              <div key={p.socketId} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-medium">
+              <div key={p.socketId} className="flex items-center gap-3 p-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition group">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   {p.name.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex-1">
-                  <div className="font-medium text-gray-900">{p.name}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-white text-sm truncate">{p.name}</div>
+                  <div className="text-xs text-gray-400">Participant</div>
                 </div>
-                {p.isMuted && <MicOff className="w-4 h-4 text-gray-400" />}
-                {p.handRaised && <Hand className="w-4 h-4 text-yellow-500" />}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {p.isMuted && <MicOff className="w-4 h-4 text-red-400" />}
+                  {p.handRaised && <Hand className="w-4 h-4 text-yellow-400" />}
+                  {isHost && (
+                    <button
+                      onClick={() => {
+                        if (confirm(`Remove ${p.name} from meeting?`)) {
+                          removeParticipant(p.socketId);
+                        }
+                      }}
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/30 rounded text-red-400 hover:text-red-300 transition text-xs"
+                      title="Remove participant"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {showHostControls && (
-        <div className="w-[360px] overflow-y-auto bg-white p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">Host Controls</h3>
-            <button onClick={() => setShowHostControls(false)} className="text-gray-500 hover:text-gray-700">
+      {activePanel === "hostControls" && (
+        <div className="w-96 overflow-y-auto bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 shadow-2xl shadow-cyan-500/10">
+          <div className="p-5 border-b border-white/10 backdrop-blur-sm bg-white/5 flex items-center justify-between sticky top-0">
+            <h3 className="font-bold text-white text-lg flex items-center gap-2">
+              <Lock className="w-5 h-5 text-cyan-400" />
+              Host Controls
+            </h3>
+            <button 
+              onClick={() => togglePanel("hostControls")} 
+              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
+            >
               ✕
             </button>
           </div>
 
-          {!isHost && <p className="mb-3 rounded bg-amber-50 p-2 text-xs text-amber-700">Host-only actions are disabled for participants.</p>}
+          <div className="p-5 space-y-4">
+            {!isHost && (
+              <div className="rounded-lg bg-yellow-500/20 border border-yellow-500/30 p-3 text-xs text-yellow-200">
+                ⚠️ Host-only features are disabled for participants.
+              </div>
+            )}
 
-          <div className="space-y-3">
             <button
               disabled={!isHost}
               onClick={toggleLockMeeting}
-              className="w-full rounded bg-gray-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="w-full rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              {meetingState.locked ? "Unlock Meeting" : "Lock Meeting"}
+              {meetingState.locked ? "🔓 Unlock Meeting" : "🔒 Lock Meeting"}
             </button>
 
-            <div className="rounded border p-2">
-              <label className="text-xs font-medium text-gray-700">Meeting password</label>
-              <div className="mt-2 flex gap-2">
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">Meeting Password</label>
+              <div className="mt-3 flex gap-2">
                 <input
                   type="text"
                   value={meetingPassword}
                   onChange={(e) => setMeetingPassword(e.target.value)}
                   placeholder="Set or clear password"
-                  className="flex-1 rounded border px-2 py-1 text-sm"
+                  className="flex-1 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
                 <button
                   disabled={!isHost}
                   onClick={updateMeetingPassword}
-                  className="rounded bg-cyan-600 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
+                  className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 transition"
                 >
                   Save
                 </button>
@@ -848,178 +891,170 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
             <button
               disabled={!isHost}
               onClick={toggleWaitingRoom}
-              className="w-full rounded bg-slate-700 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              Waiting Room: {meetingState.waitingRoomEnabled ? "On" : "Off"}
+              Waiting Room: {meetingState.waitingRoomEnabled ? "ON" : "OFF"}
             </button>
 
             <button
               disabled={!isHost}
               onClick={muteAll}
-              className="w-full rounded bg-red-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="w-full rounded-lg bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              Mute All
+              🔇 Mute All Participants
             </button>
 
-            <div className="rounded border p-2">
-              <p className="mb-2 text-xs font-medium text-gray-700">Participant permissions</p>
-              <div className="space-y-2 text-sm">
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Participant Permissions</p>
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span>Screen share</span>
+                  <span className="text-sm text-gray-300">Screen Share</span>
                   <select
                     disabled={!isHost}
                     value={meetingState.permissions.canShareScreen}
                     onChange={(e) => setPermission("canShareScreen", e.target.value as "all" | "host-only")}
-                    className="rounded border px-2 py-1 text-xs"
+                    className="rounded-lg bg-white/10 border border-white/20 px-2 py-1 text-xs text-white disabled:opacity-50"
                   >
                     <option value="all">All</option>
-                    <option value="host-only">Host only</option>
+                    <option value="host-only">Host Only</option>
                   </select>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Unmute self</span>
+                  <span className="text-sm text-gray-300">Unmute Self</span>
                   <select
                     disabled={!isHost}
                     value={meetingState.permissions.canUnmuteSelf}
                     onChange={(e) => setPermission("canUnmuteSelf", e.target.value as "all" | "host-only")}
-                    className="rounded border px-2 py-1 text-xs"
+                    className="rounded-lg bg-white/10 border border-white/20 px-2 py-1 text-xs text-white disabled:opacity-50"
                   >
                     <option value="all">All</option>
-                    <option value="host-only">Host only</option>
+                    <option value="host-only">Host Only</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            <div className="rounded border p-2">
-              <p className="mb-2 text-xs font-medium text-gray-700">Waiting room</p>
-              {meetingState.waitingRoom.length === 0 ? (
-                <p className="text-xs text-gray-500">No one is waiting.</p>
+            {meetingState.waitingRoomEnabled && (
+              <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+                <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Waiting Room</p>
+                {meetingState.waitingRoom.length === 0 ? (
+                  <p className="text-xs text-gray-400">No one waiting.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {meetingState.waitingRoom.map((person) => (
+                      <div key={person.socketId} className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 border border-white/10">
+                        <span className="truncate text-xs text-gray-300">{person.name}</span>
+                        <div className="flex gap-1 flex-shrink-0">
+                          <button
+                            disabled={!isHost}
+                            onClick={() => admitWaitingUser(person.socketId)}
+                            className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-2 py-1 text-[11px] font-semibold text-white disabled:opacity-50 transition"
+                          >
+                            ✓
+                          </button>
+                          <button
+                            disabled={!isHost}
+                            onClick={() => denyWaitingUser(person.socketId)}
+                            className="rounded-lg bg-red-600 hover:bg-red-700 px-2 py-1 text-[11px] font-semibold text-white disabled:opacity-50 transition"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Remove Participant</p>
+              {participants.length === 0 ? (
+                <p className="text-xs text-gray-400">No participants.</p>
               ) : (
                 <div className="space-y-2">
-                  {meetingState.waitingRoom.map((person) => (
-                    <div key={person.socketId} className="flex items-center justify-between gap-2">
-                      <span className="truncate text-xs text-gray-700">{person.name}</span>
-                      <div className="flex gap-1">
-                        <button
-                          disabled={!isHost}
-                          onClick={() => admitWaitingUser(person.socketId)}
-                          className="rounded bg-emerald-600 px-2 py-1 text-[11px] font-medium text-white disabled:opacity-50"
-                        >
-                          Admit
-                        </button>
-                        <button
-                          disabled={!isHost}
-                          onClick={() => denyWaitingUser(person.socketId)}
-                          className="rounded bg-red-600 px-2 py-1 text-[11px] font-medium text-white disabled:opacity-50"
-                        >
-                          Deny
-                        </button>
-                      </div>
+                  {participants.map((p: Participant) => (
+                    <div key={p.socketId} className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition">
+                      <span className="truncate text-xs text-gray-300">{p.name}</span>
+                      <button
+                        disabled={!isHost}
+                        onClick={() => {
+                          if (confirm(`Remove ${p.name} from meeting?`)) {
+                            removeParticipant(p.socketId);
+                          }
+                        }}
+                        className="rounded-lg bg-red-600 hover:bg-red-700 px-2 py-1 text-[11px] font-semibold text-white disabled:opacity-50 transition"
+                      >
+                        Remove
+                      </button>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-
-            <div className="rounded border p-2">
-              <p className="mb-2 text-xs font-medium text-gray-700">Remove participant</p>
-              <div className="space-y-2">
-                {participants.map((p: Participant) => (
-                  <div key={p.socketId} className="flex items-center justify-between gap-2">
-                    <span className="truncate text-xs text-gray-700">{p.name}</span>
-                    <button
-                      disabled={!isHost}
-                      onClick={() => removeParticipant(p.socketId)}
-                      className="rounded bg-red-600 px-2 py-1 text-[11px] font-medium text-white disabled:opacity-50"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded border p-2">
-              <p className="mb-2 text-xs font-medium text-gray-700">Breakout rooms</p>
-              <button
-                disabled={!isHost}
-                onClick={createSimpleBreakouts}
-                className="mb-2 w-full rounded bg-indigo-600 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
-              >
-                Create 2 breakout rooms
-              </button>
-              {meetingState.breakoutRooms.map((room) => (
-                <div key={room.breakoutId} className="mb-2 rounded border p-2">
-                  <p className="mb-1 text-xs font-semibold text-gray-700">{room.name}</p>
-                  {participants.map((p: Participant) => (
-                    <button
-                      key={`${room.breakoutId}-${p.socketId}`}
-                      disabled={!isHost}
-                      onClick={() => assignToBreakout(p.socketId, room.breakoutId)}
-                      className="mr-1 mb-1 rounded bg-gray-100 px-2 py-1 text-[10px] text-gray-700 disabled:opacity-50"
-                    >
-                      Assign {p.name}
-                    </button>
-                  ))}
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       )}
 
-      {showCollab && (
-        <div className="w-[420px] overflow-y-auto bg-slate-50 p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">Collaboration Tools</h3>
-            <button onClick={() => setShowCollab(false)} className="text-gray-500 hover:text-gray-700">
+      {activePanel === "collab" && (
+        <div className="w-96 overflow-y-auto bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-l border-white/10 shadow-2xl shadow-cyan-500/10">
+          <div className="p-5 border-b border-white/10 backdrop-blur-sm bg-white/5 flex items-center justify-between sticky top-0">
+            <h3 className="font-bold text-white text-lg flex items-center gap-2">
+              <Shield className="w-5 h-5 text-cyan-400" />
+              Collaboration
+            </h3>
+            <button 
+              onClick={() => togglePanel("collab")} 
+              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1 transition"
+            >
               ✕
             </button>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase text-gray-500">Whiteboard</p>
+          <div className="p-5 space-y-4 custom-scrollbar">
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Whiteboard</p>
               <CollaborativeWhiteboard socket={socket} roomId={roomId} />
             </div>
 
-            <div className="rounded border bg-white p-3">
-              <p className="mb-2 text-xs font-semibold uppercase text-gray-500">Polls</p>
-              <input
-                type="text"
-                value={pollQuestion}
-                onChange={(e) => setPollQuestion(e.target.value)}
-                placeholder="Poll question"
-                className="mb-2 w-full rounded border px-2 py-1 text-sm"
-              />
-              <textarea
-                value={pollOptionsText}
-                onChange={(e) => setPollOptionsText(e.target.value)}
-                placeholder="One option per line"
-                className="mb-2 h-16 w-full rounded border px-2 py-1 text-sm"
-              />
-              <button
-                disabled={!isHost}
-                onClick={createPoll}
-                className="rounded bg-cyan-600 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
-              >
-                Create Poll
-              </button>
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Polls</p>
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={pollQuestion}
+                  onChange={(e) => setPollQuestion(e.target.value)}
+                  placeholder="Poll question"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                />
+                <textarea
+                  value={pollOptionsText}
+                  onChange={(e) => setPollOptionsText(e.target.value)}
+                  placeholder="One option per line"
+                  className="h-16 w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
+                />
+                <button
+                  disabled={!isHost}
+                  onClick={createPoll}
+                  className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 transition w-full"
+                >
+                  Create Poll
+                </button>
+              </div>
 
               <div className="mt-3 space-y-2">
                 {meetingState.polls.map((poll) => (
-                  <div key={poll.id} className="rounded border p-2">
-                    <p className="text-sm font-medium text-gray-800">{poll.question}</p>
-                    <div className="mt-1 space-y-1">
+                  <div key={poll.id} className="rounded-lg bg-white/5 border border-white/10 p-3">
+                    <p className="text-sm font-semibold text-white mb-2">{poll.question}</p>
+                    <div className="space-y-1">
                       {poll.options.map((option, idx) => (
                         <button
                           key={`${poll.id}-${idx}`}
                           onClick={() => votePoll(poll.id, idx)}
-                          className="flex w-full items-center justify-between rounded bg-gray-100 px-2 py-1 text-xs text-gray-700"
+                          className="w-full flex items-center justify-between rounded-lg bg-white/10 hover:bg-white/20 px-3 py-2 text-xs text-gray-200 transition"
                         >
                           <span>{option.text}</span>
-                          <span>{option.votes}</span>
+                          <span className="font-semibold text-cyan-400">{option.votes}</span>
                         </button>
                       ))}
                     </div>
@@ -1028,26 +1063,29 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
               </div>
             </div>
 
-            <div className="rounded border bg-white p-3">
-              <p className="mb-2 text-xs font-semibold uppercase text-gray-500">Q&A</p>
-              <div className="mb-2 flex gap-2">
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Q&A</p>
+              <div className="mb-3 flex gap-2">
                 <input
                   type="text"
                   value={qaQuestion}
                   onChange={(e) => setQaQuestion(e.target.value)}
                   placeholder="Ask a question"
-                  className="flex-1 rounded border px-2 py-1 text-sm"
+                  className="flex-1 rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
-                <button onClick={askQuestion} className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white">
+                <button 
+                  onClick={askQuestion} 
+                  className="rounded-lg bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-semibold text-white transition"
+                >
                   Ask
                 </button>
               </div>
               <div className="space-y-2">
                 {meetingState.qa.map((item) => (
-                  <div key={item.id} className="rounded border p-2">
-                    <p className="text-sm text-gray-800">Q: {item.question}</p>
+                  <div key={item.id} className="rounded-lg bg-white/5 border border-white/10 p-3">
+                    <p className="text-sm text-gray-200">Q: {item.question}</p>
                     {item.answer ? (
-                      <p className="mt-1 text-xs text-emerald-700">A: {item.answer}</p>
+                      <p className="mt-2 text-xs text-emerald-300">A: {item.answer}</p>
                     ) : (
                       isHost && (
                         <div className="mt-2 flex gap-1">
@@ -1056,11 +1094,11 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
                             value={qaAnswerMap[item.id] || ""}
                             onChange={(e) => setQaAnswerMap((prev) => ({ ...prev, [item.id]: e.target.value }))}
                             placeholder="Type answer"
-                            className="flex-1 rounded border px-2 py-1 text-xs"
+                            className="flex-1 rounded-lg bg-white/10 border border-white/20 px-2 py-1 text-xs text-white placeholder-gray-400 focus:outline-none"
                           />
                           <button
                             onClick={() => answerQuestion(item.id)}
-                            className="rounded bg-cyan-600 px-2 py-1 text-[11px] font-medium text-white"
+                            className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-2 py-1 text-[11px] font-semibold text-white transition"
                           >
                             Reply
                           </button>
@@ -1072,57 +1110,61 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
               </div>
             </div>
 
-            <div className="rounded border bg-white p-3">
-              <p className="mb-2 text-xs font-semibold uppercase text-gray-500">Shared Notes</p>
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <p className="mb-3 text-xs font-bold text-gray-300 uppercase tracking-wide">Shared Notes</p>
               <textarea
                 value={sharedNotesDraft}
                 onChange={(e) => setSharedNotesDraft(e.target.value)}
                 onBlur={pushNotes}
                 placeholder="Collaborative notes for this meeting"
-                className="h-24 w-full rounded border px-2 py-1 text-sm"
+                className="h-24 w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
               />
-              <button onClick={pushNotes} className="mt-2 rounded bg-slate-700 px-3 py-1 text-xs font-medium text-white">
+              <button 
+                onClick={pushNotes} 
+                className="mt-3 w-full rounded-lg bg-slate-700 hover:bg-slate-600 px-3 py-2 text-xs font-semibold text-white transition"
+              >
                 Sync Notes
               </button>
             </div>
 
-            <div className="rounded border bg-white p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase text-gray-500">Live Captions / Transcription</p>
+            <div className="rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-xs font-bold text-gray-300 uppercase tracking-wide">Captions / Transcription</p>
                 <button
                   disabled={!isHost}
                   onClick={toggleCaptions}
-                  className="rounded bg-indigo-600 px-2 py-1 text-[11px] font-medium text-white disabled:opacity-50"
+                  className="rounded-lg bg-indigo-600 hover:bg-indigo-700 px-2 py-1 text-[11px] font-semibold text-white disabled:opacity-50 transition"
                 >
-                  Captions: {meetingState.captionsEnabled ? "On" : "Off"}
+                  {meetingState.captionsEnabled ? "ON" : "OFF"}
                 </button>
               </div>
-
-              <div className="mb-2 flex gap-2">
+              <div className="mb-3 flex gap-2">
                 <input
                   type="text"
                   value={captionInput}
                   onChange={(e) => setCaptionInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendCaption()}
-                  placeholder="Type a caption/transcript line"
-                  className="flex-1 rounded border px-2 py-1 text-sm"
+                  placeholder="Type a caption..."
+                  className="flex-1 rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50"
                 />
-                <button onClick={sendCaption} className="rounded bg-cyan-600 px-3 py-1 text-xs font-medium text-white">
+                <button 
+                  onClick={sendCaption} 
+                  className="rounded-lg bg-cyan-600 hover:bg-cyan-700 px-3 py-2 text-xs font-semibold text-white transition"
+                >
                   Send
                 </button>
               </div>
-
               <div className="grid grid-cols-2 gap-2">
-                <div className="h-24 overflow-y-auto rounded border p-2 text-xs">
-                  <p className="mb-1 font-semibold text-gray-600">Captions</p>
+                <div className="h-20 overflow-y-auto rounded-lg bg-white/5 border border-white/10 p-2 custom-scrollbar">
+                  <p className="mb-1 text-xs font-semibold text-cyan-300">Captions</p>
                   {captionFeed.map((line, idx) => (
-                    <p key={`c-${idx}`} className="text-gray-700">{line}</p>
+                    <p key={`c-${idx}`} className="text-[11px] text-gray-300">{line}</p>
                   ))}
                 </div>
-                <div className="h-24 overflow-y-auto rounded border p-2 text-xs">
-                  <p className="mb-1 font-semibold text-gray-600">Transcript</p>
+                <div className="h-20 overflow-y-auto rounded-lg bg-white/5 border border-white/10 p-2 custom-scrollbar">
+                  <p className="mb-1 text-xs font-semibold text-emerald-300">Transcript</p>
                   {transcriptFeed.map((line, idx) => (
-                    <p key={`t-${idx}`} className="text-gray-700">{line}</p>
+                    <p key={`t-${idx}`} className="text-[11px] text-gray-300">{line}</p>
                   ))}
                 </div>
               </div>

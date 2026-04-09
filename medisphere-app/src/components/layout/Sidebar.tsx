@@ -97,8 +97,8 @@ export default function Sidebar() {
     "relative group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition duration-200";
   const linkClass = (active: boolean) =>
     active
-      ? "bg-gradient-to-r from-cyan-500/12 to-teal-500/10 text-cyan-900 ring-1 ring-cyan-200 shadow-sm"
-      : "text-slate-700 hover:text-cyan-800 hover:bg-white/80";
+      ? "bg-gradient-to-r from-cyan-500/20 to-emerald-500/15 text-white ring-1 ring-cyan-400/50 shadow-lg shadow-cyan-500/10"
+      : "text-gray-300 hover:text-white hover:bg-white/10";
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
@@ -156,16 +156,16 @@ export default function Sidebar() {
           "fixed left-0",
           // lies BELOW header; header should have z-30, we go z-20
           "z-20",
-          "bg-white/78 backdrop-blur-md border border-cyan-100/80 shadow-[0_10px_28px_-20px_rgba(14,116,144,0.5)]",
-          "bg-gradient-to-b from-white/92 via-cyan-50/35 to-teal-50/30",
-          "border-r border-cyan-100/80 shadow-[0_18px_45px_-28px_rgba(8,145,178,0.55)] ring-1 ring-cyan-100/70",
+          "bg-gradient-to-b from-gray-900/95 via-gray-800/90 to-gray-900/95",
+          "border-r border-white/10 shadow-[0_18px_45px_-28px_rgba(0,0,0,0.8)]",
+          "backdrop-blur-sm",
         ].join(" ")}
       >
         {/* Row: title + collapse toggle */}
         <div className="flex items-center justify-between px-3 py-3">
           <div className="flex items-center gap-2">
             {mounted && !collapsed && (
-              <span className="text-base font-semibold tracking-wide bg-gradient-to-r from-cyan-700 via-sky-700 to-teal-700 bg-clip-text text-transparent">
+              <span className="text-base font-semibold tracking-wide bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
                 MediSphere
               </span>
             )}
@@ -175,14 +175,14 @@ export default function Sidebar() {
           <button
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             onClick={() => setCollapsed((v) => !v)}
-            className="inline-flex items-center justify-center size-8 rounded-md ring-1 ring-cyan-200 text-cyan-700 bg-white/90 hover:bg-cyan-50 transition-transform duration-200 ease-out hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center size-8 rounded-md ring-1 ring-white/20 text-white bg-white/10 hover:bg-white/20 transition-all duration-200"
             title={collapsed ? "Expand" : "Collapse"}
           >
             <span className="text-xl leading-none select-none">{collapsed ? "»" : "«"}</span>
           </button>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-cyan-200 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
 
         <ul className="px-3 py-3 space-y-2 overflow-y-auto h-[calc(100%-64px-1px)]">
           {NAV.map((it) => (
@@ -191,7 +191,7 @@ export default function Sidebar() {
         </ul>
 
         {/* Right glow divider */}
-        <div className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-teal-300/50 to-transparent" />
+        <div className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan-400/50 to-transparent" />
       </motion.aside>
 
       {/* MOBILE DRAWER: opens under header */}
@@ -200,7 +200,7 @@ export default function Sidebar() {
           <>
             <motion.div
               key="overlay"
-              className="md:hidden fixed inset-0 bg-black/30 z-40"
+              className="md:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -208,7 +208,7 @@ export default function Sidebar() {
             />
             <motion.aside
               key="drawer"
-              className="md:hidden fixed left-0 w-64 z-50 bg-gradient-to-b from-white to-cyan-50 border-r border-cyan-100 shadow-xl"
+              className="md:hidden fixed left-0 w-64 z-50 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-white/10 shadow-2xl backdrop-blur-sm"
               style={{
                 top: "var(--header-h, 56px)",
                 height: "calc(100vh - var(--header-h, 56px))",
@@ -228,7 +228,7 @@ export default function Sidebar() {
                       )}`}
                       onClick={() => setMobileOpen(false)}
                     >
-                      <span className="inline-flex size-8 items-center justify-center rounded-md bg-cyan-600/10 ring-1 ring-cyan-200 text-cyan-700">
+                      <span className="inline-flex size-8 items-center justify-center rounded-md bg-cyan-600/20 ring-1 ring-cyan-400/50 text-cyan-400">
                         <Dot />
                       </span>
                       <span>{it.label}</span>
@@ -243,7 +243,7 @@ export default function Sidebar() {
 
       {/* MOBILE TRIGGER BUTTON (since header is separate) */}
       <button
-        className="md:hidden fixed left-3 top-[calc(var(--header-h,56px)+0.5rem)] z-30 inline-flex items-center justify-center size-10 rounded-lg ring-1 ring-cyan-200 bg-white/90 text-cyan-700 shadow"
+        className="md:hidden fixed left-3 top-[calc(var(--header-h,56px)+0.5rem)] z-30 inline-flex items-center justify-center size-10 rounded-lg ring-1 ring-white/20 bg-white/10 text-white shadow-lg"
         aria-label="Open sidebar"
         onClick={() => setMobileOpen(true)}
       >

@@ -65,9 +65,9 @@ export default function Header() {
   ];
 
   const bgScrolled =
-    "bg-white/78 backdrop-blur-md border-b border-cyan-100/80 shadow-[0_10px_28px_-20px_rgba(14,116,144,0.5)]";
+    "bg-gray-900/95 backdrop-blur-lg border-b border-white/10 shadow-[0_10px_28px_-20px_rgba(0,0,0,0.5)]";
   const bgTop =
-    "bg-gradient-to-r from-cyan-50/85 via-sky-50/90 to-teal-50/85 backdrop-blur-sm border-b border-cyan-100/70 shadow-[0_10px_30px_-24px_rgba(14,116,144,0.6)]";
+    "bg-gradient-to-r from-gray-900/90 via-gray-800/85 to-gray-900/90 backdrop-blur-lg border-b border-white/10 shadow-[0_10px_30px_-24px_rgba(0,0,0,0.6)]";
 
   // Decide dashboard path by role
   const userRole = (session?.user as { role?: string } | undefined)?.role;
@@ -124,7 +124,7 @@ export default function Header() {
             >
               <Link
                 href={item.href}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-cyan-800 hover:bg-white/70 transition-transform duration-200 ease-out hover:-translate-y-0.5"
+                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-transform duration-200 ease-out hover:-translate-y-0.5"
               >
                 <span className="inline-flex items-center gap-2">
                   <span>{item.label}</span>
@@ -142,13 +142,13 @@ export default function Header() {
         {/* Auth section */}
         <div className="flex items-center gap-2">
           {status === "loading" ? (
-            <span className="text-xs text-gray-500">Loading…</span>
+            <span className="text-xs text-gray-400">Loading…</span>
           ) : session?.user ? (
             <>
-              <div className="hidden sm:block px-3 py-1.5 rounded-full bg-white/60 backdrop-blur ring-1 ring-cyan-200">
-                <span className="text-xs text-slate-700">
+              <div className="hidden sm:block px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/10">
+                <span className="text-xs text-gray-200">
                   Hi,{" "}
-                  <span className="font-medium">
+                  <span className="font-medium text-white">
                     {session.user.name || session.user.email || "User"}
                   </span>
                 </span>
@@ -156,14 +156,14 @@ export default function Header() {
 
               <Link
                 href={dashHref}
-                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-600 to-teal-500 shadow-md hover:from-cyan-700 hover:to-teal-600 transition-transform duration-200 ease-out hover:-translate-y-0.5"
+                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 shadow-lg shadow-cyan-500/20 transition-all duration-200"
               >
                 {dashLabel}
               </Link>
 
               <motion.button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-red-500 shadow hover:from-rose-600 hover:to-red-600"
+                className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 shadow-lg shadow-red-500/20"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -174,13 +174,13 @@ export default function Header() {
             <>
               <Link
                 href="/auth/signin"
-                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 ring-1 ring-cyan-200 hover:text-teal-700 hover:bg-cyan-50"
+                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-200 border border-white/20 hover:text-white hover:bg-white/10 transition"
               >
                 Sign in
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-emerald-500 shadow hover:from-cyan-600 hover:to-emerald-600"
+                className="px-3 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 shadow-lg shadow-cyan-500/20"
               >
                 Sign up
               </Link>
@@ -189,7 +189,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-300/60 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
     </motion.header>
   );
 }

@@ -129,11 +129,11 @@ function ExpandableText({ text, limit = 280 }: { text: string; limit?: number })
 
   return (
     <div>
-      <p className="mt-1 whitespace-pre-line text-sm leading-6 text-slate-700">{visibleText}</p>
+      <p className="mt-1 whitespace-pre-line text-sm leading-6 text-gray-300">{visibleText}</p>
       {shouldTruncate && (
         <button
           type="button"
-          className="mt-1 text-xs font-medium text-blue-700 hover:underline"
+          className="mt-1 text-xs font-medium text-cyan-300 hover:text-cyan-200 transition"
           onClick={() => setExpanded((v) => !v)}
         >
           {expanded ? "Show less" : "Show more"}
@@ -227,22 +227,22 @@ export default function MedicineKnowledgeSearch() {
   }
 
   return (
-    <section className="mt-10 w-full rounded-2xl border border-cyan-100 bg-gradient-to-b from-white to-cyan-50/30 p-6 shadow-sm md:p-8">
-      <header className="border-b border-cyan-100 pb-5">
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
+    <section className="mt-10 w-full rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-white/10 p-6 shadow-2xl shadow-cyan-500/10 backdrop-blur-sm md:p-8">
+      <header className="border-b border-white/10 pb-5">
+        <h2 className="text-2xl font-semibold tracking-tight text-white">
           Personal Health Knowledge Center
         </h2>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-sm leading-6 text-gray-300">
           Read clear, trusted medicine and disease guidance from openFDA and MedlinePlus in an easy article view.
         </p>
 
         <div className="mt-4">
-          <label className="mb-1 block text-sm font-medium text-slate-700">
+          <label className="mb-1 block text-sm font-medium text-white">
             Quick select (prebuilt topics)
           </label>
           <select
             defaultValue=""
-            className="w-full rounded-lg border border-cyan-200 bg-white p-2.5 text-sm text-slate-800 outline-none ring-cyan-200 focus:ring-2"
+            className="w-full rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm p-2.5 text-sm text-white outline-none ring-cyan-400/50 focus:ring-2 transition"
             onChange={(e) => {
               const selected = e.target.value;
               if (!selected) return;
@@ -250,9 +250,9 @@ export default function MedicineKnowledgeSearch() {
               executeSearch(selected);
             }}
           >
-            <option value="">Select a disease or medicine...</option>
+            <option value="" className="bg-gray-800">Select a disease or medicine...</option>
             {PREBUILT_TOPICS.map((topic) => (
-              <option key={topic} value={topic}>
+              <option key={topic} value={topic} className="bg-gray-800">
                 {topic}
               </option>
             ))}
@@ -262,7 +262,7 @@ export default function MedicineKnowledgeSearch() {
         <form onSubmit={onSearch} className="mt-4 flex flex-col gap-2 sm:flex-row">
           <input
             list="health-topic-options"
-            className="w-full rounded-lg border border-cyan-200 bg-white p-2.5 text-slate-900 outline-none ring-cyan-200 placeholder:text-slate-400 focus:ring-2"
+            className="flex-1 rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm p-2.5 text-white outline-none ring-cyan-400/50 placeholder:text-gray-400 focus:ring-2 transition"
             placeholder="Search by medicine or disease, for example: diabetes, asthma, paracetamol"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -275,17 +275,17 @@ export default function MedicineKnowledgeSearch() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-cyan-700 px-4 py-2.5 font-medium text-white shadow-sm hover:bg-cyan-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-lg bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 px-4 py-2.5 font-medium text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-60 transition"
           >
             {loading ? "Searching..." : "Search"}
           </button>
         </form>
 
-        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{error}</p>}
 
         {searched && followUps.length > 0 && (
           <div className="mt-4">
-            <p className="text-sm font-medium text-slate-700">Suggested follow-up topics</p>
+            <p className="text-sm font-medium text-white">Suggested follow-up topics</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {followUps.map((item) => (
                 <button
@@ -295,7 +295,7 @@ export default function MedicineKnowledgeSearch() {
                     setQuery(item);
                     executeSearch(item);
                   }}
-                  className="rounded-full border border-cyan-200 bg-white px-3 py-1.5 text-xs font-medium text-cyan-800 hover:bg-cyan-50"
+                  className="rounded-full border border-cyan-400/50 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
                 >
                   {item}
                 </button>
@@ -305,11 +305,11 @@ export default function MedicineKnowledgeSearch() {
         )}
 
         {searched && didYouMean && (
-          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <div className="mt-3 rounded-lg border border-amber-400/30 bg-amber-500/10 backdrop-blur-sm p-3 text-sm text-amber-200">
             Did you mean{" "}
             <button
               type="button"
-              className="font-semibold underline underline-offset-2"
+              className="font-semibold underline underline-offset-2 hover:text-amber-100"
               onClick={() => {
                 setQuery(didYouMean);
                 executeSearch(didYouMean);
@@ -323,29 +323,29 @@ export default function MedicineKnowledgeSearch() {
       </header>
 
       {!searched && (
-        <p className="mt-6 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+        <p className="mt-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 text-sm text-gray-300">
           Start with a keyword to read disease explanations and medicine details in a clean article view.
         </p>
       )}
 
       {searched && diseases.length > 0 && (
         <article className="mt-8">
-          <h3 className="text-lg font-semibold text-slate-900">
+          <h3 className="text-lg font-semibold text-white">
             Disease and Health Topic Articles{lastQuery ? ` for "${lastQuery}"` : ""}
           </h3>
           <div className="mt-3 space-y-4">
             {diseases.map((item) => (
-              <section key={item.id} className="rounded-xl border border-slate-200 bg-white p-5">
-                <h4 className="text-base font-semibold leading-7 text-slate-900">{item.title}</h4>
+              <section key={item.id} className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 hover:bg-white/10 transition">
+                <h4 className="text-base font-semibold leading-7 text-white">{item.title}</h4>
                 {item.summary && <ExpandableText text={item.summary} limit={900} />}
                 {item.url && (
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-3 inline-block text-sm font-medium text-cyan-700 hover:underline"
+                    className="mt-3 inline-block text-sm font-medium text-cyan-300 hover:text-cyan-200 transition"
                   >
-                    Read full article on MedlinePlus
+                    Read full article on MedlinePlus →
                   </a>
                 )}
               </section>
@@ -356,24 +356,24 @@ export default function MedicineKnowledgeSearch() {
 
       {searched && medicines.length > 0 && (
         <article className="mt-8">
-          <h3 className="text-lg font-semibold text-slate-900">Medicine Reference</h3>
+          <h3 className="text-lg font-semibold text-white">Medicine Reference</h3>
           <div className="mt-3 space-y-4">
             {medicines.map((item) => (
-              <section key={item.id} className="rounded-xl border border-slate-200 bg-white p-5">
-                <h4 className="text-base font-semibold leading-7 text-slate-900">{item.name}</h4>
+              <section key={item.id} className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 hover:bg-white/10 transition">
+                <h4 className="text-base font-semibold leading-7 text-white">{item.name}</h4>
                 {item.genericName && (
-                  <p className="mt-1 text-sm text-slate-700">
-                    <span className="font-medium">Generic name:</span> {item.genericName}
+                  <p className="mt-1 text-sm text-gray-300">
+                    <span className="font-medium text-cyan-300">Generic name:</span> {item.genericName}
                   </p>
                 )}
                 {item.manufacturer && (
-                  <p className="mt-1 text-sm text-slate-700">
-                    <span className="font-medium">Manufacturer:</span> {item.manufacturer}
+                  <p className="mt-1 text-sm text-gray-300">
+                    <span className="font-medium text-cyan-300">Manufacturer:</span> {item.manufacturer}
                   </p>
                 )}
                 {item.route && (
-                  <p className="mt-1 text-sm text-slate-700">
-                    <span className="font-medium">Route:</span> {item.route}
+                  <p className="mt-1 text-sm text-gray-300">
+                    <span className="font-medium text-cyan-300">Route:</span> {item.route}
                   </p>
                 )}
                 {item.indications && <ExpandableText text={item.indications} limit={700} />}
@@ -382,9 +382,9 @@ export default function MedicineKnowledgeSearch() {
                     href={item.labelUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-3 inline-block text-sm font-medium text-cyan-700 hover:underline"
+                    className="mt-3 inline-block text-sm font-medium text-cyan-300 hover:text-cyan-200 transition"
                   >
-                    Open drug label details
+                    Open drug label details →
                   </a>
                 )}
               </section>
@@ -394,7 +394,7 @@ export default function MedicineKnowledgeSearch() {
       )}
 
       {searched && medicines.length === 0 && diseases.length === 0 && !error && (
-        <p className="mt-6 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+        <p className="mt-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 text-sm text-gray-300">
           No results found for this keyword. Try a broader term like fever, pain, diabetes, or hypertension.
         </p>
       )}

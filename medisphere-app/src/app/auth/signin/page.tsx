@@ -7,6 +7,14 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" />}>
+      <SignInContent />
+    </Suspense>
+  );
+}
+
 function SignInContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,11 +41,12 @@ function SignInContent() {
   const signInWithGoogle = () => signIn("google", { callbackUrl });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-slate-800 text-center">Welcome back</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl shadow-cyan-500/10 p-8 border border-white/10">
+        <h1 className="text-2xl font-bold text-white text-center mb-2">Welcome back</h1>
+        <p className="text-gray-400 text-center text-sm mb-6">Sign in to your MediSphere account</p>
 
-        <Button variant="outline" className="w-full mt-6" onClick={signInWithGoogle}>
+        <Button variant="outline" className="w-full mt-6 bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={signInWithGoogle}>
           <span className="mr-3">
             {/* Google Icon */}
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -52,38 +61,30 @@ function SignInContent() {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-300" />
+            <div className="w-full border-t border-white/10" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-slate-500">Or</span>
+            <span className="px-2 bg-gray-900 text-gray-400">Or continue with email</span>
           </div>
         </div>
 
-        {err && <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm mb-4">{err}</div>}
+        {err && <div className="bg-red-500/15 text-red-300 p-3 rounded-lg text-sm mb-4 border border-red-500/30">{err}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input type="password" autoComplete="current-password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Input type="email" autoComplete="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
+          <Input type="password" autoComplete="current-password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="bg-white/10 border-white/20 text-white placeholder-gray-400" />
+          <Button type="submit" className="w-full bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white font-semibold" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-gray-400">
           No account?{" "}
-          <Link href="/auth/signup" className="text-slate-800 hover:underline font-medium">
+          <Link href="/auth/signup" className="text-white hover:text-cyan-300 font-medium transition">
             Create one
           </Link>
         </p>
       </div>
     </div>
-  );
-}
-
-export default function SignInPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200" />}>
-      <SignInContent />
-    </Suspense>
   );
 }

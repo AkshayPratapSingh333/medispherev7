@@ -7,17 +7,29 @@ import type { Session } from "next-auth";
 let socket: Socket | null = null;
 
 function resolveSignalingUrl() {
+  // Priority 1: Explicit environment variable (best for Vercel)
   const envUrl =
     process.env.NEXT_PUBLIC_SIGNALING_URL ||
     process.env.NEXT_PUBLIC_SIGNALING_SERVER;
 
-  if (envUrl) return envUrl;
-
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
-    // Production-safe fallback to hosted signaling service.
-    return "https://medispherev7.onrender.com";
+  if (envUrl) {
+    console.log("🔌 [Socket] Using env var URL:", envUrl);
+    return envUrl;
   }
 
+  // Priority 2: Production detection (use reliable fallback)
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+    
+    if (!isLocalhost) {
+      console.log("🔌 [Socket] Detected production hostname:", hostname, "- using fallback");
+      return "https://medispherev7.onrender.com";
+    }
+  }
+
+  // Priority 3: Local development
+  console.log("🔌 [Socket] Using local development URL");
   return "http://localhost:4000";
 }
 

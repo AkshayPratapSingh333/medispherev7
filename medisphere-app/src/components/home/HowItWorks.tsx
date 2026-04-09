@@ -35,26 +35,26 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="relative py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-emerald-50 overflow-hidden">
+    <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-cyan-50 to-emerald-50 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none opacity-25 bg-[radial-gradient(circle_at_12%_25%,rgba(20,184,166,0.16),transparent_35%),radial-gradient(circle_at_88%_72%,rgba(59,130,246,0.16),transparent_40%)]" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6">
+      <div className="relative z-10 max-w-7xl mx-auto">
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
           initial={{ opacity: 0, y: -18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.35 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-emerald-600 bg-clip-text text-transparent mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-emerald-600 bg-clip-text text-transparent mb-2 sm:mb-4 px-4">
             How It Works
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
             Your journey to wellness in four simple steps
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 relative">
           {steps.map((s, i) => (
             <motion.div
               key={s.step}
@@ -65,39 +65,40 @@ export default function HowItWorks() {
               transition={{ delay: i * 0.06, duration: 0.35 }}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
-              <div className="relative p-8 bg-white/90 backdrop-blur-sm rounded-3xl shadow-md border border-gray-100 text-center overflow-hidden h-full transition-all duration-300 group-hover:shadow-xl group-hover:shadow-blue-100/40">
-                <div className={`absolute inset-0 bg-gradient-to-br ${s.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+              <div className="relative p-6 sm:p-8 bg-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg border border-white/20 text-center overflow-hidden h-full transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-teal-500/30 group-hover:bg-white/15 group-hover:border-white/30">
+                <div className={`absolute inset-0 bg-gradient-to-br ${s.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
 
                 <div className="relative mb-6 mx-auto">
-                  <div className={`w-20 h-20 bg-gradient-to-br ${s.color} rounded-full flex items-center justify-center shadow-lg mx-auto`}>
-                    <span className="text-2xl font-bold text-white">{s.step}</span>
+                  <div className={`w-16 sm:w-20 h-16 sm:h-20 bg-gradient-to-br ${s.color} rounded-full flex items-center justify-center shadow-lg mx-auto`}>
+                    <span className="text-xl sm:text-2xl font-bold text-white">{s.step}</span>
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-lg">
+                  <div className="absolute -top-2 -right-2 w-7 sm:w-8 h-7 sm:h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center text-base sm:text-lg">
                     {s.icon}
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-slate-700 mb-3 group-hover:text-teal-700 transition-colors duration-300">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-700 mb-2 sm:mb-3 group-hover:text-teal-700 transition-colors duration-300">
                   {s.title}
                 </h3>
-                <p className="text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors duration-300">
+                <p className="text-xs sm:text-sm md:text-base text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors duration-300">
                   {s.desc}
                 </p>
 
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-100">
-                  <div className={`h-full bg-gradient-to-r ${s.color}`} />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white/30 to-transparent">
+                  <div className={`h-full bg-gradient-to-r ${s.color} w-0 group-hover:w-full transition-all duration-300`} />
                 </div>
               </div>
 
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 -right-4 z-20">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <div className="hidden sm:hidden md:block lg:block absolute top-1/3 -right-4 z-20 transform -translate-y-1/2">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                     <path
                       d="M9 18l6-6-6-6"
-                      stroke="#14b8a6"
-                      strokeWidth="2"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      className="text-teal-500"
                     />
                   </svg>
                 </div>
@@ -107,19 +108,18 @@ export default function HowItWorks() {
         </div>
 
         <motion.div
-          className="text-center mt-16"
+          className="text-center mt-12 sm:mt-16"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ delay: 0.12, duration: 0.35 }}
         >
           <motion.div
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-full shadow-lg"
+            className="inline-flex items-center justify-center space-x-2 px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 text-sm sm:text-base"
             whileHover={{ scale: 1.03, y: -1 }}
             whileTap={{ scale: 0.97 }}
           >
             <span className="font-semibold">Ready to get started?</span>
-            <span>→</span>
           </motion.div>
         </motion.div>
       </div>
