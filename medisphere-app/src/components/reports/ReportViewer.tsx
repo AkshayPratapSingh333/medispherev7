@@ -44,7 +44,7 @@ export default function ReportViewer({ report }: { report: any }) {
         ) : isPdf ? (
           <iframe title={report.fileName} src={fileSrc} className="w-full h-[80vh] rounded-xl" />
         ) : (
-          <div className="text-emerald-800">Preview not available. Use "Open in new tab".</div>
+          <div className="text-emerald-800">Preview not available. Use &quot;Open in new tab&quot;.</div>
         )}
       </div>
 

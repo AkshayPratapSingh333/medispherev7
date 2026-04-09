@@ -214,8 +214,6 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
     const onReaction = ({
       emoji,
       senderName,
-      senderRole,
-      isHost: senderIsHost,
     }: {
       emoji: string;
       senderName: string;
@@ -454,10 +452,12 @@ export default function MeetingRoom({ roomId, socket, onLeave }: MeetingRoomProp
     socket?.emit(meetingState.recordingActive ? "recording:stop" : "recording:start", { roomId });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const createSimpleBreakouts = () => {
     socket?.emit("breakout:create", { roomId, rooms: ["Breakout A", "Breakout B"] });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const assignToBreakout = (targetSocketId: string, breakoutId: string) => {
     socket?.emit("breakout:assign", { roomId, targetSocketId, breakoutId });
   };
