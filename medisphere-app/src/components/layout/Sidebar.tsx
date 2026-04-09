@@ -184,11 +184,13 @@ export default function Sidebar() {
 
         <div className="h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
 
-        <ul className="px-3 py-3 space-y-2 overflow-y-auto h-[calc(100%-64px-1px)]">
-          {NAV.map((it) => (
-            <NavLink key={it.href} {...it} />
-          ))}
-        </ul>
+        {!collapsed && (
+          <ul className="px-3 py-3 space-y-2 overflow-y-auto h-[calc(100%-64px-1px)]">
+            {NAV.map((it) => (
+              <NavLink key={it.href} {...it} />
+            ))}
+          </ul>
+        )}
 
         {/* Right glow divider */}
         <div className="absolute top-0 right-0 bottom-0 w-px bg-gradient-to-b from-transparent via-amber-400/40 to-transparent" />
