@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
-const PREFERRED_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || "gemini-2.5-flash";
+const PREFERRED_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || "gemini-1.5-flash";
 const FALLBACK_CHAT_MODELS = [
   "gemini-2.5-flash",
   "gemini-2.0-flash",
