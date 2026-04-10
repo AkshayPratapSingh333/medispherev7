@@ -6,11 +6,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
-const PREFERRED_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || "gemini-pro";
+const PREFERRED_CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || "gemini-2.5-flash";
 const FALLBACK_CHAT_MODELS = [
   "gemini-1.5-pro",
-  "gemini-1.5-flash",
-  "gemini-pro",
+  "gemini-1.0-pro",
+  "gemini-2.0-flash",
 ];
 
 export async function POST(req: Request) {
