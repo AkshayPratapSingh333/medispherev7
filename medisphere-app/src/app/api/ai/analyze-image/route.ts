@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
-const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || process.env.GEMINI_CHAT_MODEL || "gemini-1.5-flash";
+const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || process.env.GEMINI_CHAT_MODEL || "gemini-pro";
 
 export async function POST(req: Request) {
   if (!GEMINI_API_KEY) return NextResponse.json({ error: "Missing GEMINI_API_KEY / GOOGLE_API_KEY" }, { status: 500 });
